@@ -1,24 +1,52 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Nav } from "@/components/site/Nav";
+import { Hero } from "@/components/site/Hero";
+import { Philosophy } from "@/components/site/Philosophy";
+import { Programs } from "@/components/site/Programs";
+import { Trainers } from "@/components/site/Trainers";
+import { Facility } from "@/components/site/Facility";
+import { Stats } from "@/components/site/Stats";
+import { Membership } from "@/components/site/Membership";
+import { Testimonials } from "@/components/site/Testimonials";
+import { CTASection } from "@/components/site/CTASection";
+import { Footer } from "@/components/site/Footer";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Atlas · A Private Strength Club, London" },
+      {
+        name: "description",
+        content:
+          "Atlas is a members-only strength club in East London. Coached training, refined recovery, and a room built to disappear.",
+      },
+      { property: "og:title", content: "Atlas · A Private Strength Club, London" },
+      {
+        property: "og:description",
+        content:
+          "Coached strength, precise conditioning, and a full recovery suite. Membership capped at 240.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="bg-ink text-bone overflow-x-clip">
+      <Nav />
+      <Hero />
+      <Philosophy />
+      <Programs />
+      <Trainers />
+      <Facility />
+      <Stats />
+      <Membership />
+      <Testimonials />
+      <CTASection />
+      <Footer />
+    </main>
   );
 }
