@@ -113,32 +113,33 @@ export const paymentService = {
     // but in Supabase, we can filter locally or use inner joins. We will filter locally for simplicity here.
     
     const { data, error } = await query;
-    if (error) {
-      console.warn('Supabase error in getAdminPayments, falling back to mock:', error);
-      let results = [...MOCK_PAYMENTS];
-      if (filters?.status) {
-        results = results.filter((p: any) => p.status === filters.status);
+    let results = (data || []) as any[];
+    const dbIds = new Set(results.map(p => p.id));
+    const localPayments = MOCK_PAYMENTS.filter(p => !dbIds.has(p.id));
+    results = [...results, ...localPayments];
+
+    // Ensure profiles and membership plans are mapped correctly from offline cache if missing
+    results = results.map(p => {
+      if (!p.profiles && p.member_id) {
+        p.profiles = MOCK_MEMBERS.find(m => m.id === p.member_id) || null;
       }
-      if (filters?.search) {
-        const lower = filters.search.toLowerCase();
-        results = results.filter((p: any) => 
-          (p.profiles?.first_name || '').toLowerCase().includes(lower) || 
-          (p.profiles?.last_name || '').toLowerCase().includes(lower) ||
-          (p.profiles?.email || '').toLowerCase().includes(lower) ||
-          (p.transaction_reference || '').toLowerCase().includes(lower)
-        );
+      if (!p.membership_plans && p.membership_plan_id) {
+        p.membership_plans = DUMMY_MEMBERSHIP_PLANS.find(plan => plan.id === p.membership_plan_id) || null;
       }
-      return results;
+      return p;
+    });
+
+    if (filters?.status) {
+      results = results.filter((p: any) => p.status === filters.status);
     }
 
-    let results = data;
     if (filters?.search) {
       const lower = filters.search.toLowerCase();
       results = results.filter((p: any) => 
-        p.profiles?.first_name.toLowerCase().includes(lower) || 
-        p.profiles?.last_name.toLowerCase().includes(lower) ||
-        p.profiles?.email.toLowerCase().includes(lower) ||
-        p.transaction_reference?.toLowerCase().includes(lower)
+        (p.profiles?.first_name || '').toLowerCase().includes(lower) || 
+        (p.profiles?.last_name || '').toLowerCase().includes(lower) ||
+        (p.profiles?.email || '').toLowerCase().includes(lower) ||
+        (p.transaction_reference || '').toLowerCase().includes(lower)
       );
     }
 

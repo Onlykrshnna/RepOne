@@ -89,30 +89,30 @@ export const membersService = {
 
     const { data, error } = await query.order('created_at', { ascending: false });
     
-    if (error) {
-      console.warn('Supabase error in getMembers, falling back to mock:', error);
-      let list = [...MOCK_MEMBERS].filter(m => m.email !== 'krpris9211@gmail.com');
-      if (filters?.search) {
-        const searchLower = filters.search.toLowerCase();
-        list = list.filter(m => 
-          m.first_name.toLowerCase().includes(searchLower) ||
-          m.last_name.toLowerCase().includes(searchLower) ||
-          m.email.toLowerCase().includes(searchLower) ||
-          (m.username && m.username.toLowerCase().includes(searchLower))
-        );
-      }
-      if (filters?.status) {
-        if (filters.status === 'active') {
-          list = list.filter(m => m.is_active === true);
-        } else if (filters.status === 'inactive') {
-          list = list.filter(m => m.is_active === false);
-        } else if (filters.status === 'pending') {
-          list = list.filter(m => m.membership_status === 'pending');
-        }
-      }
-      return list;
+    let list = (data || []) as MemberProfile[];
+    const dbIds = new Set(list.map(m => m.id));
+    const localMembers = MOCK_MEMBERS.filter(m => !dbIds.has(m.id));
+    list = [...list, ...localMembers].filter(m => m.email !== 'krpris9211@gmail.com');
+
+    if (filters?.search) {
+      const searchLower = filters.search.toLowerCase();
+      list = list.filter(m => 
+        m.first_name.toLowerCase().includes(searchLower) ||
+        (m.last_name || '').toLowerCase().includes(searchLower) ||
+        m.email.toLowerCase().includes(searchLower) ||
+        (m.username && m.username.toLowerCase().includes(searchLower))
+      );
     }
-    return ((data || [...MOCK_MEMBERS]) as MemberProfile[]).filter(m => m.email !== 'krpris9211@gmail.com');
+    if (filters?.status) {
+      if (filters.status === 'active') {
+        list = list.filter(m => m.is_active === true);
+      } else if (filters.status === 'inactive') {
+        list = list.filter(m => m.is_active === false);
+      } else if (filters.status === 'pending') {
+        list = list.filter(m => m.membership_status === 'pending');
+      }
+    }
+    return list;
   },
 
   async getMemberById(id: string) {
