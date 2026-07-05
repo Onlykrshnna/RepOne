@@ -31,13 +31,9 @@ export const dashboardService = {
 
       if (profErr) throw profErr;
 
-      const ignoredEmails = ['webforgeagency1@gmail.com', 'webforge.agency1@gmail.com'];
       const filteredProfiles = (profiles || []).filter(p => 
         p.email !== 'krpris9211@gmail.com' && 
-        p.email !== 'krpris1922@gmail.com' && 
-        !ignoredEmails.includes(p.email) && 
-        !p.email.startsWith('test_') &&
-        !p.email.startsWith('admin_test_')
+        p.email !== 'krpris1922@gmail.com'
       );
 
       const [
@@ -72,13 +68,9 @@ export const dashboardService = {
     } catch (err) {
       console.warn('Supabase error in getMetrics, falling back to mock:', err);
       
-      const ignoredEmails = ['webforgeagency1@gmail.com', 'webforge.agency1@gmail.com'];
       const filteredMock = MOCK_MEMBERS.filter(m => 
         m.email !== 'krpris9211@gmail.com' && 
-        m.email !== 'krpris1922@gmail.com' && 
-        !ignoredEmails.includes(m.email) && 
-        !m.email.startsWith('test_') &&
-        !m.email.startsWith('admin_test_')
+        m.email !== 'krpris1922@gmail.com'
       );
 
       return {

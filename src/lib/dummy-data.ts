@@ -6,16 +6,7 @@
 // Unsplash portrait IDs for consistent fake avatars
 const AVATAR_BASE = 'https://api.dicebear.com/9.x/avataaars/svg?seed=';
 
-export const DUMMY_MEMBERS: any[] = [
-  {
-    id: 'dm-krish', first_name: 'Krish', last_name: 'Sharma 01M', email: 'krishsharma01m@gmail.com',
-    username: 'krishsharma01m',
-    phone: '+91 9999999999', gender: 'male', role: 'member', is_active: true,
-    membership_status: 'unpaid', avatar_url: `https://api.dicebear.com/9.x/avataaars/svg?seed=krish`,
-    created_at: new Date(Date.now() - 30 * 86400000).toISOString(),
-    member_memberships: [],
-  }
-];
+export const DUMMY_MEMBERS: any[] = [];
 
 export const DUMMY_PAYMENTS: any[] = [];
 export const DUMMY_ATTENDANCE: any[] = [];

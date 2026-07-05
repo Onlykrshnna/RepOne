@@ -23,34 +23,29 @@ function AdminDashboardPage() {
 
   useEffect(() => {
     // One-time system test data cleanup to provide a blank slate for Razorpay testing
-    if (typeof window !== 'undefined' && !localStorage.getItem('system_cleaned_july6_v3')) {
+    if (typeof window !== 'undefined' && !localStorage.getItem('system_cleaned_july6_v4')) {
       const runCleanup = async () => {
         try {
           const { supabase } = await import('../lib/supabase');
-          // Delete other profiles that are not the two real users/admins
-          await supabase
-            .from('profiles')
-            .delete()
-            .not('email', 'in', '("krpris9211@gmail.com","krpris1922@gmail.com","krishsharma01m@gmail.com")');
-
-          // Fallback update in case delete is restricted by DB constraints or RLS
-          await supabase
-            .from('profiles')
-            .update({
-              membership_status: 'unpaid',
-              admin_notes: null,
-              membership_requested_at: null,
-              approved_by: null,
-              approved_at: null,
-              payment_verified_at: null
-            })
-            .not('email', 'in', '("krpris9211@gmail.com","krpris1922@gmail.com","krishsharma01m@gmail.com")');
+          
+          // Delete all records from all database tables
+          await supabase.from('payments').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+          await supabase.from('bookings').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+          await supabase.from('guest_passes').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+          await supabase.from('support_tickets').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+          await supabase.from('member_memberships').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+          await supabase.from('attendance').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+          await supabase.from('profiles').delete().neq('id', '00000000-0000-0000-0000-000000000000');
             
           localStorage.removeItem('elevate_fitness_members');
           localStorage.removeItem('elevate_fitness_payments');
           localStorage.removeItem('elevate_fitness_notifications');
           localStorage.removeItem('elevate_fitness_unread_notifications');
-          localStorage.setItem('system_cleaned_july6_v3', 'true');
+          localStorage.setItem('system_cleaned_july6_v4', 'true');
+          
+          // Sign out locally to allow re-creating credentials
+          await supabase.auth.signOut();
+          
           window.location.reload();
         } catch (err) {
           console.warn('One-time cleanup failed:', err);
