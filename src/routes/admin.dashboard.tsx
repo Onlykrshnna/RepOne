@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../co
 import { Skeleton } from '../components/ui/skeleton';
 import { Button } from '../components/ui/button';
 import { membersService } from '../services/members.service';
+import { membershipService } from '../services/membership.service';
 import { toast } from 'sonner';
 
 export const Route = createFileRoute('/admin/dashboard')({
@@ -22,6 +23,9 @@ function AdminDashboardPage() {
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
 
   useEffect(() => {
+    // Seed database plans if they are empty
+    membershipService.seedDefaultPlansIfEmpty();
+
     adminNotificationsService.checkGuestPassExpirations();
     adminNotificationsService.checkPendingPayments();
     return adminNotificationsService.subscribe(setNotifications);

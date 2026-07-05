@@ -177,5 +177,44 @@ export const membershipService = {
       created_at: data.created_at,
       updated_at: data.created_at,
     } as MembershipPlan;
+  },
+
+  async seedDefaultPlansIfEmpty() {
+    try {
+      const { data: existingPlans } = await supabase
+        .from('membership_plans')
+        .select('id')
+        .limit(1);
+        
+      if (!existingPlans || existingPlans.length === 0) {
+        console.log('Database membership plans are empty. Seeding default packages...');
+        const plansToSeed = [
+          {
+            plan_name: 'Basic Pass',
+            description: 'Perfect for casual gym goers looking to stay active.',
+            price: 1999,
+            duration: 30
+          },
+          {
+            plan_name: 'Elite Gym Pass',
+            description: 'Our most popular option for dedicated fitness enthusiasts.',
+            price: 2999,
+            duration: 90
+          },
+          {
+            plan_name: 'VIP Unlimited',
+            description: 'All-inclusive premium experience with absolute freedom.',
+            price: 4999,
+            duration: 180
+          }
+        ];
+        
+        await supabase
+          .from('membership_plans')
+          .insert(plansToSeed);
+      }
+    } catch (e) {
+      console.warn('Failed to seed membership plans:', e);
+    }
   }
 };
