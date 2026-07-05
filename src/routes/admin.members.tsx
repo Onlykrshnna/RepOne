@@ -124,7 +124,7 @@ function MembersPage() {
                         </Avatar>
                         <div className="flex flex-col">
                           <span className="font-medium text-foreground/90">{member.first_name} {member.last_name}</span>
-                          {member.username && <span className="text-xs text-indigo-400 font-semibold">@{member.username}</span>}
+                          <span className="text-xs text-indigo-400 font-semibold">@{member.username || member.email?.split('@')[0] || 'member'}</span>
                           {!member.is_active && <span className="text-xs text-red-400">Archived</span>}
                         </div>
                       </div>

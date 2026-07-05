@@ -37,7 +37,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(session?.user ?? null);
           if (session?.user) {
             const profileData = await profileService.getProfile(session.user.id);
-            if (mounted) setProfile(profileData);
+            if (mounted) {
+              setProfile(profileData);
+              if (profileData && profileData.role === 'member') {
+                import('../services/members.service').then(({ MOCK_MEMBERS }) => {
+                  const exists = MOCK_MEMBERS.some(m => m.id === profileData.id);
+                  if (!exists) {
+                    MOCK_MEMBERS.push({
+                      id: profileData.id,
+                      first_name: profileData.first_name || '',
+                      last_name: profileData.last_name || '',
+                      email: profileData.email || '',
+                      username: profileData.username || '',
+                      phone: profileData.phone || '',
+                      gender: profileData.gender || undefined,
+                      role: 'member',
+                      is_active: true,
+                      membership_status: (profileData as any).membership_status || 'unpaid',
+                      created_at: profileData.created_at || new Date().toISOString(),
+                      updated_at: profileData.updated_at || new Date().toISOString(),
+                      member_memberships: []
+                    });
+                    localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
+                  } else {
+                    const memIndex = MOCK_MEMBERS.findIndex(m => m.id === profileData.id);
+                    if (memIndex !== -1) {
+                      MOCK_MEMBERS[memIndex].membership_status = (profileData as any).membership_status || MOCK_MEMBERS[memIndex].membership_status;
+                      localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
+                    }
+                  }
+                }).catch(e => console.warn('Could not sync profile to MOCK_MEMBERS:', e));
+              }
+            }
           }
         }
       } catch (error) {
@@ -58,7 +89,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (newSession?.user) {
         try {
           const profileData = await profileService.getProfile(newSession.user.id);
-          if (mounted) setProfile(profileData);
+          if (mounted) {
+            setProfile(profileData);
+            if (profileData && profileData.role === 'member') {
+              import('../services/members.service').then(({ MOCK_MEMBERS }) => {
+                const exists = MOCK_MEMBERS.some(m => m.id === profileData.id);
+                if (!exists) {
+                  MOCK_MEMBERS.push({
+                    id: profileData.id,
+                    first_name: profileData.first_name || '',
+                    last_name: profileData.last_name || '',
+                    email: profileData.email || '',
+                    username: profileData.username || '',
+                    phone: profileData.phone || '',
+                    gender: profileData.gender || undefined,
+                    role: 'member',
+                    is_active: true,
+                    membership_status: (profileData as any).membership_status || 'unpaid',
+                    created_at: profileData.created_at || new Date().toISOString(),
+                    updated_at: profileData.updated_at || new Date().toISOString(),
+                    member_memberships: []
+                  });
+                  localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
+                } else {
+                  const memIndex = MOCK_MEMBERS.findIndex(m => m.id === profileData.id);
+                  if (memIndex !== -1) {
+                    MOCK_MEMBERS[memIndex].membership_status = (profileData as any).membership_status || MOCK_MEMBERS[memIndex].membership_status;
+                    localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
+                  }
+                }
+              }).catch(e => console.warn('Could not sync profile to MOCK_MEMBERS:', e));
+            }
+          }
         } catch (error) {
           console.error('Error fetching profile on state change', error);
         }

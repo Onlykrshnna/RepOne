@@ -130,6 +130,32 @@ function BuyMembershipPage() {
     onSuccess: (data, variables) => {
       const actualMethod = variables?.razorpayPaymentId ? 'Razorpay Online (UPI/Cards/Net)' : (method === 'bank' ? 'Bank Transfer' : 'Cash');
 
+      // Ensure checkout member profile exists and has status = 'pending' in local storage
+      import('../services/members.service').then(({ MOCK_MEMBERS }) => {
+        const memIndex = MOCK_MEMBERS.findIndex(m => m.id === profile!.id);
+        if (memIndex !== -1) {
+          MOCK_MEMBERS[memIndex].membership_status = 'pending';
+          localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
+        } else {
+          MOCK_MEMBERS.push({
+            id: profile!.id,
+            first_name: profile!.first_name || '',
+            last_name: profile!.last_name || '',
+            email: profile!.email || '',
+            username: profile!.username || '',
+            phone: profile!.phone || '',
+            gender: profile!.gender || undefined,
+            role: 'member',
+            is_active: true,
+            membership_status: 'pending',
+            created_at: profile!.created_at || new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            member_memberships: []
+          });
+          localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
+        }
+      }).catch(err => console.warn('Local storage member checkout synchronization failed:', err));
+
       // 1. Notify Admin Console
       adminNotificationsService.addNotification(
         'payment',

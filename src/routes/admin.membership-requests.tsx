@@ -151,6 +151,7 @@ function MembershipRequestsPage() {
                         <Link to="/admin/members/$memberId" params={{ memberId: member.id }} className="font-medium text-foreground/90 hover:underline">
                           {member.first_name} {member.last_name}
                         </Link>
+                        <span className="text-xs text-indigo-400 font-semibold">@{member.username || member.email?.split('@')[0] || 'member'}</span>
                       </div>
                     </div>
                   </TableCell>
