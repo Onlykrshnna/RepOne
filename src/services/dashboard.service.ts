@@ -24,17 +24,24 @@ export const dashboardService = {
       today.setHours(0, 0, 0, 0);
 
       // Run queries in parallel for better performance
+      const { data: profiles, error: profErr } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, email, created_at, role, membership_status')
+        .eq('role', 'member');
+
+      if (profErr) throw profErr;
+
+      const ignoredEmails = ['webforgeagency1@gmail.com', 'webforge.agency1@gmail.com'];
+      const filteredProfiles = (profiles || []).filter(p => 
+        p.email !== 'krpris9211@gmail.com' && 
+        !ignoredEmails.includes(p.email) && 
+        !p.email.startsWith('test')
+      );
+
       const [
-        totalMembersRes,
         todaysCheckInsRes,
         activeMembershipsRes,
-        recentMembersRes,
       ] = await Promise.all([
-        supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true })
-          .eq('role', 'member')
-          .neq('email', 'krpris9211@gmail.com'),
         supabase
           .from('attendance')
           .select('*', { count: 'exact', head: true })
@@ -43,32 +50,38 @@ export const dashboardService = {
           .from('member_memberships')
           .select('*', { count: 'exact', head: true })
           .eq('status', 'active'),
-        supabase
-          .from('profiles')
-          .select('id, first_name, last_name, email, created_at')
-          .eq('role', 'member')
-          .neq('email', 'krpris9211@gmail.com')
-          .order('created_at', { ascending: false })
-          .limit(5),
       ]);
 
-      if (totalMembersRes.error || todaysCheckInsRes.error || activeMembershipsRes.error || recentMembersRes.error) {
-        throw totalMembersRes.error || todaysCheckInsRes.error || activeMembershipsRes.error || recentMembersRes.error;
+      if (todaysCheckInsRes.error || activeMembershipsRes.error) {
+        throw todaysCheckInsRes.error || activeMembershipsRes.error;
       }
 
+      // Sort recent members by created_at desc
+      const sortedRecent = [...filteredProfiles].sort((a, b) => 
+        new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+      );
+
       return {
-        totalMembers: totalMembersRes.count || 0,
+        totalMembers: filteredProfiles.length,
         todaysCheckIns: todaysCheckInsRes.count || 0,
         activeMemberships: activeMembershipsRes.count || 0,
-        recentMembers: recentMembersRes.data || [],
+        recentMembers: sortedRecent.slice(0, 5),
       };
     } catch (err) {
       console.warn('Supabase error in getMetrics, falling back to mock:', err);
+      
+      const ignoredEmails = ['webforgeagency1@gmail.com', 'webforge.agency1@gmail.com'];
+      const filteredMock = MOCK_MEMBERS.filter(m => 
+        m.email !== 'krpris9211@gmail.com' && 
+        !ignoredEmails.includes(m.email) && 
+        !m.email.startsWith('test')
+      );
+
       return {
-        totalMembers: MOCK_MEMBERS.length,
+        totalMembers: filteredMock.length,
         todaysCheckIns: 2,
-        activeMemberships: MOCK_MEMBERS.filter(m => m.membership_status === 'active').length,
-        recentMembers: MOCK_MEMBERS.slice(0, 5).map(m => ({
+        activeMemberships: filteredMock.filter(m => m.membership_status === 'active').length,
+        recentMembers: filteredMock.slice(0, 5).map(m => ({
           id: m.id,
           first_name: m.first_name,
           last_name: m.last_name,

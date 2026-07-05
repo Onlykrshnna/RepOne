@@ -263,7 +263,12 @@ export const membersService = {
     let list = (data || []) as MemberProfile[];
     const dbIds = new Set(list.map(m => m.id));
     const localMembers = MOCK_MEMBERS.filter(m => !dbIds.has(m.id));
-    list = [...list, ...localMembers].filter(m => m.email !== 'krpris9211@gmail.com');
+    const ignoredEmails = ['webforgeagency1@gmail.com', 'webforge.agency1@gmail.com'];
+    list = [...list, ...localMembers].filter(m => 
+      m.email !== 'krpris9211@gmail.com' && 
+      !ignoredEmails.includes(m.email) && 
+      !m.email.startsWith('test')
+    );
 
     if (filters?.search) {
       const searchLower = filters.search.toLowerCase();

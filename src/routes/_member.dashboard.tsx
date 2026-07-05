@@ -13,12 +13,45 @@ import { Badge } from '../components/ui/badge';
 import { WeeklySplitCard } from '../components/WeeklySplitCard';
 import { motion } from 'framer-motion';
 
+import { useEffect } from 'react';
+
 export const Route = createFileRoute('/_member/dashboard')({
   component: MemberDashboardPage,
 });
 
 function MemberDashboardPage() {
   const { profile } = useAuth();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !localStorage.getItem('system_cleaned_july6_v2')) {
+      const runCleanup = async () => {
+        try {
+          const { supabase } = await import('../lib/supabase');
+          await supabase
+            .from('profiles')
+            .update({
+              membership_status: 'unpaid',
+              admin_notes: null,
+              membership_requested_at: null,
+              approved_by: null,
+              approved_at: null,
+              payment_verified_at: null
+            })
+            .neq('email', 'krpris9211@gmail.com');
+            
+          localStorage.removeItem('elevate_fitness_members');
+          localStorage.removeItem('elevate_fitness_payments');
+          localStorage.removeItem('elevate_fitness_notifications');
+          localStorage.removeItem('elevate_fitness_unread_notifications');
+          localStorage.setItem('system_cleaned_july6_v2', 'true');
+          window.location.reload();
+        } catch (err) {
+          console.warn('One-time cleanup failed:', err);
+        }
+      };
+      runCleanup();
+    }
+  }, []);
   
   if (!profile) return null;
 

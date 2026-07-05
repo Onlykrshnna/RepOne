@@ -159,6 +159,15 @@ export const paymentService = {
       return p;
     });
 
+    // Filter out old test data
+    const ignoredEmails = ['webforgeagency1@gmail.com', 'webforge.agency1@gmail.com'];
+    results = results.filter(p => {
+      const email = p.profiles?.email || '';
+      return email !== 'krpris9211@gmail.com' && 
+             !ignoredEmails.includes(email) && 
+             !email.startsWith('test');
+    });
+
     if (filters?.status) {
       results = results.filter((p: any) => p.status === filters.status);
     }
