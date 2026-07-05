@@ -27,31 +27,63 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   async function syncDatabaseProfile(profileData: any) {
-    if (!profileData || profileData.role !== 'member') return;
+    if (!profileData) return;
+    
+    const isAdmin = profileData.email === 'krpris9211@gmail.com' || profileData.email === 'krpris1922@gmail.com';
     
     try {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser && authUser.id === profileData.id) {
         const meta = authUser.user_metadata;
-        if (meta) {
-          const needsUpdate = (!profileData.username && meta.username) ||
-                              (!profileData.first_name && meta.first_name) ||
-                              (!profileData.last_name && meta.last_name);
-                              
-          if (needsUpdate) {
-            console.log('Syncing database profile username & name columns with auth metadata...');
+        
+        // Check if profile exists in database profiles table
+        const { data: dbProfile } = await supabase
+          .from('profiles')
+          .select('id, role')
+          .eq('id', authUser.id)
+          .single();
+          
+        if (!dbProfile) {
+          console.log('Inserting missing profile row in database profiles table...');
+          await supabase
+            .from('profiles')
+            .insert([{
+              id: authUser.id,
+              email: authUser.email,
+              role: isAdmin ? 'admin' : 'member',
+              first_name: meta?.first_name || profileData.first_name || '',
+              last_name: meta?.last_name || profileData.last_name || '',
+              username: meta?.username || profileData.username || authUser.email?.split('@')[0] || ''
+            }]);
+        } else {
+          // If it exists, check if role or other fields need to be synchronized
+          const needsRoleUpdate = dbProfile.role !== (isAdmin ? 'admin' : 'member');
+          const needsFieldsUpdate = !isAdmin && meta && (
+            (!profileData.username && meta.username) ||
+            (!profileData.first_name && meta.first_name) ||
+            (!profileData.last_name && meta.last_name)
+          );
+          
+          if (needsRoleUpdate || needsFieldsUpdate) {
+            console.log('Updating profile role and columns in database...');
+            const updatePayload: any = {};
+            if (needsRoleUpdate) updatePayload.role = isAdmin ? 'admin' : 'member';
+            if (needsFieldsUpdate) {
+              updatePayload.username = profileData.username || meta.username || '';
+              updatePayload.first_name = profileData.first_name || meta.first_name || '';
+              updatePayload.last_name = profileData.last_name || meta.last_name || '';
+            }
+            
             await supabase
               .from('profiles')
-              .update({
-                username: profileData.username || meta.username || '',
-                first_name: profileData.first_name || meta.first_name || '',
-                last_name: profileData.last_name || meta.last_name || ''
-              })
+              .update(updatePayload)
               .eq('id', authUser.id);
               
-            profileData.username = profileData.username || meta.username || '';
-            profileData.first_name = profileData.first_name || meta.first_name || '';
-            profileData.last_name = profileData.last_name || meta.last_name || '';
+            if (needsFieldsUpdate) {
+              profileData.username = updatePayload.username;
+              profileData.first_name = updatePayload.first_name;
+              profileData.last_name = updatePayload.last_name;
+            }
           }
         }
       }

@@ -39,6 +39,37 @@ export interface PaymentRequest {
 
 export const paymentService = {
   async createPaymentRequest(req: PaymentRequest) {
+    try {
+      // Ensure the member profile row exists in the database profiles table before inserting payment
+      // to avoid any Foreign Key constraint violations (e.g. after a system cleanup sweep).
+      const { data: profileExists } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', req.member_id)
+        .maybeSingle();
+        
+      if (!profileExists) {
+        console.log('Failsafe: Provisioning missing member profile row before payment request...');
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user && user.id === req.member_id) {
+          const meta = user.user_metadata;
+          await supabase
+            .from('profiles')
+            .insert([{
+              id: user.id,
+              email: user.email,
+              role: 'member',
+              first_name: meta?.first_name || '',
+              last_name: meta?.last_name || '',
+              username: meta?.username || user.email?.split('@')[0] || '',
+              membership_status: 'unpaid'
+            }]);
+        }
+      }
+    } catch (e) {
+      console.warn('Failsafe profile provisioning check failed:', e);
+    }
+
     const { data, error } = await supabase
       .from('payments')
       .insert([{

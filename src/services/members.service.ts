@@ -605,19 +605,14 @@ export const membersService = {
 
   async resetSystemTestData() {
     try {
-      const { error: dbErr } = await supabase
-        .from('profiles')
-        .update({
-          membership_status: 'unpaid',
-          admin_notes: null,
-          membership_requested_at: null,
-          approved_by: null,
-          approved_at: null,
-          payment_verified_at: null
-        })
-        .not('email', 'in', '("krpris9211@gmail.com","krpris1922@gmail.com","krishsharma01m@gmail.com")');
-        
-      if (dbErr) console.warn('Database profiles reset warning:', dbErr);
+      // Delete all records from all database tables
+      await supabase.from('payments').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('bookings').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('guest_passes').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('support_tickets').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('member_memberships').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('attendance').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('profiles').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       
       if (typeof window !== 'undefined') {
         localStorage.removeItem('elevate_fitness_members');
