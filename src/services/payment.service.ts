@@ -78,6 +78,30 @@ export const paymentService = {
           localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
         }
       }
+
+      // Sync to the database profiles table so it propagates to any browser/admin session
+      try {
+        const paymentPayload = {
+          amount: req.amount,
+          membership_plan_id: req.membership_plan_id,
+          payment_method: req.payment_method,
+          transaction_reference: req.transaction_reference,
+          payment_proof: req.payment_proof,
+          payment_date: now
+        };
+        
+        await supabase
+          .from('profiles')
+          .update({
+            membership_status: 'pending',
+            membership_requested_at: now,
+            admin_notes: `PAYMENT_PAYLOAD:${JSON.stringify(paymentPayload)}`
+          })
+          .eq('id', req.member_id);
+      } catch (dbErr) {
+        console.warn('Database fallback sync failed:', dbErr);
+      }
+
       return newPayment;
     }
 
@@ -94,7 +118,7 @@ export const paymentService = {
   async getAdminPayments(filters?: { status?: string, search?: string }) {
     try {
       const { reconcileMissingProfiles } = await import('./members.service');
-      reconcileMissingProfiles();
+      await reconcileMissingProfiles();
     } catch (e) {
       console.warn('Reconciliation call failed in getAdminPayments:', e);
     }

@@ -25,7 +25,7 @@ const saveMembers = (members: MemberProfile[]) => {
   }
 };
 
-export function reconcileMissingProfiles() {
+export async function reconcileMissingProfiles() {
   if (typeof window === 'undefined') return;
   
   try {
@@ -33,14 +33,14 @@ export function reconcileMissingProfiles() {
     const paymentsStr = localStorage.getItem('elevate_fitness_payments');
     const membersStr = localStorage.getItem('elevate_fitness_members');
     
-    if (!notifsStr || !paymentsStr) return;
-    
-    const notifications = JSON.parse(notifsStr);
-    const payments = JSON.parse(paymentsStr);
+    const notifications = notifsStr ? JSON.parse(notifsStr) : [];
+    const payments = paymentsStr ? JSON.parse(paymentsStr) : [];
     const members = membersStr ? JSON.parse(membersStr) : [];
     
     let updated = false;
+    let paymentsUpdated = false;
     
+    // 1. Reconcile from local notifications (useful if user is in the same browser)
     notifications.forEach((n: any) => {
       if (n.type === 'payment' && n.message.includes('has purchased')) {
         const match = n.message.match(/(.+) \((.+)\) has purchased the (.+) \(₹(.+)\) via/);
@@ -86,10 +86,91 @@ export function reconcileMissingProfiles() {
       }
     });
     
+    // 2. Reconcile from Database Profiles table directly (cross-browser/cross-session sync)
+    try {
+      const { data: dbPendingProfiles, error: dbErr } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('membership_status', 'pending');
+        
+      if (!dbErr && dbPendingProfiles && dbPendingProfiles.length > 0) {
+        dbPendingProfiles.forEach((profile: any) => {
+          const mIndex = members.findIndex((m: any) => m.id === profile.id);
+          if (mIndex === -1) {
+            members.push({
+              id: profile.id,
+              first_name: profile.first_name || '',
+              last_name: profile.last_name || '',
+              email: profile.email,
+              username: profile.username || profile.email.split('@')[0],
+              role: profile.role || 'member',
+              is_active: profile.is_active !== undefined ? profile.is_active : true,
+              membership_status: 'pending',
+              created_at: profile.created_at || new Date().toISOString(),
+              updated_at: profile.updated_at || new Date().toISOString(),
+              member_memberships: []
+            });
+            updated = true;
+          } else if (members[mIndex].membership_status !== 'pending') {
+            members[mIndex].membership_status = 'pending';
+            updated = true;
+          }
+          
+          // Reconcile Payment Payload from Database
+          if (profile.admin_notes && profile.admin_notes.startsWith('PAYMENT_PAYLOAD:')) {
+            try {
+              const payload = JSON.parse(profile.admin_notes.substring(16));
+              const payExists = payments.some((p: any) => 
+                p.member_id === profile.id && 
+                p.amount === payload.amount &&
+                p.transaction_reference === payload.transaction_reference
+              );
+              
+              if (!payExists) {
+                payments.unshift({
+                  id: `db-sync-pay-${profile.id}-${Date.now()}`,
+                  member_id: profile.id,
+                  membership_plan_id: payload.membership_plan_id,
+                  amount: payload.amount,
+                  currency: payload.currency || 'INR',
+                  payment_method: payload.payment_method,
+                  transaction_reference: payload.transaction_reference || null,
+                  payment_proof: payload.payment_proof || null,
+                  status: 'pending',
+                  payment_date: payload.payment_date || new Date().toISOString(),
+                  created_at: payload.payment_date || new Date().toISOString(),
+                  profiles: {
+                    id: profile.id,
+                    first_name: profile.first_name || '',
+                    last_name: profile.last_name || '',
+                    email: profile.email,
+                    avatar_url: profile.avatar_url || null
+                  },
+                  membership_plans: DUMMY_MEMBERSHIP_PLANS.find((pl: any) => pl.id === payload.membership_plan_id) || null
+                });
+                paymentsUpdated = true;
+              }
+            } catch (jsonErr) {
+              console.warn('Failed to parse payment payload from admin_notes:', jsonErr);
+            }
+          }
+        });
+      }
+    } catch (dbFetchErr) {
+      console.warn('Database profiles fetch for reconciliation failed:', dbFetchErr);
+    }
+    
     if (updated) {
       localStorage.setItem('elevate_fitness_members', JSON.stringify(members));
       MOCK_MEMBERS.length = 0;
       MOCK_MEMBERS.push(...members);
+    }
+    
+    if (paymentsUpdated) {
+      localStorage.setItem('elevate_fitness_payments', JSON.stringify(payments));
+      const { MOCK_PAYMENTS } = await import('./payment.service');
+      MOCK_PAYMENTS.length = 0;
+      MOCK_PAYMENTS.push(...payments);
     }
   } catch (e) {
     console.warn('Reconciliation failed:', e);
@@ -126,7 +207,7 @@ export type MemberProfile = {
 
 export const membersService = {
   async getMembers(filters?: { search?: string; status?: string; plan?: string }) {
-    reconcileMissingProfiles();
+    await reconcileMissingProfiles();
     let query = supabase
       .from('profiles')
       .select(`
