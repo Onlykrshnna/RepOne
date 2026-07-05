@@ -242,7 +242,7 @@ export const membersService = {
         )
       `)
       .eq('role', 'member')
-      .neq('email', 'krpris9211@gmail.com');
+      .not('email', 'in', '("krpris9211@gmail.com","krpris1922@gmail.com")');
 
     if (filters?.search) {
       query = query.or(`first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%,username.ilike.%${filters.search}%`);
@@ -266,8 +266,10 @@ export const membersService = {
     const ignoredEmails = ['webforgeagency1@gmail.com', 'webforge.agency1@gmail.com'];
     list = [...list, ...localMembers].filter(m => 
       m.email !== 'krpris9211@gmail.com' && 
+      m.email !== 'krpris1922@gmail.com' && 
       !ignoredEmails.includes(m.email) && 
-      !m.email.startsWith('test')
+      !m.email.startsWith('test_') &&
+      !m.email.startsWith('admin_test_')
     );
 
     if (filters?.search) {
@@ -617,7 +619,7 @@ export const membersService = {
           approved_at: null,
           payment_verified_at: null
         })
-        .neq('email', 'krpris9211@gmail.com');
+        .not('email', 'in', '("krpris9211@gmail.com","krpris1922@gmail.com","krishsharma01m@gmail.com")');
         
       if (dbErr) console.warn('Database profiles reset warning:', dbErr);
       

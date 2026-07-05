@@ -164,8 +164,10 @@ export const paymentService = {
     results = results.filter(p => {
       const email = p.profiles?.email || '';
       return email !== 'krpris9211@gmail.com' && 
+             email !== 'krpris1922@gmail.com' && 
              !ignoredEmails.includes(email) && 
-             !email.startsWith('test');
+             !email.startsWith('test_') &&
+             !email.startsWith('admin_test_');
     });
 
     if (filters?.status) {

@@ -34,8 +34,10 @@ export const dashboardService = {
       const ignoredEmails = ['webforgeagency1@gmail.com', 'webforge.agency1@gmail.com'];
       const filteredProfiles = (profiles || []).filter(p => 
         p.email !== 'krpris9211@gmail.com' && 
+        p.email !== 'krpris1922@gmail.com' && 
         !ignoredEmails.includes(p.email) && 
-        !p.email.startsWith('test')
+        !p.email.startsWith('test_') &&
+        !p.email.startsWith('admin_test_')
       );
 
       const [
@@ -73,8 +75,10 @@ export const dashboardService = {
       const ignoredEmails = ['webforgeagency1@gmail.com', 'webforge.agency1@gmail.com'];
       const filteredMock = MOCK_MEMBERS.filter(m => 
         m.email !== 'krpris9211@gmail.com' && 
+        m.email !== 'krpris1922@gmail.com' && 
         !ignoredEmails.includes(m.email) && 
-        !m.email.startsWith('test')
+        !m.email.startsWith('test_') &&
+        !m.email.startsWith('admin_test_')
       );
 
       return {

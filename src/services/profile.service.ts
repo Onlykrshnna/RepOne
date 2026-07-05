@@ -75,8 +75,8 @@ export const profileService = {
         parsedProfile.last_name = parts.slice(1).join(' ') || '';
       }
 
-      // Grant Admin access to specific test credential
-      if (parsedProfile.email === 'krpris9211@gmail.com') {
+      // Grant Admin access to specific test credentials
+      if (parsedProfile.email === 'krpris9211@gmail.com' || parsedProfile.email === 'krpris1922@gmail.com') {
         parsedProfile.role = 'admin';
       }
 

@@ -23,10 +23,17 @@ function AdminDashboardPage() {
 
   useEffect(() => {
     // One-time system test data cleanup to provide a blank slate for Razorpay testing
-    if (typeof window !== 'undefined' && !localStorage.getItem('system_cleaned_july6_v2')) {
+    if (typeof window !== 'undefined' && !localStorage.getItem('system_cleaned_july6_v3')) {
       const runCleanup = async () => {
         try {
           const { supabase } = await import('../lib/supabase');
+          // Delete other profiles that are not the two real users/admins
+          await supabase
+            .from('profiles')
+            .delete()
+            .not('email', 'in', '("krpris9211@gmail.com","krpris1922@gmail.com","krishsharma01m@gmail.com")');
+
+          // Fallback update in case delete is restricted by DB constraints or RLS
           await supabase
             .from('profiles')
             .update({
@@ -37,13 +44,13 @@ function AdminDashboardPage() {
               approved_at: null,
               payment_verified_at: null
             })
-            .neq('email', 'krpris9211@gmail.com');
+            .not('email', 'in', '("krpris9211@gmail.com","krpris1922@gmail.com","krishsharma01m@gmail.com")');
             
           localStorage.removeItem('elevate_fitness_members');
           localStorage.removeItem('elevate_fitness_payments');
           localStorage.removeItem('elevate_fitness_notifications');
           localStorage.removeItem('elevate_fitness_unread_notifications');
-          localStorage.setItem('system_cleaned_july6_v2', 'true');
+          localStorage.setItem('system_cleaned_july6_v3', 'true');
           window.location.reload();
         } catch (err) {
           console.warn('One-time cleanup failed:', err);
