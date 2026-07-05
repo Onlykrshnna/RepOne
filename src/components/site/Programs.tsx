@@ -1,130 +1,55 @@
-import { useEffect, useRef, useState } from "react";
-import strength from "@/assets/program-strength.jpg";
-import hiit from "@/assets/program-hiit.jpg";
-import recovery from "@/assets/program-recovery.jpg";
-import pt from "@/assets/program-pt.jpg";
+import { useState } from "react";
 import { Reveal } from "./Reveal";
-import { cn } from "@/lib/utils";
-
-const programs = [
-  {
-    n: "01",
-    name: "Strength",
-    tag: "Barbell · Kettlebell · Structural",
-    copy: "Progressive periodization built around your lifts. Twelve-week arcs, weekly reads.",
-    img: strength,
-  },
-  {
-    n: "02",
-    name: "Conditioning",
-    tag: "HIIT · Zone 2 · Interval",
-    copy: "Precisely dosed intensity. Heart-rate governed sessions in small groups of six.",
-    img: hiit,
-  },
-  {
-    n: "03",
-    name: "Recovery",
-    tag: "Sauna · Ice · Mobility",
-    copy: "A full recovery suite. Contrast therapy, guided mobility, sleep and nutrition coaching.",
-    img: recovery,
-  },
-  {
-    n: "04",
-    name: "Private Coaching",
-    tag: "1:1 · Assessment · Programming",
-    copy: "A named coach, quarterly assessments, and a plan that adapts to your life outside.",
-    img: pt,
-  },
-];
+import { programs } from "@/constants";
 
 export function Programs() {
-  const [active, setActive] = useState(0);
-  const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      imgRefs.current.forEach((img) => {
-        if (!img) return;
-        const rect = img.getBoundingClientRect();
-        const offset = (rect.top + window.scrollY - y - window.innerHeight / 2) * 0.08;
-        img.style.transform = `translateY(${offset}px) scale(1.15)`;
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <section id="programs" className="relative py-32 md:py-48 px-6 md:px-12 bg-ink">
-      <div className="mx-auto max-w-[1440px]">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16 md:mb-24">
+    <section id="programs" className="relative py-32 md:py-48 bg-[#0C0C0E] overflow-hidden">
+      <div className="absolute top-8 right-0 select-none pointer-events-none overflow-hidden" aria-hidden>
+        <span className="font-display leading-none text-[#141418] font-bold" style={{ fontSize: "28vw", letterSpacing: "-0.05em" }}>02</span>
+      </div>
+      <div className="relative z-10 mx-auto max-w-[1440px] px-6 md:px-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20 md:mb-28">
           <div>
             <Reveal>
-              <p className="eyebrow mb-6"><span className="hairline" />Programs</p>
+              <div className="flex items-center gap-4 mb-8">
+                <span className="font-display text-xl text-[#BEFF00]">02</span>
+                <span className="block h-[1px] w-10 bg-[#F0EDE6]/15" />
+                <span className="text-[#F0EDE6]/35" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Programs</span>
+              </div>
             </Reveal>
-            <Reveal delay={100}>
-              <h2 className="font-display text-5xl md:text-7xl text-bone max-w-xl">
-                Four disciplines. <span className="italic text-gold">One standard.</span>
+            <Reveal delay={80}>
+              <h2 className="font-display text-[#F0EDE6]" style={{ fontSize: "clamp(2.4rem,5.5vw,6rem)", lineHeight: "0.94", letterSpacing: "-0.02em" }}>
+                Four disciplines.<br /><span className="italic text-[#BEFF00]">One standard.</span>
               </h2>
             </Reveal>
           </div>
-          <Reveal delay={200}>
-            <p className="text-bone/60 text-sm max-w-xs">
-              Every program is coached in person by a full-time member of our team. No apps, no
-              queues, no drop-ins.
+          <Reveal delay={160}>
+            <p className="text-[#F0EDE6]/40 max-w-xs" style={{ fontFamily: "Inter", fontSize: "14px", lineHeight: "1.75" }}>
+              Every program is coached in person. No apps, no queues, no drop-ins.
             </p>
           </Reveal>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div>
           {programs.map((p, i) => (
-            <Reveal key={p.name} delay={i * 120}>
-              <a
-                href="#book"
-                className={cn(
-                  "group block relative overflow-hidden bg-card aspect-[3/4]",
-                  "transition-all duration-700"
-                )}
-                onMouseEnter={() => setActive(i)}
-              >
-                <div className="absolute inset-0 overflow-hidden">
-                  <img
-                    ref={(el) => { imgRefs.current[i] = el; }}
-                    src={p.img}
-                    alt={p.name}
-                    width={1024}
-                    height={1280}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.05]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
+            <Reveal key={p.name} delay={i * 55}>
+              <a href="#book" className="group relative flex items-baseline gap-4 md:gap-8 border-t border-[#F0EDE6]/8 py-7 md:py-9 overflow-hidden hover:border-[#BEFF00]/30 transition-colors duration-500">
+                <div className="absolute inset-0 bg-[#BEFF00]/[0.025] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="hidden md:block absolute right-0 top-0 h-full w-56 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-700">
+                  <img src={p.img} alt="" aria-hidden className="h-full w-full object-cover scale-110 group-hover:scale-100 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-[#0C0C0E]/65" />
                 </div>
-
-                <div className="relative h-full p-6 md:p-7 flex flex-col justify-between">
-                  <div className="flex items-start justify-between">
-                    <span className="font-display text-xl text-gold">{p.n}</span>
-                    <span className="text-[10px] tracking-[0.28em] uppercase text-bone/50 group-hover:text-gold transition-colors">
-                      Enter →
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="font-display text-3xl md:text-4xl text-bone leading-none">{p.name}</h3>
-                    <p className="eyebrow mt-3 text-bone/60">{p.tag}</p>
-                    <div className="grid transition-all duration-700 ease-out grid-rows-[0fr] group-hover:grid-rows-[1fr] opacity-0 group-hover:opacity-100 mt-0 group-hover:mt-5">
-                      <p className="overflow-hidden text-[13px] leading-relaxed text-bone/70">
-                        {p.copy}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <span className="font-display text-2xl md:text-4xl text-[#BEFF00] opacity-60 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0">{p.n}</span>
+                <span className="font-display text-3xl md:text-5xl text-[#F0EDE6] group-hover:translate-x-2 transition-transform duration-500 flex-shrink-0" style={{ letterSpacing: "-0.02em" }}>{p.name}</span>
+                <span className="hidden md:block flex-1 h-[1px] bg-[#F0EDE6]/10 self-center" />
+                <span className="hidden md:block text-[#F0EDE6]/35 group-hover:text-[#F0EDE6]/65 transition-colors duration-300 flex-shrink-0" style={{ fontFamily: "Inter", fontSize: "11px", letterSpacing: "0.22em", textTransform: "uppercase" }}>{p.tag}</span>
+                <span className="ml-auto text-[#BEFF00] opacity-0 group-hover:opacity-100 translate-x-3 group-hover:translate-x-0 transition-all duration-300 flex-shrink-0">&#8594;</span>
               </a>
             </Reveal>
           ))}
+          <div className="border-t border-[#F0EDE6]/8" />
         </div>
-
-        <div className="sr-only" aria-live="polite">{programs[active].name}</div>
       </div>
     </section>
   );

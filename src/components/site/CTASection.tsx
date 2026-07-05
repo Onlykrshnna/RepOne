@@ -1,29 +1,34 @@
 import { Reveal } from "./Reveal";
-import { MagneticButton } from "./MagneticButton";
 
 export function CTASection() {
   return (
-    <section id="book" className="relative py-40 md:py-64 px-6 md:px-12 border-t border-white/5 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(201,169,97,0.15),transparent_60%)]" />
-      <div className="relative mx-auto max-w-[1440px] text-center">
+    <section id="book" className="relative min-h-[90svh] flex flex-col items-center justify-center py-32 bg-[#BEFF00] text-[#080809] selection:bg-[#080809] selection:text-[#BEFF00] overflow-hidden">
+      {/* Background radial lines */}
+      <div className="absolute inset-0 pointer-events-none opacity-10" style={{ backgroundImage: "repeating-linear-gradient(45deg, #080809 0, #080809 1px, transparent 0, transparent 50%)", backgroundSize: "30px 30px" }} />
+      
+      <div className="relative z-10 mx-auto max-w-5xl px-6 md:px-12 text-center flex flex-col items-center">
         <Reveal>
-          <p className="eyebrow mb-8">Begin</p>
+          <span className="inline-block px-4 py-2 border border-[#080809]/20 rounded-full text-[#080809]" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>
+            Build With Web Forge
+          </span>
         </Reveal>
-        <Reveal delay={100}>
-          <h2 className="font-display text-6xl md:text-8xl lg:text-[10rem] text-bone leading-[0.95]">
-            The floor is
-            <br />
-            <span className="italic text-gold">open to you.</span>
+        
+        <Reveal delay={100} className="mt-12 md:mt-16">
+          <h2 className="font-display text-[clamp(3.5rem,8vw,9rem)] leading-[0.85] tracking-tight">
+            Ready to <br /><span className="italic">scale?</span>
           </h2>
         </Reveal>
-        <Reveal delay={250} className="mt-10 text-bone/60 max-w-md mx-auto text-[15px]">
-          Book a private tour. Meet the coaches. Train a session as our guest — before you decide.
-        </Reveal>
-        <Reveal delay={400} className="mt-14">
-          <MagneticButton href="mailto:tour@atlas.club">
-            Request a Private Tour
-            <span aria-hidden>→</span>
-          </MagneticButton>
+        
+        <Reveal delay={200} className="mt-16 md:mt-24">
+          <a href="mailto:hello@webforge.com" className="group relative inline-flex items-center justify-center gap-4 bg-[#080809] text-[#BEFF00] px-10 py-6 md:px-16 md:py-8 overflow-hidden">
+            <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]" />
+            <span className="relative z-10 group-hover:text-[#080809] transition-colors duration-500" style={{ fontFamily: "Inter", fontSize: "14px", letterSpacing: "0.26em", textTransform: "uppercase", fontWeight: 600 }}>
+              Start Your Project
+            </span>
+            <span className="relative z-10 group-hover:text-[#080809] transition-colors duration-500 group-hover:translate-x-2 ease-[cubic-bezier(0.16,1,0.3,1)]">
+              &rarr;
+            </span>
+          </a>
         </Reveal>
       </div>
     </section>

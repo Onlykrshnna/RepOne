@@ -1,17 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { SiteThemeProvider } from "@/lib/theme-context";
 import { Nav } from "@/components/site/Nav";
 import { Hero } from "@/components/site/Hero";
 import { Philosophy } from "@/components/site/Philosophy";
+import { MarqueeStrip } from "@/components/site/MarqueeStrip";
 import { Programs } from "@/components/site/Programs";
+import { Stats } from "@/components/site/Stats";
 import { Trainers } from "@/components/site/Trainers";
 import { Facility } from "@/components/site/Facility";
-import { Stats } from "@/components/site/Stats";
 import { Membership } from "@/components/site/Membership";
 import { Testimonials } from "@/components/site/Testimonials";
 import { CTASection } from "@/components/site/CTASection";
 import { Footer } from "@/components/site/Footer";
+import { CustomCursor } from "@/components/site/CustomCursor";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/")(  {
   head: () => ({
     meta: [
       { title: "Atlas · A Private Strength Club, London" },
@@ -35,18 +38,24 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <main className="bg-ink text-bone overflow-x-clip">
-      <Nav />
-      <Hero />
-      <Philosophy />
-      <Programs />
-      <Trainers />
-      <Facility />
-      <Stats />
-      <Membership />
-      <Testimonials />
-      <CTASection />
-      <Footer />
-    </main>
+    <SiteThemeProvider>
+      <main className="bg-[#F8F7F4] dark:bg-[#080809] text-[#0E0E10] dark:text-[#F0EDE6] overflow-x-clip">
+        <CustomCursor />
+        <Nav />
+        <Hero />
+        <Philosophy />
+        <MarqueeStrip />
+        <Programs />
+        <Stats />
+        <Trainers />
+        <MarqueeStrip />
+        <Facility />
+        <Membership />
+        <Testimonials />
+        <CTASection />
+        <Footer />
+      </main>
+    </SiteThemeProvider>
   );
 }
+

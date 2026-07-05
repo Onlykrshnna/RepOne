@@ -9,38 +9,501 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as CheckinRouteImport } from './routes/checkin'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as MemberRouteImport } from './routes/_member'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminReportsRouteImport } from './routes/admin.reports'
+import { Route as AdminQrManagementRouteImport } from './routes/admin.qr-management'
+import { Route as AdminProgressRouteImport } from './routes/admin.progress'
+import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
+import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
+import { Route as AdminMembershipsRouteImport } from './routes/admin.memberships'
+import { Route as AdminMembershipRequestsRouteImport } from './routes/admin.membership-requests'
+import { Route as AdminMembersRouteImport } from './routes/admin.members'
+import { Route as AdminGuestPassesRouteImport } from './routes/admin.guest-passes'
+import { Route as AdminFeedbackRouteImport } from './routes/admin.feedback'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminClassesRouteImport } from './routes/admin.classes'
+import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
+import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
+import { Route as MemberSupportRouteImport } from './routes/_member.support'
+import { Route as MemberProgressRouteImport } from './routes/_member.progress'
+import { Route as MemberProfileRouteImport } from './routes/_member.profile'
+import { Route as MemberPaymentsRouteImport } from './routes/_member.payments'
+import { Route as MemberNotificationsRouteImport } from './routes/_member.notifications'
+import { Route as MemberMembershipPlansRouteImport } from './routes/_member.membership-plans'
+import { Route as MemberDashboardRouteImport } from './routes/_member.dashboard'
+import { Route as MemberClassesRouteImport } from './routes/_member.classes'
+import { Route as MemberBuyMembershipRouteImport } from './routes/_member.buy-membership'
+import { Route as MemberAttendanceRouteImport } from './routes/_member.attendance'
+import { Route as AdminMembersAddRouteImport } from './routes/admin.members.add'
+import { Route as AdminMembersMemberIdRouteImport } from './routes/admin.members.$memberId'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckinRoute = CheckinRouteImport.update({
+  id: '/checkin',
+  path: '/checkin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MemberRoute = MemberRouteImport.update({
+  id: '/_member',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReportsRoute = AdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminQrManagementRoute = AdminQrManagementRouteImport.update({
+  id: '/qr-management',
+  path: '/qr-management',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProgressRoute = AdminProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMembershipsRoute = AdminMembershipsRouteImport.update({
+  id: '/memberships',
+  path: '/memberships',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMembershipRequestsRoute = AdminMembershipRequestsRouteImport.update({
+  id: '/membership-requests',
+  path: '/membership-requests',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMembersRoute = AdminMembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGuestPassesRoute = AdminGuestPassesRouteImport.update({
+  id: '/guest-passes',
+  path: '/guest-passes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminClassesRoute = AdminClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBookingsRoute = AdminBookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => AdminRoute,
+} as any)
+const MemberSupportRoute = MemberSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberProgressRoute = MemberProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberProfileRoute = MemberProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberPaymentsRoute = MemberPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberNotificationsRoute = MemberNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberMembershipPlansRoute = MemberMembershipPlansRouteImport.update({
+  id: '/membership-plans',
+  path: '/membership-plans',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberDashboardRoute = MemberDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberClassesRoute = MemberClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberBuyMembershipRoute = MemberBuyMembershipRouteImport.update({
+  id: '/buy-membership',
+  path: '/buy-membership',
+  getParentRoute: () => MemberRoute,
+} as any)
+const MemberAttendanceRoute = MemberAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => MemberRoute,
+} as any)
+const AdminMembersAddRoute = AdminMembersAddRouteImport.update({
+  id: '/add',
+  path: '/add',
+  getParentRoute: () => AdminMembersRoute,
+} as any)
+const AdminMembersMemberIdRoute = AdminMembersMemberIdRouteImport.update({
+  id: '/$memberId',
+  path: '/$memberId',
+  getParentRoute: () => AdminMembersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/checkin': typeof CheckinRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/attendance': typeof MemberAttendanceRoute
+  '/buy-membership': typeof MemberBuyMembershipRoute
+  '/classes': typeof MemberClassesRoute
+  '/dashboard': typeof MemberDashboardRoute
+  '/membership-plans': typeof MemberMembershipPlansRoute
+  '/notifications': typeof MemberNotificationsRoute
+  '/payments': typeof MemberPaymentsRoute
+  '/profile': typeof MemberProfileRoute
+  '/progress': typeof MemberProgressRoute
+  '/support': typeof MemberSupportRoute
+  '/admin/attendance': typeof AdminAttendanceRoute
+  '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/classes': typeof AdminClassesRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
+  '/admin/guest-passes': typeof AdminGuestPassesRoute
+  '/admin/members': typeof AdminMembersRouteWithChildren
+  '/admin/membership-requests': typeof AdminMembershipRequestsRoute
+  '/admin/memberships': typeof AdminMembershipsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/progress': typeof AdminProgressRoute
+  '/admin/qr-management': typeof AdminQrManagementRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/members/$memberId': typeof AdminMembersMemberIdRoute
+  '/admin/members/add': typeof AdminMembersAddRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/checkin': typeof CheckinRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/attendance': typeof MemberAttendanceRoute
+  '/buy-membership': typeof MemberBuyMembershipRoute
+  '/classes': typeof MemberClassesRoute
+  '/dashboard': typeof MemberDashboardRoute
+  '/membership-plans': typeof MemberMembershipPlansRoute
+  '/notifications': typeof MemberNotificationsRoute
+  '/payments': typeof MemberPaymentsRoute
+  '/profile': typeof MemberProfileRoute
+  '/progress': typeof MemberProgressRoute
+  '/support': typeof MemberSupportRoute
+  '/admin/attendance': typeof AdminAttendanceRoute
+  '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/classes': typeof AdminClassesRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
+  '/admin/guest-passes': typeof AdminGuestPassesRoute
+  '/admin/members': typeof AdminMembersRouteWithChildren
+  '/admin/membership-requests': typeof AdminMembershipRequestsRoute
+  '/admin/memberships': typeof AdminMembershipsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/progress': typeof AdminProgressRoute
+  '/admin/qr-management': typeof AdminQrManagementRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/members/$memberId': typeof AdminMembersMemberIdRoute
+  '/admin/members/add': typeof AdminMembersAddRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_member': typeof MemberRouteWithChildren
+  '/admin': typeof AdminRouteWithChildren
+  '/checkin': typeof CheckinRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
+  '/_member/attendance': typeof MemberAttendanceRoute
+  '/_member/buy-membership': typeof MemberBuyMembershipRoute
+  '/_member/classes': typeof MemberClassesRoute
+  '/_member/dashboard': typeof MemberDashboardRoute
+  '/_member/membership-plans': typeof MemberMembershipPlansRoute
+  '/_member/notifications': typeof MemberNotificationsRoute
+  '/_member/payments': typeof MemberPaymentsRoute
+  '/_member/profile': typeof MemberProfileRoute
+  '/_member/progress': typeof MemberProgressRoute
+  '/_member/support': typeof MemberSupportRoute
+  '/admin/attendance': typeof AdminAttendanceRoute
+  '/admin/bookings': typeof AdminBookingsRoute
+  '/admin/classes': typeof AdminClassesRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
+  '/admin/guest-passes': typeof AdminGuestPassesRoute
+  '/admin/members': typeof AdminMembersRouteWithChildren
+  '/admin/membership-requests': typeof AdminMembershipRequestsRoute
+  '/admin/memberships': typeof AdminMembershipsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/progress': typeof AdminProgressRoute
+  '/admin/qr-management': typeof AdminQrManagementRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/members/$memberId': typeof AdminMembersMemberIdRoute
+  '/admin/members/add': typeof AdminMembersAddRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/checkin'
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/attendance'
+    | '/buy-membership'
+    | '/classes'
+    | '/dashboard'
+    | '/membership-plans'
+    | '/notifications'
+    | '/payments'
+    | '/profile'
+    | '/progress'
+    | '/support'
+    | '/admin/attendance'
+    | '/admin/bookings'
+    | '/admin/classes'
+    | '/admin/dashboard'
+    | '/admin/feedback'
+    | '/admin/guest-passes'
+    | '/admin/members'
+    | '/admin/membership-requests'
+    | '/admin/memberships'
+    | '/admin/notifications'
+    | '/admin/payments'
+    | '/admin/progress'
+    | '/admin/qr-management'
+    | '/admin/reports'
+    | '/admin/settings'
+    | '/admin/members/$memberId'
+    | '/admin/members/add'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/checkin'
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/attendance'
+    | '/buy-membership'
+    | '/classes'
+    | '/dashboard'
+    | '/membership-plans'
+    | '/notifications'
+    | '/payments'
+    | '/profile'
+    | '/progress'
+    | '/support'
+    | '/admin/attendance'
+    | '/admin/bookings'
+    | '/admin/classes'
+    | '/admin/dashboard'
+    | '/admin/feedback'
+    | '/admin/guest-passes'
+    | '/admin/members'
+    | '/admin/membership-requests'
+    | '/admin/memberships'
+    | '/admin/notifications'
+    | '/admin/payments'
+    | '/admin/progress'
+    | '/admin/qr-management'
+    | '/admin/reports'
+    | '/admin/settings'
+    | '/admin/members/$memberId'
+    | '/admin/members/add'
+  id:
+    | '__root__'
+    | '/'
+    | '/_member'
+    | '/admin'
+    | '/checkin'
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/_member/attendance'
+    | '/_member/buy-membership'
+    | '/_member/classes'
+    | '/_member/dashboard'
+    | '/_member/membership-plans'
+    | '/_member/notifications'
+    | '/_member/payments'
+    | '/_member/profile'
+    | '/_member/progress'
+    | '/_member/support'
+    | '/admin/attendance'
+    | '/admin/bookings'
+    | '/admin/classes'
+    | '/admin/dashboard'
+    | '/admin/feedback'
+    | '/admin/guest-passes'
+    | '/admin/members'
+    | '/admin/membership-requests'
+    | '/admin/memberships'
+    | '/admin/notifications'
+    | '/admin/payments'
+    | '/admin/progress'
+    | '/admin/qr-management'
+    | '/admin/reports'
+    | '/admin/settings'
+    | '/admin/members/$memberId'
+    | '/admin/members/add'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MemberRoute: typeof MemberRouteWithChildren
+  AdminRoute: typeof AdminRouteWithChildren
+  CheckinRoute: typeof CheckinRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LoginRoute: typeof LoginRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkin': {
+      id: '/checkin'
+      path: '/checkin'
+      fullPath: '/checkin'
+      preLoaderRoute: typeof CheckinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_member': {
+      id: '/_member'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof MemberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,12 +511,299 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reports': {
+      id: '/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminReportsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/qr-management': {
+      id: '/admin/qr-management'
+      path: '/qr-management'
+      fullPath: '/admin/qr-management'
+      preLoaderRoute: typeof AdminQrManagementRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/progress': {
+      id: '/admin/progress'
+      path: '/progress'
+      fullPath: '/admin/progress'
+      preLoaderRoute: typeof AdminProgressRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/payments': {
+      id: '/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AdminPaymentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/memberships': {
+      id: '/admin/memberships'
+      path: '/memberships'
+      fullPath: '/admin/memberships'
+      preLoaderRoute: typeof AdminMembershipsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/membership-requests': {
+      id: '/admin/membership-requests'
+      path: '/membership-requests'
+      fullPath: '/admin/membership-requests'
+      preLoaderRoute: typeof AdminMembershipRequestsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/members': {
+      id: '/admin/members'
+      path: '/members'
+      fullPath: '/admin/members'
+      preLoaderRoute: typeof AdminMembersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/guest-passes': {
+      id: '/admin/guest-passes'
+      path: '/guest-passes'
+      fullPath: '/admin/guest-passes'
+      preLoaderRoute: typeof AdminGuestPassesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/feedback': {
+      id: '/admin/feedback'
+      path: '/feedback'
+      fullPath: '/admin/feedback'
+      preLoaderRoute: typeof AdminFeedbackRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/classes': {
+      id: '/admin/classes'
+      path: '/classes'
+      fullPath: '/admin/classes'
+      preLoaderRoute: typeof AdminClassesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bookings': {
+      id: '/admin/bookings'
+      path: '/bookings'
+      fullPath: '/admin/bookings'
+      preLoaderRoute: typeof AdminBookingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/attendance': {
+      id: '/admin/attendance'
+      path: '/attendance'
+      fullPath: '/admin/attendance'
+      preLoaderRoute: typeof AdminAttendanceRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_member/support': {
+      id: '/_member/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof MemberSupportRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/progress': {
+      id: '/_member/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof MemberProgressRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/profile': {
+      id: '/_member/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof MemberProfileRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/payments': {
+      id: '/_member/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof MemberPaymentsRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/notifications': {
+      id: '/_member/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof MemberNotificationsRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/membership-plans': {
+      id: '/_member/membership-plans'
+      path: '/membership-plans'
+      fullPath: '/membership-plans'
+      preLoaderRoute: typeof MemberMembershipPlansRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/dashboard': {
+      id: '/_member/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof MemberDashboardRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/classes': {
+      id: '/_member/classes'
+      path: '/classes'
+      fullPath: '/classes'
+      preLoaderRoute: typeof MemberClassesRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/buy-membership': {
+      id: '/_member/buy-membership'
+      path: '/buy-membership'
+      fullPath: '/buy-membership'
+      preLoaderRoute: typeof MemberBuyMembershipRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/_member/attendance': {
+      id: '/_member/attendance'
+      path: '/attendance'
+      fullPath: '/attendance'
+      preLoaderRoute: typeof MemberAttendanceRouteImport
+      parentRoute: typeof MemberRoute
+    }
+    '/admin/members/add': {
+      id: '/admin/members/add'
+      path: '/add'
+      fullPath: '/admin/members/add'
+      preLoaderRoute: typeof AdminMembersAddRouteImport
+      parentRoute: typeof AdminMembersRoute
+    }
+    '/admin/members/$memberId': {
+      id: '/admin/members/$memberId'
+      path: '/$memberId'
+      fullPath: '/admin/members/$memberId'
+      preLoaderRoute: typeof AdminMembersMemberIdRouteImport
+      parentRoute: typeof AdminMembersRoute
+    }
   }
 }
 
+interface MemberRouteChildren {
+  MemberAttendanceRoute: typeof MemberAttendanceRoute
+  MemberBuyMembershipRoute: typeof MemberBuyMembershipRoute
+  MemberClassesRoute: typeof MemberClassesRoute
+  MemberDashboardRoute: typeof MemberDashboardRoute
+  MemberMembershipPlansRoute: typeof MemberMembershipPlansRoute
+  MemberNotificationsRoute: typeof MemberNotificationsRoute
+  MemberPaymentsRoute: typeof MemberPaymentsRoute
+  MemberProfileRoute: typeof MemberProfileRoute
+  MemberProgressRoute: typeof MemberProgressRoute
+  MemberSupportRoute: typeof MemberSupportRoute
+}
+
+const MemberRouteChildren: MemberRouteChildren = {
+  MemberAttendanceRoute: MemberAttendanceRoute,
+  MemberBuyMembershipRoute: MemberBuyMembershipRoute,
+  MemberClassesRoute: MemberClassesRoute,
+  MemberDashboardRoute: MemberDashboardRoute,
+  MemberMembershipPlansRoute: MemberMembershipPlansRoute,
+  MemberNotificationsRoute: MemberNotificationsRoute,
+  MemberPaymentsRoute: MemberPaymentsRoute,
+  MemberProfileRoute: MemberProfileRoute,
+  MemberProgressRoute: MemberProgressRoute,
+  MemberSupportRoute: MemberSupportRoute,
+}
+
+const MemberRouteWithChildren =
+  MemberRoute._addFileChildren(MemberRouteChildren)
+
+interface AdminMembersRouteChildren {
+  AdminMembersMemberIdRoute: typeof AdminMembersMemberIdRoute
+  AdminMembersAddRoute: typeof AdminMembersAddRoute
+}
+
+const AdminMembersRouteChildren: AdminMembersRouteChildren = {
+  AdminMembersMemberIdRoute: AdminMembersMemberIdRoute,
+  AdminMembersAddRoute: AdminMembersAddRoute,
+}
+
+const AdminMembersRouteWithChildren = AdminMembersRoute._addFileChildren(
+  AdminMembersRouteChildren,
+)
+
+interface AdminRouteChildren {
+  AdminAttendanceRoute: typeof AdminAttendanceRoute
+  AdminBookingsRoute: typeof AdminBookingsRoute
+  AdminClassesRoute: typeof AdminClassesRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminFeedbackRoute: typeof AdminFeedbackRoute
+  AdminGuestPassesRoute: typeof AdminGuestPassesRoute
+  AdminMembersRoute: typeof AdminMembersRouteWithChildren
+  AdminMembershipRequestsRoute: typeof AdminMembershipRequestsRoute
+  AdminMembershipsRoute: typeof AdminMembershipsRoute
+  AdminNotificationsRoute: typeof AdminNotificationsRoute
+  AdminPaymentsRoute: typeof AdminPaymentsRoute
+  AdminProgressRoute: typeof AdminProgressRoute
+  AdminQrManagementRoute: typeof AdminQrManagementRoute
+  AdminReportsRoute: typeof AdminReportsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAttendanceRoute: AdminAttendanceRoute,
+  AdminBookingsRoute: AdminBookingsRoute,
+  AdminClassesRoute: AdminClassesRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminFeedbackRoute: AdminFeedbackRoute,
+  AdminGuestPassesRoute: AdminGuestPassesRoute,
+  AdminMembersRoute: AdminMembersRouteWithChildren,
+  AdminMembershipRequestsRoute: AdminMembershipRequestsRoute,
+  AdminMembershipsRoute: AdminMembershipsRoute,
+  AdminNotificationsRoute: AdminNotificationsRoute,
+  AdminPaymentsRoute: AdminPaymentsRoute,
+  AdminProgressRoute: AdminProgressRoute,
+  AdminQrManagementRoute: AdminQrManagementRoute,
+  AdminReportsRoute: AdminReportsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MemberRoute: MemberRouteWithChildren,
+  AdminRoute: AdminRouteWithChildren,
+  CheckinRoute: CheckinRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  LoginRoute: LoginRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
