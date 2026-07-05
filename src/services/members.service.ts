@@ -111,9 +111,27 @@ export async function reconcileMissingProfiles() {
               member_memberships: []
             });
             updated = true;
-          } else if (members[mIndex].membership_status !== 'pending') {
-            members[mIndex].membership_status = 'pending';
-            updated = true;
+          } else {
+            let memberChanged = false;
+            if (members[mIndex].membership_status !== 'pending') {
+              members[mIndex].membership_status = 'pending';
+              memberChanged = true;
+            }
+            if (profile.username && members[mIndex].username !== profile.username) {
+              members[mIndex].username = profile.username;
+              memberChanged = true;
+            }
+            if (profile.first_name && members[mIndex].first_name !== profile.first_name) {
+              members[mIndex].first_name = profile.first_name;
+              memberChanged = true;
+            }
+            if (profile.last_name && members[mIndex].last_name !== profile.last_name) {
+              members[mIndex].last_name = profile.last_name;
+              memberChanged = true;
+            }
+            if (memberChanged) {
+              updated = true;
+            }
           }
           
           // Reconcile Payment Payload from Database
@@ -580,5 +598,32 @@ export const membersService = {
       .getPublicUrl(filePath);
 
     return data.publicUrl;
+  },
+
+  async resetSystemTestData() {
+    try {
+      const { error: dbErr } = await supabase
+        .from('profiles')
+        .update({
+          membership_status: 'unpaid',
+          admin_notes: null,
+          membership_requested_at: null,
+          approved_by: null,
+          approved_at: null,
+          payment_verified_at: null
+        })
+        .neq('email', 'krpris9211@gmail.com');
+        
+      if (dbErr) console.warn('Database profiles reset warning:', dbErr);
+      
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('elevate_fitness_members');
+        localStorage.removeItem('elevate_fitness_payments');
+        localStorage.removeItem('elevate_fitness_notifications');
+        localStorage.removeItem('elevate_fitness_unread_notifications');
+      }
+    } catch (e) {
+      console.error('Failed to reset system test data:', e);
+    }
   }
 };

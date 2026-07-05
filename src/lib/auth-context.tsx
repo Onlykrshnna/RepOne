@@ -26,6 +26,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  async function syncDatabaseProfile(profileData: any) {
+    if (!profileData || profileData.role !== 'member') return;
+    
+    try {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser && authUser.id === profileData.id) {
+        const meta = authUser.user_metadata;
+        if (meta) {
+          const needsUpdate = (!profileData.username && meta.username) ||
+                              (!profileData.first_name && meta.first_name) ||
+                              (!profileData.last_name && meta.last_name);
+                              
+          if (needsUpdate) {
+            console.log('Syncing database profile username & name columns with auth metadata...');
+            await supabase
+              .from('profiles')
+              .update({
+                username: profileData.username || meta.username || '',
+                first_name: profileData.first_name || meta.first_name || '',
+                last_name: profileData.last_name || meta.last_name || ''
+              })
+              .eq('id', authUser.id);
+              
+            profileData.username = profileData.username || meta.username || '';
+            profileData.first_name = profileData.first_name || meta.first_name || '';
+            profileData.last_name = profileData.last_name || meta.last_name || '';
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to sync database profile columns:', err);
+    }
+  }
+
   useEffect(() => {
     let mounted = true;
 
@@ -37,6 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(session?.user ?? null);
           if (session?.user) {
             const profileData = await profileService.getProfile(session.user.id);
+            await syncDatabaseProfile(profileData);
             if (mounted) {
               setProfile(profileData);
               if (profileData && profileData.role === 'member') {
@@ -89,6 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (newSession?.user) {
         try {
           const profileData = await profileService.getProfile(newSession.user.id);
+          await syncDatabaseProfile(profileData);
           if (mounted) {
             setProfile(profileData);
             if (profileData && profileData.role === 'member') {

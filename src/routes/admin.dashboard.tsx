@@ -11,6 +11,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Skeleton } from '../components/ui/skeleton';
 import { Button } from '../components/ui/button';
+import { membersService } from '../services/members.service';
+import { toast } from 'sonner';
 
 export const Route = createFileRoute('/admin/dashboard')({
   component: AdminDashboardPage,
@@ -181,12 +183,28 @@ function AdminDashboardPage() {
             <Activity className="h-4 w-4 text-blue-500/70" />
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-xl font-bold text-emerald-500 flex items-center gap-2">
-              <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-              </span>
-              Operational
+            <div className="flex items-center justify-between mt-1">
+              <div className="text-xl font-bold text-emerald-500 flex items-center gap-2">
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+                Operational
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="h-7 px-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-950/20"
+                onClick={async () => {
+                  if (confirm("Reset all test data (payments, checkouts, and profiles)?")) {
+                    await membersService.resetSystemTestData();
+                    toast.success("Test data reset successfully!");
+                    setTimeout(() => window.location.reload(), 800);
+                  }
+                }}
+              >
+                Reset Data
+              </Button>
             </div>
           </CardContent>
         </Card>
