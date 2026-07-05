@@ -14,15 +14,25 @@ import { Badge } from '../components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Skeleton } from '../components/ui/skeleton';
 
+type MembersSearch = {
+  status?: string;
+};
+
 export const Route = createFileRoute('/admin/members')({
+  validateSearch: (search: Record<string, unknown>): MembersSearch => {
+    return {
+      status: search.status as string | undefined,
+    };
+  },
   component: MembersPage,
 });
 
 function MembersPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const searchParams = Route.useSearch();
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>(searchParams.status || 'all');
 
   const { data: dbMembers, isLoading } = useQuery({
     queryKey: ['members', search, statusFilter],

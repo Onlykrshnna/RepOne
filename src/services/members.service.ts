@@ -25,6 +25,77 @@ const saveMembers = (members: MemberProfile[]) => {
   }
 };
 
+export function reconcileMissingProfiles() {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    const notifsStr = localStorage.getItem('elevate_fitness_notifications');
+    const paymentsStr = localStorage.getItem('elevate_fitness_payments');
+    const membersStr = localStorage.getItem('elevate_fitness_members');
+    
+    if (!notifsStr || !paymentsStr) return;
+    
+    const notifications = JSON.parse(notifsStr);
+    const payments = JSON.parse(paymentsStr);
+    const members = membersStr ? JSON.parse(membersStr) : [];
+    
+    let updated = false;
+    
+    notifications.forEach((n: any) => {
+      if (n.type === 'payment' && n.message.includes('has purchased')) {
+        const match = n.message.match(/(.+) \((.+)\) has purchased the (.+) \(₹(.+)\) via/);
+        if (match) {
+          const fullName = match[1].trim();
+          const email = match[2].trim();
+          const price = Number(match[4]);
+          
+          const matchingPayment = payments.find((p: any) => p.amount === price && p.status === 'pending');
+          if (matchingPayment) {
+            const memberId = matchingPayment.member_id;
+            const exists = members.some((m: any) => m.id === memberId);
+            
+            if (!exists) {
+              const parts = fullName.split(' ');
+              const firstName = parts[0] || '';
+              const lastName = parts.slice(1).join(' ') || '';
+              
+              members.push({
+                id: memberId,
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                username: email.split('@')[0],
+                role: 'member',
+                is_active: true,
+                membership_status: 'pending',
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                member_memberships: []
+              });
+              
+              updated = true;
+            } else {
+              const mIndex = members.findIndex((m: any) => m.id === memberId);
+              if (mIndex !== -1 && members[mIndex].membership_status !== 'pending' && members[mIndex].membership_status !== 'active') {
+                members[mIndex].membership_status = 'pending';
+                updated = true;
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    if (updated) {
+      localStorage.setItem('elevate_fitness_members', JSON.stringify(members));
+      MOCK_MEMBERS.length = 0;
+      MOCK_MEMBERS.push(...members);
+    }
+  } catch (e) {
+    console.warn('Reconciliation failed:', e);
+  }
+}
+
 
 export type MemberProfile = {
   id: string;
@@ -55,6 +126,7 @@ export type MemberProfile = {
 
 export const membersService = {
   async getMembers(filters?: { search?: string; status?: string; plan?: string }) {
+    reconcileMissingProfiles();
     let query = supabase
       .from('profiles')
       .select(`

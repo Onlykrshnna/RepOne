@@ -92,6 +92,12 @@ export const paymentService = {
   },
 
   async getAdminPayments(filters?: { status?: string, search?: string }) {
+    try {
+      const { reconcileMissingProfiles } = await import('./members.service');
+      reconcileMissingProfiles();
+    } catch (e) {
+      console.warn('Reconciliation call failed in getAdminPayments:', e);
+    }
     let query = supabase
       .from('payments')
       .select(`

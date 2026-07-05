@@ -134,16 +134,18 @@ function AdminDashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Total Members */}
-        <Card className="bg-card border-border text-foreground overflow-hidden relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Members</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground/75" />
-          </CardHeader>
-          <CardContent className="relative">
-            <div className="text-3xl font-bold">{totalMembers}</div>
-          </CardContent>
-        </Card>
+        <Link to="/admin/members" search={{ status: 'active' }} className="group block">
+          <Card className="bg-card border-border text-foreground overflow-hidden relative h-full hover:border-indigo-500/50 hover:bg-muted/50 transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Total Members</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground/75" />
+            </CardHeader>
+            <CardContent className="relative">
+              <div className="text-3xl font-bold">{totalMembers}</div>
+            </CardContent>
+          </Card>
+        </Link>
 
         {/* Today's Check-ins */}
         <Card className="bg-card border-border text-foreground overflow-hidden relative group">
@@ -158,16 +160,18 @@ function AdminDashboardPage() {
         </Card>
 
         {/* Active Memberships */}
-        <Card className="bg-card border-border text-foreground overflow-hidden relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active Memberships</CardTitle>
-            <CreditCard className="h-4 w-4 text-emerald-500/70" />
-          </CardHeader>
-          <CardContent className="relative">
-            <div className="text-3xl font-bold">{activeMemberships}</div>
-          </CardContent>
-        </Card>
+        <Link to="/admin/members" search={{ status: 'active' }} className="group block">
+          <Card className="bg-card border-border text-foreground overflow-hidden relative h-full hover:border-emerald-500/50 hover:bg-muted/50 transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Active Memberships</CardTitle>
+              <CreditCard className="h-4 w-4 text-emerald-500/70" />
+            </CardHeader>
+            <CardContent className="relative">
+              <div className="text-3xl font-bold">{activeMemberships}</div>
+            </CardContent>
+          </Card>
+        </Link>
 
         {/* System Status */}
         <Card className="bg-card border-border text-foreground overflow-hidden relative group">
