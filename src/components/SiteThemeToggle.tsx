@@ -4,8 +4,27 @@ import { Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function SiteThemeToggle() {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { siteTheme, toggleSiteTheme } = useSiteTheme();
   const isDark = siteTheme === "dark";
+
+  if (!mounted) {
+    // Return static default dark state to match server-side rendering exactly
+    return (
+      <button
+        aria-label="Switch to light mode"
+        className="relative inline-flex items-center justify-center w-9 h-9 rounded-full border border-white/10 bg-white/5 shadow-[0_0_14px_2px_rgba(190,255,0,0.14)]"
+      >
+        <span className="flex items-center justify-center">
+          <Sun className="w-[17px] h-[17px] text-[#BEFF00]" strokeWidth={1.8} />
+        </span>
+      </button>
+    );
+  }
 
   return (
     <button
