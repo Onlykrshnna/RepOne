@@ -9,11 +9,28 @@ export interface MemberNotification {
   read: boolean;
 }
 
-let MOCK_NOTIFICATIONS: MemberNotification[] = [
-  { id: '1', type: 'class', title: 'HIIT Class Booking Confirmed', message: 'Your booking for Morning HIIT Blast today at 6:30 PM is confirmed. Get ready to sweat!', date: new Date().toISOString(), read: false },
-  { id: '2', type: 'plan', title: 'Membership Activated', message: 'Your Premium Annual Membership has been approved and activated. Welcome to the family!', date: new Date(Date.now() - 86400000).toISOString(), read: true },
-  { id: '3', type: 'announcement', title: 'Streak Milestone!', message: 'Congratulations! You hit a 5-day check-in streak 🔥 Keep it up!', date: new Date(Date.now() - 3 * 86400000).toISOString(), read: true },
-];
+const NOTIFS_STORAGE_KEY = 'elevate_fitness_member_notifications';
+
+const getInitialNotifications = (): MemberNotification[] => {
+  if (typeof window === 'undefined') return [];
+  const stored = localStorage.getItem(NOTIFS_STORAGE_KEY);
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.warn('Failed to parse stored notifications', e);
+    }
+  }
+  return [];
+};
+
+let MOCK_NOTIFICATIONS: MemberNotification[] = getInitialNotifications();
+
+const saveNotifications = (notifs: MemberNotification[]) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(NOTIFS_STORAGE_KEY, JSON.stringify(notifs));
+  }
+};
 
 type NotificationListener = (notifications: MemberNotification[]) => void;
 const listeners = new Set<NotificationListener>();
@@ -46,12 +63,14 @@ export const notificationsService = {
       read: false,
     };
     MOCK_NOTIFICATIONS = [newNotif, ...MOCK_NOTIFICATIONS];
+    saveNotifications(MOCK_NOTIFICATIONS);
     this.privateNotify();
     return newNotif;
   },
 
   markAllRead() {
     MOCK_NOTIFICATIONS = MOCK_NOTIFICATIONS.map(n => ({ ...n, read: true }));
+    saveNotifications(MOCK_NOTIFICATIONS);
     this.privateNotify();
   },
 
