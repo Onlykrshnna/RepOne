@@ -9,14 +9,8 @@ export const analyticsService = {
 
     // 1. Fetch raw data from Supabase
     const { data: rawProfiles } = await supabase.from('profiles').select('*');
-    const { data: rawAttendance } = await supabase.from('attendance').select(`
-      *,
-      profiles (
-        first_name,
-        last_name,
-        email
-      )
-    `);
+    const { data: rawMembers } = await supabase.from('members').select('id, profile_id');
+    const { data: rawAttendance } = await supabase.from('attendance').select('*');
     const { data: rawPayments } = await supabase.from('payments').select(`
       *,
       membership_plans (
@@ -43,7 +37,17 @@ export const analyticsService = {
     const { data: rawProgress } = await supabase.from('progress_tracking').select('*');
 
     const profiles = rawProfiles || [];
-    const attendance = rawAttendance || [];
+    const membersList = rawMembers || [];
+    const membersMap = new Map();
+    membersList.forEach(m => {
+      const profile = profiles.find(p => p.id === m.profile_id);
+      if (profile) membersMap.set(m.id, profile);
+    });
+    
+    const attendance = (rawAttendance || []).map(a => ({
+      ...a,
+      profiles: membersMap.get(a.member_id) || null
+    }));
     const payments = rawPayments || [];
     const classes = rawClasses || [];
     const bookings = rawBookings || [];

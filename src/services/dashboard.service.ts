@@ -69,7 +69,7 @@ export const dashboardService = {
     }
   },
 
-  async getMemberDashboard(memberId: string): Promise<MemberDashboardData> {
+  async getMemberDashboard(profileId: string): Promise<MemberDashboardData> {
     try {
       // 1. Call RPC to update expiry status before fetching (silent fail if RPC doesn't exist yet)
       await supabase.rpc('check_membership_expiry');
@@ -78,7 +78,7 @@ export const dashboardService = {
       const { data: activePlan, error: activeError } = await supabase
         .from('members')
         .select('*, membership_plans(name, description)')
-        .eq('profile_id', memberId)
+        .eq('profile_id', profileId)
         .eq('status', 'active')
         .order('expiry_date', { ascending: false })
         .limit(1)
@@ -88,24 +88,33 @@ export const dashboardService = {
         console.error('Supabase activePlan query error:', activeError);
       }
 
+      // 3. Get member id for attendance tracking
+      const { data: memberData } = await supabase.from('members').select('id').eq('profile_id', profileId).single();
+
       // 4. Fetch recent attendance
-      const { data: recentCheckins, error: checkinError } = await supabase
-        .from('attendance')
-        .select('*')
-        .eq('member_id', memberId)
-        .order('check_in_time', { ascending: false })
-        .limit(5);
+      let recentCheckins: any[] = [];
+      if (memberData?.id) {
+        const { data: checkins, error: checkinError } = await supabase
+          .from('attendance')
+          .select('*')
+          .eq('member_id', memberData.id)
+          .order('check_in_time', { ascending: false })
+          .limit(5);
+          
+        if (checkinError) throw checkinError;
+        recentCheckins = checkins || [];
+      }
 
       // 5. Check if they have a pending payment request
       const { data: pendingPayments, error: paymentError } = await supabase
         .from('payments')
         .select('id')
-        .eq('profile_id', memberId)
+        .eq('profile_id', profileId)
         .eq('status', 'pending')
         .limit(1);
 
-      if (checkinError || paymentError) {
-        throw checkinError || paymentError;
+      if (paymentError) {
+        throw paymentError;
       }
 
       let daysRemaining = null;
