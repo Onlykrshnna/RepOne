@@ -135,16 +135,23 @@ function CheckInPage() {
               qrbox: { width: 250, height: 250 }
             },
             (decodedText) => {
+              // Pause immediately to prevent multiple scans
+              if (html5QrCode.getState() === 2) { // 2 = SCANNING
+                 html5QrCode.pause();
+              }
+              
               // On successful scan
               if (decodedText === GYM_QR_PAYLOAD) {
-                html5QrCode.stop().then(() => html5QrCode.clear());
-                setStatus('checking');
-                checkInMutation.mutate();
+                html5QrCode.stop().catch(console.error).finally(() => {
+                  setStatus('checking');
+                  checkInMutation.mutate();
+                });
               } else {
-                html5QrCode.stop().then(() => html5QrCode.clear());
-                setStatus('error');
-                setErrorType('invalid_qr');
-                setErrorMessage('This QR code does not belong to Elevate Fitness. Please scan the front desk code.');
+                html5QrCode.stop().catch(console.error).finally(() => {
+                  setStatus('error');
+                  setErrorType('invalid_qr');
+                  setErrorMessage('This QR code does not belong to Elevate Fitness. Please scan the front desk code.');
+                });
               }
             },
             (error) => {
@@ -173,9 +180,11 @@ function CheckInPage() {
 
       return () => {
         if (scannerRef.current) {
-          scannerRef.current.stop().then(() => {
-            scannerRef.current?.clear();
-          }).catch(console.error);
+          try {
+            if (scannerRef.current.getState() === 2) {
+              scannerRef.current.stop().catch(() => {});
+            }
+          } catch(e) {}
           scannerRef.current = null;
         }
       };
