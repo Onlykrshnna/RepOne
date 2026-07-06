@@ -12,7 +12,37 @@ export const attendanceService = {
       
     if (memberErr || !member) throw new Error('Member record not found');
 
-    // 2. Insert into attendance using member.id
+    // 2. Enforce limits: 3 times a day, 1 hour gap
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const { data: todaysCheckins, error: checkinsErr } = await supabase
+      .from('attendance')
+      .select('check_in_time')
+      .eq('member_id', member.id)
+      .gte('check_in_time', today.toISOString())
+      .order('check_in_time', { ascending: false });
+
+    if (checkinsErr) throw new Error('Failed to verify check-in history');
+
+    if (todaysCheckins && todaysCheckins.length > 0) {
+      // Limit 1: Max 3 entries per day
+      if (todaysCheckins.length >= 3) {
+        throw new Error('Maximum daily check-in limit reached (3/3).');
+      }
+
+      // Limit 2: Minimum 1 hour between check-ins
+      const lastCheckinTime = new Date(todaysCheckins[0].check_in_time).getTime();
+      const now = new Date().getTime();
+      const hoursDifference = (now - lastCheckinTime) / (1000 * 60 * 60);
+
+      if (hoursDifference < 1) {
+        const minutesLeft = Math.ceil((1 - hoursDifference) * 60);
+        throw new Error(`Please wait ${minutesLeft} more minutes before your next check-in.`);
+      }
+    }
+
+    // 3. Insert into attendance using member.id
     const { data, error } = await supabase
       .from('attendance')
       .insert([{
