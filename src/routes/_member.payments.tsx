@@ -220,7 +220,7 @@ function PaymentHistoryPage() {
                       <TableCell colSpan={5} className="h-24 text-center text-muted-foreground/75">No payment history found.</TableCell>
                     </TableRow>
                   ) : (
-                    payments?.map((payment) => (
+                    payments?.map((payment: any) => (
                       <TableRow key={payment.id} className="border-border hover:bg-muted/50">
                         <TableCell className="text-foreground/80">
                           {new Date(payment.payment_date).toLocaleDateString()}

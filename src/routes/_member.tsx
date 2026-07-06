@@ -121,7 +121,7 @@ function MemberLayout() {
   const { signOut, profile } = useAuth();
   
   const currentPath = location.pathname;
-  const navItems = profile ? getMemberNavItems(profile.membership_status || 'active') : [];
+  const navItems = profile ? getMemberNavItems(profile.membership_status || 'none') : [];
   const currentNav = navItems.find(item => currentPath === item.url || currentPath.startsWith(item.url + '/')) || navItems[0];
 
   return (

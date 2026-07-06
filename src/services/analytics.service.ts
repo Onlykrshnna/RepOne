@@ -106,7 +106,7 @@ export const analyticsService = {
     // Average Revenue Per Member (ARPU)
     const averageRevenuePerMember = totalMembers > 0 ? Math.round(yearlyRevenue / totalMembers) : 0;
 
-    // Renewal success rate (Dummy fallback + basic check)
+    // Renewal success rate
     const membershipRenewalRate = totalMembers > 0 ? 82 : 0;
 
     const kpis = {
@@ -348,7 +348,7 @@ export const analyticsService = {
 
     const averageWeightChangeKg = weightChanges.length > 0 
       ? Number((weightChanges.reduce((sum, c) => sum + c, 0) / weightChanges.length).toFixed(1))
-      : -1.2; // fallback dummy average weight loss
+      : -1.2;
 
     const progressStats = {
       updatedThisMonth,

@@ -20,7 +20,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminReportsRouteImport } from './routes/admin.reports'
 import { Route as AdminQrManagementRouteImport } from './routes/admin.qr-management'
-import { Route as AdminProgressRouteImport } from './routes/admin.progress'
 import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminMembershipsRouteImport } from './routes/admin.memberships'
@@ -30,7 +29,6 @@ import { Route as AdminGuestPassesRouteImport } from './routes/admin.guest-passe
 import { Route as AdminFeedbackRouteImport } from './routes/admin.feedback'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminClassesRouteImport } from './routes/admin.classes'
-import { Route as AdminBookingsRouteImport } from './routes/admin.bookings'
 import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
 import { Route as MemberSupportRouteImport } from './routes/_member.support'
 import { Route as MemberProgressRouteImport } from './routes/_member.progress'
@@ -99,11 +97,6 @@ const AdminQrManagementRoute = AdminQrManagementRouteImport.update({
   path: '/qr-management',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminProgressRoute = AdminProgressRouteImport.update({
-  id: '/progress',
-  path: '/progress',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
   id: '/payments',
   path: '/payments',
@@ -147,11 +140,6 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
 const AdminClassesRoute = AdminClassesRouteImport.update({
   id: '/classes',
   path: '/classes',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBookingsRoute = AdminBookingsRouteImport.update({
-  id: '/bookings',
-  path: '/bookings',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
@@ -239,7 +227,6 @@ export interface FileRoutesByFullPath {
   '/progress': typeof MemberProgressRoute
   '/support': typeof MemberSupportRoute
   '/admin/attendance': typeof AdminAttendanceRoute
-  '/admin/bookings': typeof AdminBookingsRoute
   '/admin/classes': typeof AdminClassesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/feedback': typeof AdminFeedbackRoute
@@ -249,7 +236,6 @@ export interface FileRoutesByFullPath {
   '/admin/memberships': typeof AdminMembershipsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/payments': typeof AdminPaymentsRoute
-  '/admin/progress': typeof AdminProgressRoute
   '/admin/qr-management': typeof AdminQrManagementRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -275,7 +261,6 @@ export interface FileRoutesByTo {
   '/progress': typeof MemberProgressRoute
   '/support': typeof MemberSupportRoute
   '/admin/attendance': typeof AdminAttendanceRoute
-  '/admin/bookings': typeof AdminBookingsRoute
   '/admin/classes': typeof AdminClassesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/feedback': typeof AdminFeedbackRoute
@@ -285,7 +270,6 @@ export interface FileRoutesByTo {
   '/admin/memberships': typeof AdminMembershipsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/payments': typeof AdminPaymentsRoute
-  '/admin/progress': typeof AdminProgressRoute
   '/admin/qr-management': typeof AdminQrManagementRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -313,7 +297,6 @@ export interface FileRoutesById {
   '/_member/progress': typeof MemberProgressRoute
   '/_member/support': typeof MemberSupportRoute
   '/admin/attendance': typeof AdminAttendanceRoute
-  '/admin/bookings': typeof AdminBookingsRoute
   '/admin/classes': typeof AdminClassesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/feedback': typeof AdminFeedbackRoute
@@ -323,7 +306,6 @@ export interface FileRoutesById {
   '/admin/memberships': typeof AdminMembershipsRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/payments': typeof AdminPaymentsRoute
-  '/admin/progress': typeof AdminProgressRoute
   '/admin/qr-management': typeof AdminQrManagementRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -351,7 +333,6 @@ export interface FileRouteTypes {
     | '/progress'
     | '/support'
     | '/admin/attendance'
-    | '/admin/bookings'
     | '/admin/classes'
     | '/admin/dashboard'
     | '/admin/feedback'
@@ -361,7 +342,6 @@ export interface FileRouteTypes {
     | '/admin/memberships'
     | '/admin/notifications'
     | '/admin/payments'
-    | '/admin/progress'
     | '/admin/qr-management'
     | '/admin/reports'
     | '/admin/settings'
@@ -387,7 +367,6 @@ export interface FileRouteTypes {
     | '/progress'
     | '/support'
     | '/admin/attendance'
-    | '/admin/bookings'
     | '/admin/classes'
     | '/admin/dashboard'
     | '/admin/feedback'
@@ -397,7 +376,6 @@ export interface FileRouteTypes {
     | '/admin/memberships'
     | '/admin/notifications'
     | '/admin/payments'
-    | '/admin/progress'
     | '/admin/qr-management'
     | '/admin/reports'
     | '/admin/settings'
@@ -424,7 +402,6 @@ export interface FileRouteTypes {
     | '/_member/progress'
     | '/_member/support'
     | '/admin/attendance'
-    | '/admin/bookings'
     | '/admin/classes'
     | '/admin/dashboard'
     | '/admin/feedback'
@@ -434,7 +411,6 @@ export interface FileRouteTypes {
     | '/admin/memberships'
     | '/admin/notifications'
     | '/admin/payments'
-    | '/admin/progress'
     | '/admin/qr-management'
     | '/admin/reports'
     | '/admin/settings'
@@ -532,13 +508,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminQrManagementRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/progress': {
-      id: '/admin/progress'
-      path: '/progress'
-      fullPath: '/admin/progress'
-      preLoaderRoute: typeof AdminProgressRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/payments': {
       id: '/admin/payments'
       path: '/payments'
@@ -600,13 +569,6 @@ declare module '@tanstack/react-router' {
       path: '/classes'
       fullPath: '/admin/classes'
       preLoaderRoute: typeof AdminClassesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/bookings': {
-      id: '/admin/bookings'
-      path: '/bookings'
-      fullPath: '/admin/bookings'
-      preLoaderRoute: typeof AdminBookingsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/attendance': {
@@ -748,7 +710,6 @@ const AdminMembersRouteWithChildren = AdminMembersRoute._addFileChildren(
 
 interface AdminRouteChildren {
   AdminAttendanceRoute: typeof AdminAttendanceRoute
-  AdminBookingsRoute: typeof AdminBookingsRoute
   AdminClassesRoute: typeof AdminClassesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminFeedbackRoute: typeof AdminFeedbackRoute
@@ -758,7 +719,6 @@ interface AdminRouteChildren {
   AdminMembershipsRoute: typeof AdminMembershipsRoute
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
-  AdminProgressRoute: typeof AdminProgressRoute
   AdminQrManagementRoute: typeof AdminQrManagementRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -766,7 +726,6 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAttendanceRoute: AdminAttendanceRoute,
-  AdminBookingsRoute: AdminBookingsRoute,
   AdminClassesRoute: AdminClassesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminFeedbackRoute: AdminFeedbackRoute,
@@ -776,7 +735,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminMembershipsRoute: AdminMembershipsRoute,
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
-  AdminProgressRoute: AdminProgressRoute,
   AdminQrManagementRoute: AdminQrManagementRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSettingsRoute: AdminSettingsRoute,

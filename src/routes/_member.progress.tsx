@@ -4,7 +4,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { progressService, ProgressEntry } from '../services/progress.service';
 import { calculateTrend, formatMeasurement } from '../services/progress.utils';
 import { useAuth } from '../lib/auth-context';
-import { DUMMY_PROGRESS } from '../lib/dummy-data';
 import { Activity, ArrowDown, ArrowUp, ChevronLeft, Plus, Scale, Target, Camera } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -55,7 +54,7 @@ function ProgressPage() {
     enabled: !!selectedMemberId,
   });
 
-  const history = rawHistory && rawHistory.length > 0 ? rawHistory : (historyLoading ? [] : DUMMY_PROGRESS as any[]);
+  const history = rawHistory && rawHistory.length > 0 ? rawHistory : [];
 
 
   const addMutation = useMutation({
@@ -130,7 +129,7 @@ function ProgressPage() {
                     <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10 border border-slate-300">
                         <AvatarImage src={o.member.avatar} />
-                        <AvatarFallback className="bg-muted text-xs">{o.member.name[0]}</AvatarFallback>
+                         <AvatarFallback className="bg-muted text-xs">{o.member?.name?.[0] || 'M'}</AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="font-medium text-sm">{o.member.name}</div>

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { feedbackService, GymFeedback } from '../services/feedback.service';
 import { classesService } from '../services/classes.service';
 import { useAuth } from '../lib/auth-context';
-import { DUMMY_FEEDBACK } from '../lib/dummy-data';
 import { supabase } from '../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -59,7 +58,7 @@ function FeedbackPage() {
     })
   });
 
-  const feedback = dbFeedback && dbFeedback.length > 0 ? dbFeedback : (feedbackLoading ? [] : DUMMY_FEEDBACK as any[]);
+  const feedback = dbFeedback && dbFeedback.length > 0 ? dbFeedback : [];
 
 
   const { data: classes = [] } = useQuery({

@@ -112,7 +112,7 @@ function MemberDetailsPage() {
     return <div className="text-muted-foreground">Member not found.</div>;
   }
 
-  const activeMembership = member.member_memberships?.find((m: any) => m.status === 'active');
+  const activeMembership = member.members?.find((m: any) => m.status === 'active');
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-10">
@@ -125,7 +125,7 @@ function MemberDetailsPage() {
             <Avatar className="h-16 w-16 border-2 border-border shadow-xl">
               <AvatarImage src={member.avatar_url} />
               <AvatarFallback className="bg-muted text-foreground/80 text-xl">
-                {member.first_name[0]}{member.last_name[0]}
+                {member.first_name?.[0] || 'M'}{member.last_name?.[0] || ''}
               </AvatarFallback>
             </Avatar>
             <div>

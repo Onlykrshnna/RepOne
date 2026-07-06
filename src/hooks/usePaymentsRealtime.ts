@@ -15,9 +15,9 @@ export function usePaymentsRealtime() {
           queryClient.invalidateQueries({ queryKey: ['admin-payments'] });
           queryClient.invalidateQueries({ queryKey: ['dashboard-revenue'] });
           
-          if (payload.new && 'member_id' in payload.new) {
-             queryClient.invalidateQueries({ queryKey: ['member-payments', payload.new.member_id] });
-             queryClient.invalidateQueries({ queryKey: ['member-dashboard', payload.new.member_id] });
+          if (payload.new && 'profile_id' in payload.new) {
+             queryClient.invalidateQueries({ queryKey: ['member-payments', payload.new.profile_id] });
+             queryClient.invalidateQueries({ queryKey: ['member-dashboard', payload.new.profile_id] });
           }
         }
       )

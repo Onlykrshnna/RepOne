@@ -3,20 +3,23 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../co
 import { Bell, Info, Calendar, Award } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { notificationsService, MemberNotification } from '../services/notifications.service';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '../lib/auth-context';
 
 export const Route = createFileRoute('/_member/notifications')({
   component: MemberNotificationsPage,
 });
 
 function MemberNotificationsPage() {
-  const [notifications, setNotifications] = useState<MemberNotification[]>([]);
-
-  useEffect(() => {
-    return notificationsService.subscribe(setNotifications);
-  }, []);
+  const { profile } = useAuth();
+  const { data: notifications = [], refetch } = useQuery({
+    queryKey: ['member-notifications', profile?.id],
+    queryFn: () => notificationsService.getNotifications(profile!.id),
+    enabled: !!profile?.id,
+  });
 
   const markAllRead = () => {
-    notificationsService.markAllRead();
+    notificationsService.markAllRead(profile!.id);
   };
 
   const getIcon = (type: string) => {

@@ -1,6 +1,4 @@
 import { supabase } from '../lib/supabase';
-import { MOCK_PAYMENTS } from './payment.service';
-import { MOCK_MEMBERS } from './members.service';
 
 export interface DashboardMetrics {
   totalMembers: number;
@@ -45,7 +43,7 @@ export const dashboardService = {
           .select('*', { count: 'exact', head: true })
           .gte('check_in_time', today.toISOString()),
         supabase
-          .from('member_memberships')
+          .from('members')
           .select('*', { count: 'exact', head: true })
           .eq('status', 'active'),
       ]);
@@ -66,25 +64,8 @@ export const dashboardService = {
         recentMembers: sortedRecent.slice(0, 5),
       };
     } catch (err) {
-      console.warn('Supabase error in getMetrics, falling back to mock:', err);
-      
-      const filteredMock = MOCK_MEMBERS.filter(m => 
-        m.email !== 'krpris9211@gmail.com' && 
-        m.email !== 'krpris1922@gmail.com'
-      );
-
-      return {
-        totalMembers: filteredMock.length,
-        todaysCheckIns: 2,
-        activeMemberships: filteredMock.filter(m => m.membership_status === 'active').length,
-        recentMembers: filteredMock.slice(0, 5).map(m => ({
-          id: m.id,
-          first_name: m.first_name,
-          last_name: m.last_name,
-          email: m.email,
-          created_at: m.created_at || new Date().toISOString()
-        })),
-      };
+      console.error('Supabase error in getMetrics:', err);
+      throw err;
     }
   },
 
@@ -95,13 +76,17 @@ export const dashboardService = {
 
       // 2. Fetch active membership
       const { data: activePlan, error: activeError } = await supabase
-        .from('member_memberships')
+        .from('members')
         .select('*, membership_plans(name, description)')
-        .eq('member_id', memberId)
+        .eq('profile_id', memberId)
         .eq('status', 'active')
-        .order('end_date', { ascending: false })
+        .order('expiry_date', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
+
+      if (activeError) {
+        console.error('Supabase activePlan query error:', activeError);
+      }
 
       // 4. Fetch recent attendance
       const { data: recentCheckins, error: checkinError } = await supabase
@@ -115,17 +100,17 @@ export const dashboardService = {
       const { data: pendingPayments, error: paymentError } = await supabase
         .from('payments')
         .select('id')
-        .eq('member_id', memberId)
+        .eq('profile_id', memberId)
         .eq('status', 'pending')
         .limit(1);
 
-      if (activeError || checkinError || paymentError) {
-        throw activeError || checkinError || paymentError;
+      if (checkinError || paymentError) {
+        throw checkinError || paymentError;
       }
 
       let daysRemaining = null;
-      if (activePlan?.end_date) {
-        const end = new Date(activePlan.end_date);
+      if (activePlan?.expiry_date) {
+        const end = new Date(activePlan.expiry_date);
         const now = new Date();
         const diffTime = end.getTime() - now.getTime();
         daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -141,27 +126,8 @@ export const dashboardService = {
         upcomingClasses: []
       };
     } catch (err) {
-      console.warn('Supabase error in getMemberDashboard, falling back to mock:', err);
-      const member = MOCK_MEMBERS.find(m => m.id === memberId);
-      const activePlan = member?.member_memberships?.find(m => m.status === 'active') || null;
-      
-      let daysRemaining = null;
-      if (activePlan?.end_date) {
-        const end = new Date(activePlan.end_date);
-        const now = new Date();
-        const diffTime = end.getTime() - now.getTime();
-        daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      }
-
-      const hasPendingPayment = MOCK_PAYMENTS.some(p => p.member_id === memberId && p.status === 'pending');
-
-      return {
-        activePlan,
-        daysRemaining,
-        recentCheckins: [],
-        hasPendingPayment,
-        upcomingClasses: []
-      };
+      console.error('Supabase error in getMemberDashboard:', err);
+      throw err;
     }
   }
 };

@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { profileService } from './profile.service';
 import type { User, Session } from '@supabase/supabase-js';
 
 export type LoginCredentials = {
@@ -47,12 +48,47 @@ export const authService = {
           full_name: `${firstName} ${lastName}`.trim(),
           username,
           role: 'member',
-          membership_status: 'unpaid',
+          membership_status: 'pending',
         },
       },
     });
 
     if (error) throw error;
+
+    if (data.user) {
+      const payload = {
+        id: data.user.id,
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        username: username.toLowerCase(),
+        role: 'member',
+        membership_status: 'pending'
+      };
+
+      console.log("[UPSERT REQUEST]", payload);
+
+      const { data: upsertData, error: upsertError } = await supabase
+        .from('profiles')
+        .upsert(payload)
+        .select();
+
+      console.log("[UPSERT RESPONSE]", upsertData, upsertError);
+
+      if (upsertError) {
+        console.error('Failed to manually update profile row during signup:', upsertError);
+      } else {
+        console.log('[PROFILE CREATED]', JSON.stringify({
+          id: data.user.id,
+          username: username.toLowerCase(),
+          first_name: firstName,
+          last_name: lastName,
+          membership_status: 'pending'
+        }, null, 2));
+      }
+
+      profileService.clearProfileCache();
+    }
 
     // Update cache if session is immediately returned (auto-confirm enabled)
     if (data.session) {

@@ -2,7 +2,6 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { classesService } from '../services/classes.service';
-import { DUMMY_CLASSES } from '../lib/dummy-data';
 
 import { bookingsService } from '../services/bookings.service';
 import { useAuth } from '../lib/auth-context';
@@ -33,12 +32,7 @@ import { Skeleton } from '../components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 
-const DUMMY_TRAINERS = [
-  { id: 'tr-1', name: 'Coach Ryan', specialization: 'HIIT & Conditioning', email: 'ryan@atlas.gym', phone: '+1 555-1001', avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=ryan', bio: '10 years experience in strength and conditioning.', classes_count: 3 },
-  { id: 'tr-2', name: 'Instructor Maya', specialization: 'Yoga & Mindfulness', email: 'maya@atlas.gym', phone: '+1 555-1002', avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=maya', bio: 'Certified yoga teacher with 8 years of practice.', classes_count: 2 },
-  { id: 'tr-3', name: 'Coach Dan', specialization: 'Powerlifting', email: 'dan@atlas.gym', phone: '+1 555-1003', avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=dan', bio: 'National champion powerlifter, 5+ years coaching.', classes_count: 1 },
-  { id: 'tr-4', name: 'Coach Lisa', specialization: 'Cardio & Dance', email: 'lisa@atlas.gym', phone: '+1 555-1004', avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=lisa', bio: 'Zumba & aerobics specialist with 7 years experience.', classes_count: 2 },
-];
+
 
 export const Route = createFileRoute('/admin/classes')({
   component: ClassesPage,
@@ -80,14 +74,14 @@ function ClassesPage() {
     }),
   });
 
-  const classes = dbClasses && dbClasses.length > 0 ? dbClasses : (classesLoading ? [] : DUMMY_CLASSES as any[]);
+  const classes = dbClasses && dbClasses.length > 0 ? dbClasses : [];
 
   const { data: dbTrainers, isLoading: trainersLoading } = useQuery({
     queryKey: ['trainers'],
     queryFn: classesService.getTrainers,
   });
 
-  const trainers = dbTrainers && dbTrainers.length > 0 ? dbTrainers : (trainersLoading ? [] : DUMMY_TRAINERS as any[]);
+  const trainers = dbTrainers && dbTrainers.length > 0 ? dbTrainers : [];
 
   const { data: attendees = [], refetch: refetchAttendees } = useQuery({
     queryKey: ['class-attendees', selectedClass?.id],

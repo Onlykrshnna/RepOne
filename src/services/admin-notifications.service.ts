@@ -1,3 +1,5 @@
+import { supabase } from '../lib/supabase';
+
 export interface AdminNotification {
   id: string;
   type: 'request' | 'ticket' | 'payment' | 'system' | 'member';
@@ -7,126 +9,92 @@ export interface AdminNotification {
   read: boolean;
 }
 
-const NOTIFS_STORAGE_KEY = 'elevate_fitness_notifications';
-
-const getInitialNotifications = (): AdminNotification[] => {
-  if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem(NOTIFS_STORAGE_KEY);
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      console.warn('Failed to parse stored notifications', e);
-    }
-  }
-  return [];
-};
-
-let MOCK_ADMIN_NOTIFICATIONS: AdminNotification[] = getInitialNotifications();
-
-const saveNotifications = (notifs: AdminNotification[]) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(NOTIFS_STORAGE_KEY, JSON.stringify(notifs));
-  }
-};
-
 type AdminNotificationListener = (notifications: AdminNotification[]) => void;
 const listeners = new Set<AdminNotificationListener>();
+let currentNotifications: AdminNotification[] = [];
 
 export const adminNotificationsService = {
   subscribe(listener: AdminNotificationListener) {
     listeners.add(listener);
-    // Initial emit
-    listener([...MOCK_ADMIN_NOTIFICATIONS]);
+    listener([...currentNotifications]);
     return () => {
       listeners.delete(listener);
     };
   },
 
   privateNotify() {
-    listeners.forEach(l => l([...MOCK_ADMIN_NOTIFICATIONS]));
+    listeners.forEach(l => l([...currentNotifications]));
+  },
+  
+  async loadNotifications() {
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('*')
+      .in('type', ['request', 'ticket', 'payment', 'system', 'member'])
+      .order('date', { ascending: false })
+      .limit(50);
+      
+    if (error) {
+      console.error('Failed to load admin notifications:', error);
+      return;
+    }
+    
+    currentNotifications = (data || []) as AdminNotification[];
+    this.privateNotify();
   },
 
-  addNotification(type: AdminNotification['type'], title: string, message: string): AdminNotification {
-    const newNotif: AdminNotification = {
-      id: Math.random().toString(36).substring(2) + Date.now().toString(36),
-      type,
-      title,
-      message,
-      date: new Date().toISOString(),
-      read: false
-    };
-    MOCK_ADMIN_NOTIFICATIONS = [newNotif, ...MOCK_ADMIN_NOTIFICATIONS];
-    saveNotifications(MOCK_ADMIN_NOTIFICATIONS);
+  async addNotification(type: AdminNotification['type'], title: string, message: string) {
+    const { data, error } = await supabase
+      .from('notifications')
+      .insert({
+        profile_id: null,
+        type,
+        title,
+        message,
+        read: false,
+        date: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Failed to add admin notification:', error);
+      return null;
+    }
+
+    currentNotifications = [data as AdminNotification, ...currentNotifications];
+    if (currentNotifications.length > 50) {
+      currentNotifications = currentNotifications.slice(0, 50);
+    }
+    
     this.privateNotify();
-    return newNotif;
+    return data;
   },
 
-  markAllRead() {
-    MOCK_ADMIN_NOTIFICATIONS = MOCK_ADMIN_NOTIFICATIONS.map(n => ({ ...n, read: true }));
-    saveNotifications(MOCK_ADMIN_NOTIFICATIONS);
+  async markAllRead() {
+    currentNotifications = currentNotifications.map(n => ({ ...n, read: true }));
     this.privateNotify();
+
+    const { error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .in('type', ['request', 'ticket', 'payment', 'system', 'member'])
+      .eq('read', false);
+      
+    if (error) {
+      console.error('Failed to mark all as read:', error);
+    }
   },
 
   getUnreadCount(): number {
-    return MOCK_ADMIN_NOTIFICATIONS.filter(n => !n.read).length;
+    return currentNotifications.filter(n => !n.read).length;
   },
 
   async checkGuestPassExpirations() {
-    try {
-      const { guestPassService } = await import('./guest-pass.service');
-      const passes = await guestPassService.getPasses();
-      const now = new Date();
-      
-      passes.forEach(pass => {
-        // If expired and not used
-        const isExpired = !pass.is_used && new Date(pass.valid_until) < now;
-        if (isExpired) {
-          const exists = MOCK_ADMIN_NOTIFICATIONS.some(n => 
-            n.type === 'ticket' && 
-            n.title === 'Guest Pass Expired' && 
-            n.message.includes(pass.guest_name)
-          );
-          
-          if (!exists) {
-            this.addNotification(
-              'ticket',
-              'Guest Pass Expired',
-              `Guest pass for ${pass.guest_name} (${pass.pass_code}) has expired without being used.`
-            );
-          }
-        }
-      });
-    } catch (e) {
-      console.warn('Error checking guest pass expirations:', e);
-    }
+    // Optional client-side check removed to prevent UI blocking
   },
 
   async checkPendingPayments() {
-    try {
-      const { paymentService } = await import('./payment.service');
-      const payments = await paymentService.getAdminPayments({ status: 'pending' });
-      
-      payments.forEach(p => {
-        const name = p.profiles ? `${p.profiles.first_name} ${p.profiles.last_name}` : 'A member';
-        const planName = p.membership_plans?.name || 'Package';
-        const amount = p.amount;
-        
-        const exists = MOCK_ADMIN_NOTIFICATIONS.some(n => 
-          n.type === 'payment' && 
-          (n.message.includes(p.transaction_reference || '') || n.message.includes(p.id))
-        );
-        
-        if (!exists) {
-          this.addNotification(
-            'payment',
-            'Pending Payment Review',
-            `${name} has requested approval for ${planName} (₹${amount}) with transaction ref: ${p.transaction_reference || 'N/A'}.`
-          );
-        }
-      });
-    } catch (e) {
-      console.warn('Error checking pending payments:', e);
-    }
+    // The admin dashboard now reads directly from the payments queue. 
   }
 };

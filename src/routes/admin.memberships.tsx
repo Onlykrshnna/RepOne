@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { membershipService, MembershipPlan } from '../services/membership.service';
-import { DUMMY_MEMBERSHIP_PLANS } from '../lib/dummy-data';
 import { useState } from 'react';
 import { Plus, Edit2, Archive, CheckCircle2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -29,7 +28,7 @@ function AdminMembershipPlansPage() {
     queryFn: () => membershipService.getPlans(true), // Include inactive
   });
 
-  const plans = dbPlans && dbPlans.length > 0 ? dbPlans : (isLoading ? [] : DUMMY_MEMBERSHIP_PLANS as any[]);
+  const plans = dbPlans && dbPlans.length > 0 ? dbPlans : [];
 
   const saveMutation = useMutation({
     mutationFn: (plan: Partial<MembershipPlan>) => {

@@ -47,19 +47,52 @@ function MemberDashboard({ profile }: { profile: any }) {
 
   const BYPASS_STATUS_BLOCKS = false; // Set to true to allow testing all features with dummy data
 
+  // --- STATE MACHINE ---
+  const status = displayProfile.membership_status || 'none';
+
+  // Calculate if the membership has expired based on expiry date
+  let hasExpiredPlan = false;
+  if (data?.activePlan?.expiry_date) {
+    const expiryDate = new Date(data.activePlan.expiry_date);
+    const now = new Date();
+    // Reset hours to compare dates accurately
+    expiryDate.setHours(23, 59, 59, 999);
+    hasExpiredPlan = expiryDate.getTime() < now.getTime();
+  }
+  
+  const isNone = !BYPASS_STATUS_BLOCKS && (status === 'none' || status === 'unpaid' || status === 'pending') && !data?.hasPendingPayment;
+  const isPending = !BYPASS_STATUS_BLOCKS && data?.hasPendingPayment;
+  const isRejected = !BYPASS_STATUS_BLOCKS && status === 'rejected';
+  const isExpired = !BYPASS_STATUS_BLOCKS && (status === 'expired' || hasExpiredPlan);
+  const isSuspended = !BYPASS_STATUS_BLOCKS && status === 'suspended';
+  const isActive = !BYPASS_STATUS_BLOCKS && status === 'active' && !hasExpiredPlan;
+  
+  const isLocked = !isActive;
+
+  // Add Dashboard Lifecycle Logging
+  useEffect(() => {
+    if (!isLoading) {
+      console.log('[DASHBOARD STATUS]', JSON.stringify({
+        membership_status: status,
+        payment_status: data?.hasPendingPayment ? 'pending' : 'none',
+        member_row_exists: !!displayProfile.members && displayProfile.members.length > 0
+      }, null, 2));
+    }
+  }, [status, data?.hasPendingPayment, displayProfile.members, isLoading]);
+
   if (isLoading && !BYPASS_STATUS_BLOCKS) {
     return <div className="space-y-6"><Skeleton className="h-[200px] w-full bg-background" /></div>;
   }
 
-  // --- REJECTED / SUSPENDED ---
-  if (!BYPASS_STATUS_BLOCKS && (displayProfile.membership_status === 'rejected' || displayProfile.membership_status === 'suspended')) {
+  // --- SUSPENDED EARLY RETURN ---
+  if (!BYPASS_STATUS_BLOCKS && isSuspended) {
     return (
       <div className="space-y-6 max-w-2xl mx-auto mt-10">
         <Card className="bg-red-950/20 border-red-900/50 text-foreground text-center py-10 shadow-lg shadow-red-900/10">
           <AlertTriangle className="h-16 w-16 text-red-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
-          <CardTitle className="text-3xl mb-2 text-red-400">Account {displayProfile.membership_status === 'rejected' ? 'Rejected' : 'Suspended'}</CardTitle>
+          <CardTitle className="text-3xl mb-2 text-red-400">Account Suspended</CardTitle>
           <CardDescription className="text-muted-foreground max-w-md mx-auto text-base">
-            Your account is currently not active. Please contact support for more information.
+            Your account is currently suspended. Please contact support for more information.
             {displayProfile.admin_notes && (
               <div className="mt-6 p-4 bg-card border border-border rounded-lg text-left text-sm text-foreground/80">
                 <strong className="text-foreground block mb-1">Admin Notes:</strong>
@@ -75,20 +108,8 @@ function MemberDashboard({ profile }: { profile: any }) {
     );
   }
 
-  // --- UNPAID & PENDING VARIABLES ---
-  const hasPendingPayment = data?.hasPendingPayment || false;
-  const hasActivePlan = !!data?.activePlan;
-  
-  // A user is only truly pending if they have a pending payment request
-  const isPending = !BYPASS_STATUS_BLOCKS && (displayProfile.membership_status === 'pending' || hasPendingPayment) && hasPendingPayment;
-  
-  // A user is unpaid if they have no active plan, no pending payment, and aren't marked as expired
-  const isUnpaid = !BYPASS_STATUS_BLOCKS && !hasActivePlan && !hasPendingPayment && displayProfile.membership_status !== 'expired';
-  
-  const isLocked = isUnpaid || isPending;
-
   // --- EXPIRED ---
-  if (!BYPASS_STATUS_BLOCKS && profile.membership_status === 'expired') {
+  if (!BYPASS_STATUS_BLOCKS && isExpired) {
     return (
       <div className="space-y-6 max-w-3xl mx-auto mt-10">
         <Card className="bg-card border-amber-900/50 text-foreground shadow-xl shadow-amber-900/10">
@@ -127,26 +148,38 @@ function MemberDashboard({ profile }: { profile: any }) {
       <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-4 gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-foreground mb-1">Hello, {displayProfile.first_name} {displayProfile.last_name || ''}</h2>
-          <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">@{displayProfile.username || displayProfile.email?.split('@')[0] || 'member'}</p>
+          <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">@{displayProfile.username || 'member'}</p>
           <p className="text-muted-foreground text-xs mt-1">Ready to crush your goals today?</p>
         </div>
         <Badge className={`px-4 py-1.5 text-xs font-semibold tracking-wide uppercase rounded-full ${
-          isUnpaid ? 'bg-slate-500/10 text-slate-500 border border-slate-500/20' : 
+          isNone ? 'bg-slate-500/10 text-slate-500 border border-slate-500/20' : 
           isPending ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
-          'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+          isRejected ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
+          isExpired ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
+          isSuspended ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
+          isActive ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
+          'bg-slate-500/10 text-slate-500 border border-slate-500/20'
         }`}>
-          {isUnpaid ? 'Unpaid Account' : isPending ? 'Paid Account - Approval Needed' : 'Active Member'}
+          {
+            isNone ? 'Incomplete Registration' : 
+            isPending ? 'Pending Approval' : 
+            isRejected ? 'Payment Rejected' : 
+            isExpired ? 'Expired' : 
+            isSuspended ? 'Suspended' :
+            isActive ? 'Active Member' : 
+            'Incomplete Registration'
+          }
         </Badge>
       </div>
 
-      {isUnpaid && (
+      {isNone && (
         <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg shadow-emerald-900/5 gap-4 transition-colors">
           <div className="flex items-center gap-4">
             <div className="bg-emerald-100 dark:bg-emerald-500/20 p-2 rounded-full">
               <CreditCard className="h-6 w-6 text-emerald-600 dark:text-emerald-500" />
             </div>
             <div>
-              <h4 className="text-emerald-800 dark:text-emerald-500 font-semibold text-lg">Complete Your Registration</h4>
+              <h4 className="text-emerald-800 dark:text-emerald-500 font-semibold text-lg">Complete Registration</h4>
               <p className="text-emerald-600 dark:text-emerald-200/80 text-sm">Purchase a membership plan to unlock all gym features.</p>
             </div>
           </div>
@@ -163,15 +196,37 @@ function MemberDashboard({ profile }: { profile: any }) {
               <Clock className="h-6 w-6 text-amber-600 dark:text-amber-500" />
             </div>
             <div>
-              <h4 className="text-amber-800 dark:text-amber-500 font-semibold text-lg font-bold">Paid Account - Approval Pending</h4>
-              <p className="text-amber-600 dark:text-amber-200/80 text-sm">Your payment reference was recorded successfully. Our admin team is verifying your transaction details. Access will unlock shortly!</p>
+              <h4 className="text-amber-800 dark:text-amber-500 font-semibold text-lg font-bold">Payment Submitted</h4>
+              <p className="text-amber-600 dark:text-amber-200/80 text-sm">Waiting for Admin Approval. Your access will unlock shortly!</p>
             </div>
           </div>
-          <Button variant="outline" asChild className="border-amber-300 dark:border-amber-500/30 text-amber-700 dark:text-amber-500 hover:bg-amber-100 dark:hover:bg-amber-950 w-full md:w-auto bg-transparent">
-            <Link to="/buy-membership">View Plan Status</Link>
+          <Button disabled className="opacity-50 cursor-not-allowed bg-amber-200 text-amber-800 border-amber-300 w-full md:w-auto font-medium shadow-md">
+            Purchase Disabled
           </Button>
         </div>
       )}
+
+      {isRejected && (
+        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg shadow-red-900/5 gap-4 transition-colors">
+          <div className="flex items-center gap-4">
+            <div className="bg-red-100 dark:bg-red-500/20 p-2 rounded-full">
+              <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-500" />
+            </div>
+            <div>
+              <h4 className="text-red-800 dark:text-red-500 font-semibold text-lg font-bold">Payment Rejected</h4>
+              <p className="text-red-600 dark:text-red-200/80 text-sm">
+                Your recent payment was rejected. 
+                {displayProfile.admin_notes && <span className="font-semibold block mt-1">Admin notes: {displayProfile.admin_notes}</span>}
+              </p>
+            </div>
+          </div>
+          <Button asChild className="bg-red-600 text-white hover:bg-red-700 font-medium shadow-md w-full md:w-auto">
+            <Link to="/buy-membership">Resubmit Payment</Link>
+          </Button>
+        </div>
+      )}
+
+
 
       {isExpiringSoon && (
         <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 p-5 rounded-xl flex items-center justify-between shadow-lg shadow-amber-900/5 transition-colors">
@@ -291,20 +346,41 @@ function MemberDashboard({ profile }: { profile: any }) {
         </motion.div>
 
         <motion.div whileHover={{ y: -6, scale: 1.02 }} transition={{ type: "spring", stiffness: 300, damping: 15 }}>
-          <Link to="/buy-membership" className="group block h-full">
-            <Card className="bg-card border-border text-foreground h-full hover:border-purple-500/50 hover:bg-muted/50 transition-all duration-300 shadow-sm hover:shadow-purple-500/10 overflow-hidden relative">
-              <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <CardContent className="flex flex-col items-center justify-center p-8 text-center space-y-4 relative z-10">
-                <div className="p-4 bg-background rounded-full group-hover:bg-purple-500/10 group-hover:scale-110 transition-all duration-300">
-                  <CreditCard className="h-8 w-8 text-muted-foreground group-hover:text-purple-500 transition-colors" />
+          {isPending ? (
+            <div className="group block h-full cursor-not-allowed">
+              <Card className="bg-card/50 border-border/50 text-foreground/50 h-full overflow-hidden relative shadow-sm">
+                <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px] z-20 flex items-center justify-center rounded-xl">
+                  <div className="bg-background p-3 rounded-full shadow-lg border border-border">
+                    <Lock className="h-6 w-6 text-muted-foreground" />
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-lg group-hover:text-purple-600 transition-colors">Membership</h3>
-                  <p className="text-xs text-muted-foreground/75 mt-1">View or renew plan</p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
+                <CardContent className="flex flex-col items-center justify-center p-8 text-center space-y-4 relative z-10 opacity-50">
+                  <div className="p-4 bg-background rounded-full">
+                    <CreditCard className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg">Membership</h3>
+                    <p className="text-xs mt-1">Approval pending</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <Link to="/buy-membership" className="group block h-full">
+              <Card className="bg-card border-border text-foreground h-full hover:border-purple-500/50 hover:bg-muted/50 transition-all duration-300 shadow-sm hover:shadow-purple-500/10 overflow-hidden relative">
+                <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CardContent className="flex flex-col items-center justify-center p-8 text-center space-y-4 relative z-10">
+                  <div className="p-4 bg-background rounded-full group-hover:bg-purple-500/10 group-hover:scale-110 transition-all duration-300">
+                    <CreditCard className="h-8 w-8 text-muted-foreground group-hover:text-purple-500 transition-colors" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg group-hover:text-purple-600 transition-colors">Membership</h3>
+                    <p className="text-xs text-muted-foreground/75 mt-1">View or renew plan</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          )}
         </motion.div>
       </motion.div>
 

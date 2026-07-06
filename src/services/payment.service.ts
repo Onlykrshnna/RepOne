@@ -1,34 +1,9 @@
 import { supabase } from '../lib/supabase';
 import { authService } from './auth.service';
 import { profileService } from './profile.service';
-import { DUMMY_PAYMENTS, DUMMY_MEMBERSHIP_PLANS } from '../lib/dummy-data';
-import { MOCK_MEMBERS } from './members.service';
-
-const PAYMENTS_STORAGE_KEY = 'elevate_fitness_payments';
-
-const getInitialPayments = () => {
-  if (typeof window === 'undefined') return [...DUMMY_PAYMENTS];
-  const stored = localStorage.getItem(PAYMENTS_STORAGE_KEY);
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      console.warn('Failed to parse stored payments', e);
-    }
-  }
-  return [...DUMMY_PAYMENTS];
-};
-
-export let MOCK_PAYMENTS: any[] = getInitialPayments();
-
-const savePayments = (payments: any[]) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(PAYMENTS_STORAGE_KEY, JSON.stringify(payments));
-  }
-};
 
 export interface PaymentRequest {
-  member_id: string;
+  profile_id: string;
   membership_plan_id: string;
   amount: number;
   currency?: string;
@@ -39,36 +14,8 @@ export interface PaymentRequest {
 
 export const paymentService = {
   async createPaymentRequest(req: PaymentRequest) {
-    try {
-      // Ensure the member profile row exists in the database profiles table before inserting payment
-      // to avoid any Foreign Key constraint violations (e.g. after a system cleanup sweep).
-      const { data: profileExists } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('id', req.member_id)
-        .maybeSingle();
-        
-      if (!profileExists) {
-        console.log('Failsafe: Provisioning missing member profile row before payment request...');
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user && user.id === req.member_id) {
-          const meta = user.user_metadata;
-          await supabase
-            .from('profiles')
-            .insert([{
-              id: user.id,
-              email: user.email,
-              role: 'member',
-              first_name: meta?.first_name || '',
-              last_name: meta?.last_name || '',
-              username: meta?.username || user.email?.split('@')[0] || '',
-              membership_status: 'unpaid'
-            }]);
-        }
-      }
-    } catch (e) {
-      console.warn('Failsafe profile provisioning check failed:', e);
-    }
+    console.log('[LIFECYCLE STEP 1] Payment submission started.', req);
+    console.log('[LIFECYCLE STEP 2] Inserting payment row into payments table...');
 
     const { data, error } = await supabase
       .from('payments')
@@ -79,88 +26,31 @@ export const paymentService = {
       .select()
       .single();
 
-    const now = new Date().toISOString();
-    const newPayment = {
-      id: `mock-pay-${Date.now()}`,
-      member_id: req.member_id,
-      membership_plan_id: req.membership_plan_id,
-      amount: req.amount,
-      currency: req.currency || 'INR',
-      payment_method: req.payment_method,
-      transaction_reference: req.transaction_reference || null,
-      payment_proof: req.payment_proof || null,
-      status: 'pending',
-      payment_date: now,
-      created_at: now,
-      // joined data
-      profiles: MOCK_MEMBERS.find(m => m.id === req.member_id) || null,
-      membership_plans: DUMMY_MEMBERSHIP_PLANS.find(p => p.id === req.membership_plan_id) || null,
-    };
-
     if (error) {
-      console.warn('Supabase error in createPaymentRequest, falling back to mock:', error);
-      MOCK_PAYMENTS = [newPayment, ...MOCK_PAYMENTS];
-      savePayments(MOCK_PAYMENTS);
-      // Update profile status locally
-      const memIndex = MOCK_MEMBERS.findIndex(m => m.id === req.member_id);
-      if (memIndex !== -1) {
-        MOCK_MEMBERS[memIndex].membership_status = 'pending';
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
-        }
-      }
-
-      // Sync to the database profiles table so it propagates to any browser/admin session
-      try {
-        const paymentPayload = {
-          amount: req.amount,
-          membership_plan_id: req.membership_plan_id,
-          payment_method: req.payment_method,
-          transaction_reference: req.transaction_reference,
-          payment_proof: req.payment_proof,
-          payment_date: now
-        };
-        
-        await supabase
-          .from('profiles')
-          .update({
-            membership_status: 'pending',
-            membership_requested_at: now,
-            admin_notes: `PAYMENT_PAYLOAD:${JSON.stringify(paymentPayload)}`
-          })
-          .eq('id', req.member_id);
-      } catch (dbErr) {
-        console.warn('Database fallback sync failed:', dbErr);
-      }
-
-      return newPayment;
+      console.error('[LIFECYCLE ERROR] Payment insert failed with exact error:', error);
+      throw error;
     }
+
+    console.log(`[LIFECYCLE STEP 3] Payment insert returned success. Row ID: ${data.id}`);
 
     // Immediately update user status to pending so they see the awaiting approval screen
     await supabase
       .from('profiles')
-      .update({ membership_status: 'pending' })
-      .eq('id', req.member_id);
+      .update({ membership_status: 'pending', membership_requested_at: new Date().toISOString() })
+      .eq('id', req.profile_id);
 
-    profileService.clearProfileCache();
     return data;
   },
 
   async getAdminPayments(filters?: { status?: string, search?: string }) {
-    try {
-      const { reconcileMissingProfiles } = await import('./members.service');
-      await reconcileMissingProfiles();
-    } catch (e) {
-      console.warn('Reconciliation call failed in getAdminPayments:', e);
-    }
     let query = supabase
       .from('payments')
       .select(`
         *,
-        profiles (
+        profiles!profile_id (
           id, first_name, last_name, email, avatar_url
         ),
-        membership_plans (
+        membership_plans!membership_plan_id (
           id, name, duration_days
         )
       `)
@@ -175,17 +65,14 @@ export const paymentService = {
     
     const { data, error } = await query;
     let results = (data || []) as any[];
-    const dbIds = new Set(results.map(p => p.id));
-    const localPayments = MOCK_PAYMENTS.filter(p => !dbIds.has(p.id));
-    results = [...results, ...localPayments];
 
     // Ensure profiles and membership plans are mapped correctly from offline cache if missing
     results = results.map(p => {
-      if (!p.profiles && p.member_id) {
-        p.profiles = MOCK_MEMBERS.find(m => m.id === p.member_id) || null;
+      if (p.profiles === undefined && p.member_id) {
+        p.profiles = null;
       }
       if (!p.membership_plans && p.membership_plan_id) {
-        p.membership_plans = DUMMY_MEMBERSHIP_PLANS.find(plan => plan.id === p.membership_plan_id) || null;
+        p.membership_plans = null;
       }
       return p;
     });
@@ -213,61 +100,64 @@ export const paymentService = {
     return results;
   },
 
-  async getMemberPayments(memberId: string) {
+  async getMemberPayments(profileId: string) {
     const { data, error } = await supabase
       .from('payments')
       .select(`
         *,
-        membership_plans (
+        membership_plans!membership_plan_id (
           id, name, duration_days
         )
       `)
-      .eq('member_id', memberId)
+      .eq('profile_id', profileId)
       .order('payment_date', { ascending: false });
 
     if (error) {
-      console.warn('Supabase error in getMemberPayments, falling back to mock:', error);
-      return MOCK_PAYMENTS.filter((p: any) => p.member_id === memberId);
+      console.warn('Supabase error in getMemberPayments:', error);
+      throw error;
     }
     return data;
   },
 
   async approvePayment(paymentId: string, adminId: string) {
-    // Calling our highly secure RPC
-    const { error } = await supabase.rpc('approve_payment', { 
-      p_payment_id: paymentId, 
-      p_admin_id: adminId 
+    // 1. Fetch the payment details to get profile_id and plan_id
+    const { data: payment, error: payError } = await supabase
+      .from('payments')
+      .select('profile_id, membership_plan_id')
+      .eq('id', paymentId)
+      .single();
+
+    if (payError || !payment) {
+      console.error('Payment not found:', payError);
+      throw new Error('Payment not found.');
+    }
+
+    // 2. Determine end date by fetching real plan from DB
+    let durationDays = 30;
+    if (payment.membership_plan_id) {
+      const { data: planData } = await supabase
+        .from('membership_plans')
+        .select('duration_days')
+        .eq('id', payment.membership_plan_id)
+        .single();
+      if (planData?.duration_days) {
+        durationDays = planData.duration_days;
+      }
+    }
+    const endDate = new Date(Date.now() + durationDays * 86400000).toISOString();
+
+    // 3. Call approve_payment_transaction RPC
+    const { error: rpcError } = await supabase.rpc('approve_payment_transaction', {
+      p_payment_id: paymentId,
+      p_admin_id: adminId,
+      p_end_date: endDate
     });
 
-    if (error) {
-      console.warn('Supabase error in approvePayment, falling back to mock:', error);
-      const payIndex = MOCK_PAYMENTS.findIndex((p: any) => p.id === paymentId);
-      if (payIndex !== -1) {
-        MOCK_PAYMENTS[payIndex].status = 'approved';
-        MOCK_PAYMENTS[payIndex].verified_at = new Date().toISOString();
-        MOCK_PAYMENTS[payIndex].verified_by = adminId;
-        savePayments(MOCK_PAYMENTS);
-        
-        // Update member status
-        const memId = MOCK_PAYMENTS[payIndex].member_id;
-        const memIndex = MOCK_MEMBERS.findIndex((m: any) => m.id === memId);
-        if (memIndex !== -1) {
-          MOCK_MEMBERS[memIndex].membership_status = 'active';
-          MOCK_MEMBERS[memIndex].is_active = true;
-          // Set membership plan
-          const plan = DUMMY_MEMBERSHIP_PLANS.find((p: any) => p.id === MOCK_PAYMENTS[payIndex].membership_plan_id);
-          MOCK_MEMBERS[memIndex].member_memberships = [{
-            status: 'active',
-            membership_plans: { name: plan?.name || 'Active Gym Pass' },
-            end_date: new Date(Date.now() + (plan?.duration_days || 30) * 86400000).toISOString()
-          }];
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
-          }
-        }
-      }
-      return true;
+    if (rpcError) {
+      console.error('[LIFECYCLE ERROR] RPC approve_payment_transaction failed:', rpcError);
+      throw rpcError;
     }
+
     profileService.clearProfileCache();
     return true;
   },
@@ -285,33 +175,14 @@ export const paymentService = {
       .eq('id', paymentId);
 
     if (paymentError) {
-      console.warn('Supabase error in rejectPayment, falling back to mock:', paymentError);
-      const payIndex = MOCK_PAYMENTS.findIndex((p: any) => p.id === paymentId);
-      if (payIndex !== -1) {
-        MOCK_PAYMENTS[payIndex].status = 'rejected';
-        MOCK_PAYMENTS[payIndex].remarks = notes;
-        MOCK_PAYMENTS[payIndex].verified_at = new Date().toISOString();
-        MOCK_PAYMENTS[payIndex].verified_by = adminId;
-        savePayments(MOCK_PAYMENTS);
-
-        const memId = MOCK_PAYMENTS[payIndex].member_id;
-        const memIndex = MOCK_MEMBERS.findIndex((m: any) => m.id === memId);
-        if (memIndex !== -1) {
-          MOCK_MEMBERS[memIndex].membership_status = 'rejected';
-          MOCK_MEMBERS[memIndex].admin_notes = notes;
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
-          }
-        }
-      }
-      return true;
+      throw paymentError;
     }
     profileService.clearProfileCache();
 
     // 2. Fetch member id from payment
     const { data: payment } = await supabase
       .from('payments')
-      .select('member_id')
+      .select('profile_id')
       .eq('id', paymentId)
       .single();
 
@@ -323,7 +194,7 @@ export const paymentService = {
           membership_status: 'rejected',
           admin_notes: notes 
         })
-        .eq('id', payment.member_id);
+        .eq('id', payment.profile_id);
     }
 
     return true;
@@ -341,12 +212,12 @@ export const paymentService = {
         supabase
           .from('payments')
           .select('amount')
-          .eq('status', 'approved')
+          .eq('status', 'completed')
           .gte('payment_date', today.toISOString()),
         supabase
           .from('payments')
           .select('amount')
-          .eq('status', 'approved')
+          .eq('status', 'completed')
           .gte('payment_date', firstDayOfMonth.toISOString())
       ]);
 
@@ -362,23 +233,8 @@ export const paymentService = {
         month: monthRevenue
       };
     } catch (e) {
-      console.warn('Supabase error in getDashboardRevenue, falling back to mock:', e);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
-      const todayRevenue = MOCK_PAYMENTS
-        .filter((p: any) => p.status === 'approved' && new Date(p.payment_date) >= today)
-        .reduce((sum, p) => sum + Number(p.amount), 0);
-
-      const monthRevenue = MOCK_PAYMENTS
-        .filter((p: any) => p.status === 'approved' && new Date(p.payment_date) >= firstDayOfMonth)
-        .reduce((sum, p) => sum + Number(p.amount), 0);
-
-      return {
-        today: todayRevenue,
-        month: monthRevenue
-      };
+      console.warn('Supabase error in getDashboardRevenue:', e);
+      return { today: 0, month: 0 };
     }
   }
 };

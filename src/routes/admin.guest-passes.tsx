@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { guestPassService, GuestPass } from '../services/guest-pass.service';
 import { useAuth } from '../lib/auth-context';
-import { DUMMY_GUEST_PASSES } from '../lib/dummy-data';
 import QRCode from 'react-qr-code';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -486,7 +485,7 @@ function GuestPassPage() {
     staleTime: 30_000,
   });
 
-  const passes = dbPasses.length > 0 ? dbPasses : (isLoading ? [] : DUMMY_GUEST_PASSES as any[]);
+  const passes = dbPasses.length > 0 ? dbPasses : [];
 
   const { data: stats } = useQuery({
     queryKey: ['guest-pass-stats'],

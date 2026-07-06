@@ -9,72 +9,88 @@ export interface MemberNotification {
   read: boolean;
 }
 
-const NOTIFS_STORAGE_KEY = 'elevate_fitness_member_notifications';
-
-const getInitialNotifications = (): MemberNotification[] => {
-  if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem(NOTIFS_STORAGE_KEY);
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      console.warn('Failed to parse stored notifications', e);
-    }
-  }
-  return [];
-};
-
-let MOCK_NOTIFICATIONS: MemberNotification[] = getInitialNotifications();
-
-const saveNotifications = (notifs: MemberNotification[]) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(NOTIFS_STORAGE_KEY, JSON.stringify(notifs));
-  }
-};
-
 type NotificationListener = (notifications: MemberNotification[]) => void;
 const listeners = new Set<NotificationListener>();
+
+let currentNotifications: MemberNotification[] = [];
 
 export const notificationsService = {
   subscribe(listener: NotificationListener) {
     listeners.add(listener);
-    // Emit initial values
-    listener([...MOCK_NOTIFICATIONS]);
+    listener([...currentNotifications]);
     return () => {
       listeners.delete(listener);
     };
   },
 
   privateNotify() {
-    listeners.forEach(l => l([...MOCK_NOTIFICATIONS]));
+    listeners.forEach(l => l([...currentNotifications]));
   },
 
-  async getNotifications(): Promise<MemberNotification[]> {
-    return [...MOCK_NOTIFICATIONS];
-  },
-
-  addNotification(type: 'class' | 'plan' | 'announcement', title: string, message: string): MemberNotification {
-    const newNotif: MemberNotification = {
-      id: Math.random().toString(36).substring(2) + Date.now().toString(36),
-      type,
-      title,
-      message,
-      date: new Date().toISOString(),
-      read: false,
-    };
-    MOCK_NOTIFICATIONS = [newNotif, ...MOCK_NOTIFICATIONS];
-    saveNotifications(MOCK_NOTIFICATIONS);
+  async loadNotifications(userId: string) {
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('*')
+      .or(`profile_id.eq.${userId},profile_id.is.null`)
+      .order('date', { ascending: false })
+      .limit(50);
+      
+    if (error) {
+      console.error('Failed to load notifications:', error);
+      return;
+    }
+    
+    currentNotifications = (data || []) as MemberNotification[];
     this.privateNotify();
-    return newNotif;
   },
 
-  markAllRead() {
-    MOCK_NOTIFICATIONS = MOCK_NOTIFICATIONS.map(n => ({ ...n, read: true }));
-    saveNotifications(MOCK_NOTIFICATIONS);
+  async getNotifications(userId: string): Promise<MemberNotification[]> {
+    await this.loadNotifications(userId);
+    return [...currentNotifications];
+  },
+
+  async addNotification(userId: string | null, type: 'class' | 'plan' | 'announcement', title: string, message: string) {
+    const { data, error } = await supabase
+      .from('notifications')
+      .insert({
+        profile_id: userId,
+        type,
+        title,
+        message,
+        read: false,
+        date: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Failed to add notification:', error);
+      return null;
+    }
+
+    currentNotifications = [data as MemberNotification, ...currentNotifications];
     this.privateNotify();
+    return data;
+  },
+
+  async markAllRead(userId: string) {
+    // Optimistically update UI
+    currentNotifications = currentNotifications.map(n => ({ ...n, read: true }));
+    this.privateNotify();
+
+    const { error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .or(`profile_id.eq.${userId},profile_id.is.null`)
+      .eq('read', false);
+      
+    if (error) {
+      console.error('Failed to mark all as read:', error);
+      // We could reload here on failure
+    }
   },
 
   getUnreadCount(): number {
-    return MOCK_NOTIFICATIONS.filter(n => !n.read).length;
+    return currentNotifications.filter(n => !n.read).length;
   }
 };

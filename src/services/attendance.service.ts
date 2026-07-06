@@ -20,15 +20,7 @@ export const attendanceService = {
         throw new Error('ALREADY_CHECKED_IN');
       }
       
-      // Fallback for missing backend schema (PGRST200 or similar relation errors)
-      console.warn('Check-in failed due to missing DB schema, mocking success.', error);
-      return {
-        id: `mock-attendance-${Date.now()}`,
-        member_id: memberId,
-        check_in_time: new Date().toISOString(),
-        method,
-        device,
-      };
+      throw error;
     }
 
     return data;
@@ -94,11 +86,22 @@ export const attendanceService = {
     return data || [];
   },
 
+  async getMemberAttendance(memberId: string) {
+    const { data, error } = await supabase
+      .from('attendance')
+      .select('*')
+      .eq('member_id', memberId)
+      .order('check_in_time', { ascending: false })
+      .limit(200);
+
+    if (error) throw error;
+    return data || [];
+  },
+
   async manualCheckOut(attendanceId: string) {
     // Calling the RPC since we need to just set it to now() securely
     const { error } = await supabase.rpc('manual_checkout', { p_attendance_id: attendanceId });
     if (error) {
-      // Fallback if RPC isn't created yet by user
       const { error: updateError } = await supabase
         .from('attendance')
         .update({ check_out_time: new Date().toISOString() })

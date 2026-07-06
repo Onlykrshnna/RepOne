@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { paymentService } from '../services/payment.service';
 import { usePaymentsRealtime } from '../hooks/usePaymentsRealtime';
 import { useAuth } from '../lib/auth-context';
-import { DUMMY_PAYMENTS } from '../lib/dummy-data';
 import { useState } from 'react';
 import { CheckCircle2, XCircle, FileText, Search, Download, ExternalLink, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
@@ -45,7 +44,7 @@ function AdminPaymentsPage() {
   });
 
   // Fall back to rich dummy data when DB is empty
-  const payments = dbPayments && dbPayments.length > 0 ? dbPayments : (isLoading ? [] : DUMMY_PAYMENTS as any[]);
+  const payments = dbPayments && dbPayments.length > 0 ? dbPayments : [];
 
   const { data: revenue } = useQuery({
     queryKey: ['dashboard-revenue'],
@@ -185,7 +184,7 @@ function AdminPaymentsPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
-                            <AvatarFallback className="bg-muted text-[10px]">{payment.profiles?.first_name[0]}</AvatarFallback>
+                            <AvatarFallback className="bg-muted text-[10px]">{payment.profiles?.first_name?.[0] || 'U'}</AvatarFallback>
                           </Avatar>
                           <div className="font-medium">{payment.profiles?.first_name} {payment.profiles?.last_name}</div>
                         </div>

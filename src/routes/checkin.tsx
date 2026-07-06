@@ -1,48 +1,71 @@
-import { createFileRoute, redirect, useNavigate, Link } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useAuth } from '../lib/auth-context';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { attendanceService } from '../services/attendance.service';
 import { dashboardService } from '../services/dashboard.service';
-import { guestPassService, GuestPass } from '../services/guest-pass.service';
-import { CheckCircle2, XCircle, AlertTriangle, Loader2, QrCode } from 'lucide-react';
+import { 
+  CheckCircle2, XCircle, AlertTriangle, Loader2, QrCode, 
+  MonitorSmartphone, Camera, MonitorX, Dumbbell, Flame, CheckCircle, RefreshCcw
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../components/ui/card';
-
-type CheckInSearch = {
-  guestId?: string;
-}
+import { Badge } from '../components/ui/badge';
+import { Html5QrcodeScanner, Html5QrcodeScanType, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const Route = createFileRoute('/checkin')({
-  validateSearch: (search: Record<string, unknown>): CheckInSearch => {
-    return {
-      guestId: search.guestId as string | undefined,
-    }
-  },
   component: CheckInPage,
 });
 
+const GYM_QR_PAYLOAD = 'ELEVATE_FITNESS_CHECKIN';
+
 function CheckInPage() {
-  const { guestId } = Route.useSearch();
   const { user, profile, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
-  const [status, setStatus] = useState<'checking' | 'success' | 'duplicate' | 'error' | 'unauthorized' | 'guest'>('checking');
+  
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const [status, setStatus] = useState<'idle' | 'scanning' | 'checking' | 'success' | 'error'>('idle');
+  const [errorType, setErrorType] = useState<'camera_denied' | 'invalid_qr' | 'membership_pending' | 'membership_expired' | 'duplicate' | 'network_error' | 'unauthorized' | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   
-  const [guestPass, setGuestPass] = useState<GuestPass | null>(null);
-  const [guestStatus, setGuestStatus] = useState<'active' | 'used' | 'expired' | 'invalid' | null>(null);
+  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
-  // We fetch member dashboard data to get daysRemaining and active plan for the success screen
-  const { data: dashboardData, isLoading: isDashboardLoading } = useQuery({
+  // Device detection
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent;
+      const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent) || window.innerWidth <= 768;
+      setIsMobile(isMobileDevice);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Ensure user is logged in
+  useEffect(() => {
+    if (isAuthLoading) return;
+    if (!user) {
+      navigate({ to: '/login', search: { redirect: '/checkin' } });
+    } else if (isMobile && status === 'idle') {
+      setStatus('scanning');
+    }
+  }, [isAuthLoading, user, isMobile, status, navigate]);
+
+  // Mobile-only queries (disabled on desktop)
+  const isEligibleToQuery = isMobile === true && profile !== null && status === 'success';
+
+  const { data: dashboardData } = useQuery({
     queryKey: ['member-dashboard', profile?.id],
     queryFn: () => dashboardService.getMemberDashboard(profile!.id),
-    enabled: !!profile && profile.membership_status === 'active',
+    enabled: isEligibleToQuery,
   });
 
   const { data: streakData } = useQuery({
     queryKey: ['member-streak', profile?.id],
     queryFn: () => attendanceService.getMemberStreak(profile!.id),
-    enabled: !!profile,
+    enabled: isEligibleToQuery,
   });
 
   const checkInMutation = useMutation({
@@ -51,98 +74,134 @@ function CheckInPage() {
       setStatus('success');
     },
     onError: (error: any) => {
+      setStatus('error');
       if (error.message === 'ALREADY_CHECKED_IN') {
-        setStatus('duplicate');
+        setErrorType('duplicate');
+        setErrorMessage('You have already checked in for today.');
+      } else if (!navigator.onLine) {
+        setErrorType('network_error');
+        setErrorMessage('Network connection lost. Please check your internet connection.');
       } else {
-        setStatus('error');
-        setErrorMessage(error.message);
+        setErrorType('network_error');
+        setErrorMessage(error.message || 'An unexpected error occurred during check-in.');
       }
     }
   });
 
-  const markGuestUsedMutation = useMutation({
-    mutationFn: () => guestPassService.markUsed(guestPass!.id, profile!.id),
-    onSuccess: () => {
-      setGuestStatus('used');
-    }
-  });
-
+  // Scanner Initialization
   useEffect(() => {
-    if (isAuthLoading) return;
+    if (status === 'scanning' && isMobile && profile) {
+      // Check membership status first
+      if (profile.membership_status === 'pending') {
+        setStatus('error');
+        setErrorType('membership_pending');
+        setErrorMessage('Your membership is pending approval.');
+        return;
+      }
+      if (profile.membership_status === 'expired' || profile.membership_status === 'suspended' || profile.membership_status === 'rejected') {
+        setStatus('error');
+        setErrorType('membership_expired');
+        setErrorMessage(`Your account is ${profile.membership_status}.`);
+        return;
+      }
+      if (profile.role === 'admin') {
+        setStatus('error');
+        setErrorType('unauthorized');
+        setErrorMessage('Staff and Administrators do not need to check in.');
+        return;
+      }
 
-    // If it's a guest check-in, we don't require login immediately (unless they are an admin scanning it)
-    if (guestId) return;
-
-    if (!user) {
-      // Not logged in -> Redirect to login and return here
-      navigate({ to: '/login', search: { redirect: '/checkin' } });
-      return;
-    }
-
-    if (!profile) return;
-
-    // Check membership status
-    if (profile.membership_status === 'pending') {
-      setStatus('unauthorized');
-      setErrorMessage('Membership pending approval.');
-      return;
-    }
-    if (profile.membership_status === 'suspended') {
-      setStatus('unauthorized');
-      setErrorMessage('Account suspended. Please contact support.');
-      return;
-    }
-    if (profile.membership_status === 'expired') {
-      setStatus('unauthorized');
-      setErrorMessage('Membership expired.');
-      return;
-    }
-    if (profile.membership_status === 'rejected') {
-      setStatus('unauthorized');
-      setErrorMessage('Membership request was rejected.');
-      return;
-    }
-
-    if (profile.role === 'admin' && !guestId) {
-      setStatus('unauthorized');
-      setErrorMessage('Staff and Administrators do not need to check in.');
-      return;
-    }
-
-    // Active member -> Proceed to check-in
-    if (status === 'checking' && !checkInMutation.isPending && !checkInMutation.isSuccess && !checkInMutation.isError && !guestId) {
-      checkInMutation.mutate();
-    }
-  }, [isAuthLoading, user, profile, guestId]);
-
-  useEffect(() => {
-    if (guestId) {
-      guestPassService.getPassById(guestId).then((pass) => {
-        if (!pass) {
-          setStatus('guest');
-          setGuestStatus('invalid');
-        } else {
-          setGuestPass(pass);
-          setStatus('guest');
-          if (pass.is_used) {
-            setGuestStatus('used');
-          } else if (new Date(pass.valid_until) < new Date()) {
-            setGuestStatus('expired');
-          } else {
-            setGuestStatus('active');
+      const initScanner = () => {
+        try {
+          if (!document.getElementById('qr-reader')) return;
+          
+          if (scannerRef.current) {
+            scannerRef.current.clear().catch(console.error);
           }
-        }
-      });
-    }
-  }, [guestId]);
 
-  if (isAuthLoading || (profile?.membership_status === 'active' && isDashboardLoading) || (guestId && status !== 'guest')) {
+          const scanner = new Html5QrcodeScanner(
+            "qr-reader",
+            { 
+              fps: 10, 
+              qrbox: { width: 250, height: 250 },
+              supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+              formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
+            },
+            /* verbose= */ false
+          );
+          
+          scannerRef.current = scanner;
+
+          scanner.render(
+            (decodedText) => {
+              // On successful scan
+              if (decodedText === GYM_QR_PAYLOAD) {
+                scanner.clear();
+                setStatus('checking');
+                checkInMutation.mutate();
+              } else {
+                scanner.clear();
+                setStatus('error');
+                setErrorType('invalid_qr');
+                setErrorMessage('This QR code does not belong to Elevate Fitness. Please scan the front desk code.');
+              }
+            },
+            (error) => {
+              // Ignore standard scan errors (e.g. no QR found yet)
+            }
+          );
+        } catch (err) {
+          console.error("Camera permission error or scanner init failed:", err);
+          setStatus('error');
+          setErrorType('camera_denied');
+          setErrorMessage('Camera access was denied or is unavailable. Please check your browser permissions.');
+        }
+      };
+
+      // Slight delay to ensure DOM element exists
+      setTimeout(initScanner, 100);
+
+      return () => {
+        if (scannerRef.current) {
+          scannerRef.current.clear().catch(console.error);
+          scannerRef.current = null;
+        }
+      };
+    }
+  }, [status, isMobile, profile]);
+
+  const resetScanner = () => {
+    setStatus('scanning');
+    setErrorType(null);
+    setErrorMessage('');
+  };
+
+  if (isAuthLoading || isMobile === null) {
     return (
-      <div className="min-h-screen bg-card flex items-center justify-center p-4">
-        <div className="flex flex-col items-center gap-4 text-muted-foreground">
-          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-          <p>Processing Check-in...</p>
-        </div>
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+      </div>
+    );
+  }
+
+  // DESKTOP BLOCKER
+  if (!isMobile) {
+    return (
+      <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 bg-background">
+        <Card className="max-w-md w-full border-border shadow-xl text-center">
+          <CardHeader className="pb-4">
+            <div className="mx-auto bg-indigo-500/10 p-4 rounded-full mb-4 w-20 h-20 flex items-center justify-center">
+              <MonitorX className="h-10 w-10 text-indigo-500" />
+            </div>
+            <CardTitle className="text-2xl font-black">Mobile Check-In Only</CardTitle>
+            <CardDescription className="text-base mt-2">
+              For security and accuracy, the check-in scanner is only available on mobile devices.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-muted-foreground pb-8">
+            Please log into Elevate Fitness on your smartphone and navigate to the Check-In page to scan the gym's QR code at the front desk.
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -150,231 +209,194 @@ function CheckInPage() {
   // Helper to format success time
   const now = new Date();
   const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const dateString = now.toLocaleDateString('en-IN', { weekday: 'long', month: 'short', day: 'numeric' });
+
+  // Weekly split extraction for Today's Workout
+  let todayWorkout = 'Rest Day';
+  if (profile) {
+    try {
+      const saved = localStorage.getItem(`weekly_split_${profile.id}`);
+      if (saved) {
+        const split = JSON.parse(saved);
+        const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][now.getDay()];
+        if (split[dayName]) {
+          todayWorkout = split[dayName];
+        }
+      }
+    } catch(e) {}
+  }
 
   return (
-    <div className="min-h-screen bg-card flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-card border-border text-foreground shadow-2xl">
+    <div className="min-h-[100dvh] bg-background flex flex-col items-center pt-8 pb-16 px-4">
+      <AnimatePresence mode="wait">
         
-        {status === 'guest' && (
-          <>
-            <CardHeader className="text-center pb-2">
-              <div className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4 border ${
-                guestStatus === 'active' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' :
-                guestStatus === 'used' ? 'bg-blue-500/10 border-blue-500/20 text-blue-500' :
-                'bg-red-500/10 border-red-500/20 text-red-500'
-              }`}>
-                {guestStatus === 'active' ? <QrCode className="h-8 w-8" /> : 
-                 guestStatus === 'used' ? <CheckCircle2 className="h-8 w-8" /> : 
-                 <XCircle className="h-8 w-8" />}
-              </div>
-              <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
-                Guest Verification
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center pt-2 space-y-4">
-              {guestStatus === 'invalid' ? (
-                <p className="text-red-500 font-medium">This guest pass does not exist.</p>
-              ) : (
-                <>
-                  <div className="bg-background border border-border rounded-lg p-4 space-y-2 text-left">
-                    <p className="text-sm text-muted-foreground">Guest Name</p>
-                    <p className="font-bold text-lg text-foreground">{guestPass?.guest_name}</p>
-                    <div className="h-px w-full bg-border my-2" />
-                    <p className="text-sm text-muted-foreground">Pass Code</p>
-                    <p className="font-mono text-indigo-600 font-bold">{guestPass?.pass_code}</p>
-                    <div className="h-px w-full bg-border my-2" />
-                    <p className="text-sm text-muted-foreground">Valid Until</p>
-                    <p className="font-medium">{new Date(guestPass?.valid_until!).toLocaleString()}</p>
-                  </div>
-
-                  {guestStatus === 'used' && (
-                    <p className="text-blue-500 font-medium bg-blue-50 p-2 rounded">
-                      This pass has already been used.
-                    </p>
-                  )}
-                  {guestStatus === 'expired' && (
-                    <p className="text-red-500 font-medium bg-red-50 p-2 rounded">
-                      This pass has expired.
-                    </p>
-                  )}
-                  {guestStatus === 'active' && profile?.role === 'admin' && (
-                    <Button 
-                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-6 text-lg font-bold"
-                      onClick={() => markGuestUsedMutation.mutate()}
-                      disabled={markGuestUsedMutation.isPending}
-                    >
-                      {markGuestUsedMutation.isPending ? 'Marking...' : 'Mark Used & Allow Entry'}
-                    </Button>
-                  )}
-                  {guestStatus === 'active' && profile?.role !== 'admin' && (
-                    <p className="text-amber-600 font-medium bg-amber-50 p-2 rounded text-sm">
-                      Please show this screen to a staff member to scan your QR code.
-                    </p>
-                  )}
-                </>
-              )}
-            </CardContent>
-            <CardFooter>
-              <Button asChild className="w-full bg-background text-foreground hover:bg-muted border border-border">
-                <Link to="/">Return to Home</Link>
-              </Button>
-            </CardFooter>
-          </>
-        )}
-
-        {status === 'success' && (
-          <>
-            <CardHeader className="text-center pb-2">
-              <div className="mx-auto w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 border border-emerald-500/20">
-                 <CheckCircle2 className="h-8 w-8 text-emerald-500" />
-              </div>
-              <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
-                Check-in Successful
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center pt-2 space-y-6">
-              <div>
-                <p className="text-muted-foreground">Welcome back,</p>
-                <p className="text-xl font-medium text-foreground">{profile?.first_name} {profile?.last_name}</p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-background border border-border rounded-lg p-3">
-                  <p className="text-xs text-muted-foreground/75 uppercase tracking-wider mb-1">Time</p>
-                  <p className="font-medium">{timeString}</p>
-                </div>
-                <div className="bg-background border border-border rounded-lg p-3">
-                  <p className="text-xs text-muted-foreground/75 uppercase tracking-wider mb-1">Streak</p>
-                  <p className="font-medium text-indigo-600">{streakData?.currentStreak || 1} Days 🔥</p>
+        {/* SCANNING STATE */}
+        {status === 'scanning' && (
+          <motion.div 
+            key="scanning"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="w-full max-w-sm flex flex-col items-center"
+          >
+            <div className="text-center mb-8 space-y-2">
+              <h1 className="text-2xl font-black text-foreground">Scan to Check In</h1>
+              <p className="text-muted-foreground text-sm">Align the front desk QR code within the frame to record your attendance.</p>
+            </div>
+            
+            <div className="w-full aspect-square bg-card rounded-3xl overflow-hidden border-2 border-indigo-500/30 shadow-2xl shadow-indigo-500/10 relative">
+              <div id="qr-reader" className="w-full h-full [&>div]:border-none [&_video]:object-cover [&>div>div:first-child]:!hidden" />
+              {/* Overlay targeting crosshairs */}
+              <div className="absolute inset-0 pointer-events-none border-[40px] border-background/80 flex items-center justify-center">
+                <div className="w-64 h-64 border-2 border-indigo-500 rounded-xl relative">
+                  <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-indigo-500" />
+                  <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-indigo-500" />
+                  <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-indigo-500" />
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-indigo-500" />
                 </div>
               </div>
+            </div>
 
-              {dashboardData?.activePlan && (
-                <div className="text-sm text-muted-foreground/75">
-                   Plan expires in <strong className="text-foreground/80">{dashboardData.daysRemaining} days</strong>
-                </div>
-              )}
-
-              {/* Weekly Split Focus */}
-              {(() => {
-                const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                const currentDay = DAYS[new Date().getDay()];
-                let splitData: Record<string, string> = {
-                  Sunday: 'Rest', Monday: 'Chest & Triceps', Tuesday: 'Back & Biceps', 
-                  Wednesday: 'Legs & Core', Thursday: 'Rest', Friday: 'Shoulders & Arms', Saturday: 'Cardio & Abs'
-                };
-                
-                try {
-                  const saved = localStorage.getItem(`weekly_split_${profile?.id}`);
-                  if (saved) {
-                    splitData = JSON.parse(saved);
-                  }
-                } catch (e) {}
-
-                const todaysFocus = splitData[currentDay];
-
-                return (
-                  <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-4 mt-4 text-left">
-                    <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">
-                      Today's Focus ({currentDay})
-                    </p>
-                    <p className="font-bold text-indigo-900 text-lg flex items-center gap-2">
-                      💪 {todaysFocus}
-                    </p>
-                  </div>
-                );
-              })()}
-
-              <div className="p-4 bg-background rounded-lg italic text-muted-foreground text-sm border border-border">
-                "The only bad workout is the one that didn't happen."
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button asChild className="w-full bg-indigo-600 text-white hover:bg-gold/90">
-                <Link to="/dashboard">Go to Dashboard</Link>
+            <div className="mt-8 flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground">
+              <Camera className="h-4 w-4" /> Camera active
+            </div>
+            {/* Dev helper to simulate scan */}
+            {import.meta.env.DEV && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-6"
+                onClick={() => {
+                  if (scannerRef.current) scannerRef.current.clear();
+                  setStatus('checking');
+                  checkInMutation.mutate();
+                }}
+              >
+                Simulate Successful Scan (Dev)
               </Button>
-            </CardFooter>
-          </>
+            )}
+          </motion.div>
         )}
 
-        {status === 'duplicate' && (
-          <>
-            <CardHeader className="text-center pb-2">
-              <div className="mx-auto w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mb-4 border border-amber-500/20">
-                 <CheckCircle2 className="h-8 w-8 text-amber-500" />
-              </div>
-              <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
-                Already Checked In
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center pt-2 space-y-4">
-              <p className="text-muted-foreground">
-                You have already checked in today at {timeString}. Have a great workout!
-              </p>
-              {streakData && (
-                 <p className="text-sm text-indigo-600 font-medium">Current Streak: {streakData.currentStreak} Days 🔥</p>
-              )}
-            </CardContent>
-            <CardFooter>
-              <Button asChild className="w-full bg-background text-foreground hover:bg-muted border border-border">
-                <Link to="/dashboard">Go to Dashboard</Link>
-              </Button>
-            </CardFooter>
-          </>
+        {/* CHECKING STATE */}
+        {status === 'checking' && (
+          <motion.div 
+            key="checking"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-20"
+          >
+            <Loader2 className="h-12 w-12 animate-spin text-indigo-500 mb-6" />
+            <h2 className="text-xl font-bold">Verifying Membership...</h2>
+            <p className="text-muted-foreground text-sm mt-2">Processing your check-in securely.</p>
+          </motion.div>
         )}
 
-        {status === 'unauthorized' && (
-          <>
-            <CardHeader className="text-center pb-2">
-              <div className="mx-auto w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4 border border-red-500/20">
-                 <AlertTriangle className="h-8 w-8 text-red-500" />
-              </div>
-              <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
-                Access Denied
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center pt-2">
-              <p className="text-muted-foreground mb-6">{errorMessage}</p>
-              {profile?.membership_status === 'expired' && (
-                <Button asChild className="w-full bg-indigo-600 text-white hover:bg-gold/90">
-                  <Link to="/buy-membership">Renew Membership</Link>
-                </Button>
-              )}
-              {profile?.membership_status === 'pending' && (
-                <Button asChild variant="outline" className="w-full border-border hover:bg-muted">
-                  <Link to="/dashboard">Go to Dashboard</Link>
-                </Button>
-              )}
-              {profile?.role === 'admin' && (
-                <Button asChild className="w-full bg-indigo-600 text-white hover:bg-indigo-700 mt-4">
-                  <Link to="/admin/dashboard">Go to Admin Dashboard</Link>
-                </Button>
-              )}
-            </CardContent>
-          </>
-        )}
-
+        {/* ERROR STATE */}
         {status === 'error' && (
-          <>
-             <CardHeader className="text-center pb-2">
-              <div className="mx-auto w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4 border border-red-500/20">
-                 <XCircle className="h-8 w-8 text-red-500" />
-              </div>
-              <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
-                Check-in Failed
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center pt-2">
-              <p className="text-muted-foreground text-sm">{errorMessage}</p>
-            </CardContent>
-            <CardFooter>
-              <Button asChild variant="outline" className="w-full border-border hover:bg-muted">
-                <Link to="/dashboard">Go to Dashboard</Link>
-              </Button>
-            </CardFooter>
-          </>
+          <motion.div 
+            key="error"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full max-w-sm"
+          >
+            <Card className="border-red-900/30 shadow-xl shadow-red-900/10 overflow-hidden relative">
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-red-500" />
+              <CardContent className="pt-10 pb-8 px-6 flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mb-6">
+                  <AlertTriangle className="h-8 w-8" />
+                </div>
+                <h2 className="text-2xl font-black text-foreground mb-2">
+                  {errorType === 'duplicate' ? 'Already Checked In' : 'Check-In Failed'}
+                </h2>
+                <p className="text-muted-foreground text-sm mb-8">
+                  {errorMessage}
+                </p>
+                <Button 
+                  onClick={resetScanner} 
+                  className="w-full bg-foreground text-background hover:bg-foreground/90"
+                  size="lg"
+                >
+                  <RefreshCcw className="h-4 w-4 mr-2" /> Try Again
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
         )}
-      </Card>
+
+        {/* SUCCESS STATE */}
+        {status === 'success' && (
+          <motion.div 
+            key="success"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full max-w-sm"
+          >
+            <Card className="border-emerald-900/30 shadow-xl shadow-emerald-900/10 overflow-hidden relative bg-gradient-to-b from-emerald-950/20 to-card">
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-emerald-500" />
+              
+              <CardHeader className="text-center pb-2 pt-8">
+                <motion.div 
+                  initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
+                  className="mx-auto w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/30 text-emerald-50"
+                >
+                  <CheckCircle className="h-10 w-10" />
+                </motion.div>
+                <CardTitle className="text-3xl font-black text-foreground tracking-tight">Access Granted</CardTitle>
+                <p className="text-emerald-500 font-bold uppercase tracking-wider text-xs mt-2">Active Member</p>
+              </CardHeader>
+              
+              <CardContent className="pt-6 pb-8 px-6 space-y-6">
+                <div className="bg-background/50 border border-border rounded-xl p-5 space-y-4 shadow-inner">
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Member</p>
+                    <p className="font-bold text-lg text-foreground">{profile?.first_name} {profile?.last_name}</p>
+                  </div>
+                  
+                  <div className="h-px w-full bg-border" />
+                  
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Time</p>
+                      <p className="font-bold text-foreground">{timeString}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Date</p>
+                      <p className="font-bold text-foreground text-sm">{dateString}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="h-px w-full bg-border" />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold flex items-center gap-1">
+                        <Flame className="h-3 w-3 text-orange-500" /> Streak
+                      </p>
+                      <p className="font-bold text-foreground">{streakData?.currentStreak || 1} Days</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold flex items-center gap-1">
+                        <Dumbbell className="h-3 w-3 text-indigo-500" /> Today
+                      </p>
+                      <p className="font-bold text-foreground truncate">{todayWorkout}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={() => navigate({ to: '/dashboard' })}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20"
+                  size="lg"
+                >
+                  Go to Dashboard
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+      </AnimatePresence>
     </div>
   );
 }

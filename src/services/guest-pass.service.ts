@@ -58,24 +58,7 @@ export const guestPassService = {
       .select(`*, profiles:generated_by ( first_name, last_name, email )`)
       .single();
 
-    if (error) {
-      console.warn('Supabase error in createPass, falling back to mock:', error);
-      const mockPass: GuestPass = {
-        id: `mock-${Date.now()}`,
-        generated_by: dto.generated_by,
-        guest_name: dto.guest_name,
-        guest_phone: dto.guest_phone,
-        guest_email: dto.guest_email,
-        pass_code: generatePassCode(),
-        valid_from: now.toISOString(),
-        valid_until: validUntil.toISOString(),
-        is_used: false,
-        notes: dto.notes,
-        created_at: now.toISOString(),
-      };
-      MOCK_PASSES = [mockPass, ...MOCK_PASSES];
-      return mockPass;
-    }
+    if (error) throw error;
     return data;
   },
 
@@ -86,11 +69,8 @@ export const guestPassService = {
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (error) {
-      console.warn('Supabase error in getPasses, falling back to mock:', error);
-      return [...MOCK_PASSES];
-    }
-    return data || [...MOCK_PASSES];
+    if (error) throw error;
+    return data || [];
   },
 
   async getPassByCode(code: string): Promise<GuestPass | null> {
@@ -100,10 +80,7 @@ export const guestPassService = {
       .eq('pass_code', code.toUpperCase())
       .single();
 
-    if (error) {
-      console.warn('Supabase error in getPassByCode, falling back to mock:', error);
-      return MOCK_PASSES.find(p => p.pass_code === code.toUpperCase()) || null;
-    }
+    if (error) return null;
     return data;
   },
 
@@ -114,10 +91,7 @@ export const guestPassService = {
       .eq('id', id)
       .single();
 
-    if (error) {
-      console.warn('Supabase error in getPassById, falling back to mock:', error);
-      return MOCK_PASSES.find(p => p.id === id) || null;
-    }
+    if (error) return null;
     return data;
   },
 
@@ -133,15 +107,7 @@ export const guestPassService = {
       .select()
       .single();
 
-    if (error) {
-      console.warn('Supabase error in markUsed, falling back to mock:', error);
-      MOCK_PASSES = MOCK_PASSES.map((p) =>
-        p.id === passId ? { ...p, is_used: true, used_at: new Date().toISOString(), used_by_staff: staffId } : p
-      );
-      const updatedPass = MOCK_PASSES.find((p) => p.id === passId);
-      if (!updatedPass) throw new Error('Pass not found');
-      return updatedPass;
-    }
+    if (error) throw error;
     return data;
   },
 
@@ -151,11 +117,8 @@ export const guestPassService = {
       .delete()
       .eq('id', passId);
 
-    if (error) {
-      console.warn('Supabase error in deletePass, falling back to mock:', error);
-      MOCK_PASSES = MOCK_PASSES.filter(p => p.id !== passId);
-      return;
-    }
+    if (error) throw error;
+    return;
   },
 
   async getStats(): Promise<{ total: number; used: number; active: number; expired: number }> {
@@ -163,8 +126,7 @@ export const guestPassService = {
       .from('guest_passes')
       .select('is_used, valid_until');
 
-    const sourceData = (error || !data) ? MOCK_PASSES : data;
-
+    const sourceData = data || [];
     const now = new Date();
     const total = sourceData.length;
     const used = sourceData.filter(p => p.is_used).length;
@@ -174,6 +136,3 @@ export const guestPassService = {
     return { total, used, active, expired };
   },
 };
-
-// Mock data for when the table doesn't exist yet
-let MOCK_PASSES: GuestPass[] = [];

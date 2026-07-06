@@ -2,10 +2,9 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { attendanceService } from '../services/attendance.service';
 import { bookingsService } from '../services/bookings.service';
+import { useState } from 'react';
 import { formatTime12h } from '../services/classes.utils';
 import { useAttendanceRealtime } from '../hooks/useAttendanceRealtime';
-import { DUMMY_ATTENDANCE } from '../lib/dummy-data';
-import { useState } from 'react';
 import { CalendarCheck, Download, Search, CheckCircle2, User, Clock, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -35,7 +34,7 @@ function AdminAttendancePage() {
 
   const todayAttendance = rawTodayAttendance && rawTodayAttendance.length > 0
     ? rawTodayAttendance
-    : (todayLoading ? [] : DUMMY_ATTENDANCE as any[]);
+    : [];
 
   const { data: classBookings = [], isLoading: classLoading } = useQuery({
     queryKey: ['today-class-attendance'],
@@ -66,7 +65,7 @@ function AdminAttendancePage() {
 
   const history = rawHistory && rawHistory.length > 0
     ? rawHistory
-    : (historyLoading ? [] : DUMMY_ATTENDANCE as any[]);
+    : [];
 
 
   const checkOutMutation = useMutation({
@@ -183,7 +182,7 @@ function AdminAttendancePage() {
                             <div className="flex items-center gap-3">
                               <Avatar className="h-8 w-8 border border-border">
                                 <AvatarImage src={record.profiles?.avatar_url} />
-                                <AvatarFallback className="bg-muted text-foreground/80 text-xs">{record.profiles?.first_name[0]}</AvatarFallback>
+                                 <AvatarFallback className="bg-muted text-foreground/80 text-xs">{record.profiles?.first_name?.[0] || 'U'}</AvatarFallback>
                               </Avatar>
                               <div>
                                 <div className="font-medium">{record.profiles?.first_name} {record.profiles?.last_name}</div>
@@ -357,7 +356,7 @@ function AdminAttendancePage() {
                   type="date"
                   className="bg-background border-border text-foreground w-full sm:w-auto "
                   value={dateRange.end}
-                  onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+                  onChange={(e) => setDateRange((prev: any) => ({ ...prev, end: e.target.value }))}
                 />
               </div>
 

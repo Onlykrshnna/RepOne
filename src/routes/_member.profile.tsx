@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useAuth } from '../lib/auth-context';
 import { membersService } from '../services/members.service';
+import { supabase } from '../lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { User, Phone, MapPin, AlertCircle, Calendar, Shield, Save, Loader2 } from 'lucide-react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/_member/profile')({
   component: ProfilePage,
@@ -16,19 +17,51 @@ export const Route = createFileRoute('/_member/profile')({
 
 function ProfilePage() {
   const { profile } = useAuth();
-  const queryClient = useQueryClient();
-  
   if (!profile) return null;
+  return <ProfileForm profile={profile} />;
+}
+
+function ProfileForm({ profile }: { profile: any }) {
+  const queryClient = useQueryClient();
+
+  const { data: latestProfile } = useQuery({
+    queryKey: ['member-profile', profile.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', profile.id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const displayProfile = latestProfile || profile;
 
   const [formData, setFormData] = useState({
-    first_name: profile.first_name || '',
-    last_name: profile.last_name || '',
-    phone: profile.phone || '',
-    address: profile.address || '',
-    emergency_contact: profile.emergency_contact || '',
-    date_of_birth: profile.date_of_birth || '',
-    gender: profile.gender || '',
+    first_name: '',
+    last_name: '',
+    phone: '',
+    address: '',
+    emergency_contact: '',
+    date_of_birth: '',
+    gender: '',
   });
+
+  useEffect(() => {
+    if (displayProfile) {
+      setFormData({
+        first_name: displayProfile.first_name || '',
+        last_name: displayProfile.last_name || '',
+        phone: displayProfile.phone || '',
+        address: displayProfile.address || '',
+        emergency_contact: displayProfile.emergency_contact || '',
+        date_of_birth: displayProfile.date_of_birth || '',
+        gender: displayProfile.gender || '',
+      });
+    }
+  }, [displayProfile]);
 
   const [message, setMessage] = useState<{type: 'success'|'error', text: string} | null>(null);
 
@@ -36,7 +69,7 @@ function ProfilePage() {
     mutationFn: (data: typeof formData) => membersService.updateMember(profile.id, data),
     onSuccess: () => {
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
-      queryClient.invalidateQueries({ queryKey: ['member', profile.id] });
+      queryClient.invalidateQueries({ queryKey: ['member-profile', profile.id] });
       setTimeout(() => setMessage(null), 3000);
     },
     onError: (error: any) => {
@@ -67,20 +100,20 @@ function ProfilePage() {
           <Card className="bg-card border-border shadow-sm text-center pt-6 transition-all duration-300">
             <CardContent className="flex flex-col items-center">
               <div className="w-24 h-24 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-3xl font-bold mb-4 shadow-sm border-4 border-white transition-all duration-300 hover:scale-105">
-                {profile?.first_name?.[0] || 'U'}{profile?.last_name?.[0] || ''}
+                {displayProfile?.first_name?.[0] || 'U'}{displayProfile?.last_name?.[0] || ''}
               </div>
-              <h3 className="text-xl font-bold text-foreground">{profile?.first_name || 'User'} {profile?.last_name || ''}</h3>
-              <p className="text-muted-foreground text-sm mb-4">{profile?.email}</p>
+              <h3 className="text-xl font-bold text-foreground">{displayProfile?.first_name || ''} {displayProfile?.last_name || ''}</h3>
+              <p className="text-muted-foreground text-sm mb-4">{displayProfile?.email}</p>
               
               <Badge 
                 variant="outline" 
                 className={`uppercase tracking-wider font-semibold ${
-                  profile.membership_status === 'active' 
+                  displayProfile.membership_status === 'active' 
                     ? 'border-emerald-500 text-emerald-600 bg-emerald-50' 
                     : 'border-indigo-600 text-indigo-600 bg-indigo-50'
                 }`}
               >
-                {profile.membership_status}
+                {displayProfile.membership_status}
               </Badge>
             </CardContent>
           </Card>

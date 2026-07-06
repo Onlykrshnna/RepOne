@@ -35,47 +35,14 @@ export const profileService = {
         .eq('id', userId)
         .single();
       
-      let parsedProfile = data as Profile;
-      
-      if (error) {
-        console.warn('Failed to fetch profile from database, falling back to auth metadata', error);
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user && user.id === userId) {
-          const meta = user.user_metadata;
-          parsedProfile = {
-            id: user.id,
-            email: user.email || '',
-            role: (meta?.role || 'member') as 'member' | 'admin',
-            first_name: meta?.first_name || '',
-            last_name: meta?.last_name || '',
-            username: meta?.username || user.email?.split('@')[0] || 'member',
-            membership_status: meta?.membership_status || 'unpaid',
-            created_at: user.created_at,
-          };
-        } else {
-          return null;
-        }
-      } else {
-        // Enforce fallback metadata integration if columns in database are empty
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user && user.id === userId) {
-          const meta = user.user_metadata;
-          if (meta) {
-            if (!parsedProfile.username && meta.username) parsedProfile.username = meta.username;
-            if (!parsedProfile.first_name && meta.first_name) parsedProfile.first_name = meta.first_name;
-            if (!parsedProfile.last_name && meta.last_name) parsedProfile.last_name = meta.last_name;
-          }
-        }
-      }
-      
-      // Split full_name for UI compatibility if first/last aren't present
-      if (parsedProfile.full_name && (!parsedProfile.first_name || !parsedProfile.last_name)) {
-        const parts = parsedProfile.full_name.split(' ');
-        parsedProfile.first_name = parts[0] || '';
-        parsedProfile.last_name = parts.slice(1).join(' ') || '';
+      if (error || !data) {
+        console.error('Failed to fetch profile from database. Profile missing or error:', error);
+        return null;
       }
 
-      // Grant Admin access to specific test credentials
+      const parsedProfile = data as Profile;
+
+      // Grant Admin access to specific credentials if needed, or remove if you want to rely on DB role
       if (parsedProfile.email === 'krpris9211@gmail.com' || parsedProfile.email === 'krpris1922@gmail.com') {
         parsedProfile.role = 'admin';
       }
@@ -83,7 +50,7 @@ export const profileService = {
       cachedProfile = parsedProfile;
       return cachedProfile;
     } catch (e) {
-      console.warn('Error fetching profile', e);
+      console.error('Error fetching profile', e);
       return null;
     }
   },

@@ -11,6 +11,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Skeleton } from '../components/ui/skeleton';
 import { Button } from '../components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../components/ui/dialog';
+import { Input } from '../components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import { Search } from 'lucide-react';
 import { membersService } from '../services/members.service';
 import { membershipService } from '../services/membership.service';
 import { toast } from 'sonner';
@@ -21,6 +26,8 @@ export const Route = createFileRoute('/admin/dashboard')({
 
 function AdminDashboardPage() {
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
+  const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
+  const [memberSearch, setMemberSearch] = useState('');
 
   useEffect(() => {
     // Seed database plans if they are empty
@@ -40,6 +47,22 @@ function AdminDashboardPage() {
     queryKey: ['class-dashboard-metrics'],
     queryFn: bookingsService.getClassDashboardMetrics,
   });
+
+  const { data: allMembers, isLoading: isMembersLoading } = useQuery({
+    queryKey: ['all-members'],
+    queryFn: () => membersService.getMembers(),
+    enabled: isMembersModalOpen,
+  });
+
+  const filteredMembers = allMembers?.filter(m => {
+    const searchLower = memberSearch.toLowerCase();
+    return (
+      (m.username || '').toLowerCase().includes(searchLower) ||
+      m.email.toLowerCase().includes(searchLower) ||
+      m.first_name.toLowerCase().includes(searchLower) ||
+      (m.last_name || '').toLowerCase().includes(searchLower)
+    );
+  }) || [];
 
   const recentMembers = metrics?.recentMembers?.length ? metrics.recentMembers : [];
   const totalMembers = metrics?.totalMembers ?? 0;
@@ -140,7 +163,7 @@ function AdminDashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Total Members */}
-        <Link to="/admin/members" search={{ status: 'active' }} className="group block">
+        <div onClick={() => setIsMembersModalOpen(true)} className="group block cursor-pointer">
           <Card className="bg-card border-border text-foreground overflow-hidden relative h-full hover:border-indigo-500/50 hover:bg-muted/50 transition-all duration-300">
             <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
@@ -151,7 +174,7 @@ function AdminDashboardPage() {
               <div className="text-3xl font-bold">{totalMembers}</div>
             </CardContent>
           </Card>
-        </Link>
+        </div>
 
         {/* Today's Check-ins */}
         <Card className="bg-card border-border text-foreground overflow-hidden relative group">
@@ -345,6 +368,88 @@ function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
+      <Dialog open={isMembersModalOpen} onOpenChange={setIsMembersModalOpen}>
+        <DialogContent className="max-w-4xl bg-card border-border text-foreground">
+          <DialogHeader>
+            <DialogTitle>Total Members Directory</DialogTitle>
+            <DialogDescription className="text-muted-foreground">Search and view all registered members.</DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center gap-2 mb-4 mt-2">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search by username, email, first or last name..." 
+              value={memberSearch}
+              onChange={(e) => setMemberSearch(e.target.value)}
+              className="bg-background border-border text-foreground focus-visible:ring-indigo-500"
+            />
+          </div>
+          <div className="max-h-[60vh] overflow-y-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="text-muted-foreground">Member</TableHead>
+                  <TableHead className="text-muted-foreground">Username</TableHead>
+                  <TableHead className="text-muted-foreground">Status</TableHead>
+                  <TableHead className="text-muted-foreground">Plan</TableHead>
+                  <TableHead className="text-muted-foreground">Join Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isMembersLoading ? (
+                  <TableRow className="border-border">
+                    <TableCell colSpan={5} className="text-center py-8">
+                      <div className="flex justify-center"><Activity className="h-6 w-6 animate-spin text-indigo-500" /></div>
+                    </TableCell>
+                  </TableRow>
+                ) : filteredMembers.length === 0 ? (
+                  <TableRow className="border-border">
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                      No members found matching your search.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredMembers.map((m) => {
+                    const activeMembership = m.members?.find((mem: any) => mem.status === 'active');
+                    const planName = activeMembership?.membership_plans?.name || 'No Active Plan';
+                    const joinDate = activeMembership?.join_date ? new Date(activeMembership.join_date).toLocaleDateString() : 'N/A';
+                    
+                    return (
+                      <TableRow key={m.id} className="border-border hover:bg-muted/50">
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-8 w-8 border border-border">
+                              <AvatarImage src={m.avatar_url} />
+                              <AvatarFallback className="bg-background text-xs">{m.first_name?.[0] || 'M'}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{m.first_name} {m.last_name}</span>
+                              <span className="text-xs text-muted-foreground">{m.email}</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground font-mono text-sm">
+                          {m.username ? `@${m.username}` : '--'}
+                        </TableCell>
+                        <TableCell>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            m.membership_status === 'active' ? 'bg-emerald-500/10 text-emerald-500' :
+                            m.membership_status === 'pending' ? 'bg-amber-500/10 text-amber-500' :
+                            'bg-slate-500/10 text-slate-400'
+                          }`}>
+                            {m.membership_status}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">{planName}</TableCell>
+                        <TableCell className="text-muted-foreground text-sm">{joinDate}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

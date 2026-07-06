@@ -121,7 +121,7 @@ function MembersPage() {
               </TableRow>
             ) : (
               members?.map((member) => {
-                const activeMembership = member.member_memberships?.find((m: any) => m.status === 'active');
+                const activeMembership = member.members?.find((m: any) => m.status === 'active');
                 return (
                   <TableRow key={member.id} className="border-border hover:bg-muted/50">
                     <TableCell>
@@ -129,7 +129,7 @@ function MembersPage() {
                         <Avatar className="h-10 w-10 border border-border">
                           <AvatarImage src={member.avatar_url} />
                           <AvatarFallback className="bg-muted text-foreground/80">
-                            {member.first_name[0]}{member.last_name[0]}
+                            {member.first_name?.[0] || 'M'}{member.last_name?.[0] || ''}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">

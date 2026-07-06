@@ -136,6 +136,7 @@ export const classesService = {
     if (error) throw error;
     
     notificationsService.addNotification(
+      null,
       'class',
       `New Class: ${classData.title}`,
       `A new class "${classData.title}" has been scheduled. Book your spot now!`
@@ -155,6 +156,7 @@ export const classesService = {
     if (error) throw error;
 
     notificationsService.addNotification(
+      null,
       'class',
       `Class Updated: ${data.title}`,
       `The class "${data.title}" schedule or details have been updated.`
@@ -194,6 +196,7 @@ export const classesService = {
       const classObj = await this.getClassById(id);
       if (classObj) {
         notificationsService.addNotification(
+          null,
           'class',
           `Class Cancelled: ${classObj.title}`,
           `We regret to inform you that the class "${classObj.title}" has been cancelled.`

@@ -13,21 +13,15 @@ export const Route = createFileRoute('/_member/attendance')({
 
 function MemberAttendancePage() {
   const { profile } = useAuth();
-
   if (!profile) return null;
+  return <MemberAttendanceBody profile={profile} />;
+}
 
-  const { data: dbCheckins, isLoading } = useQuery({
+function MemberAttendanceBody({ profile }: { profile: any }) {
+  const { data: checkins = [], isLoading } = useQuery({
     queryKey: ['member-attendance', profile.id],
-    queryFn: () => (attendanceService as any).getMemberAttendance ? (attendanceService as any).getMemberAttendance(profile.id) : [],
+    queryFn: () => attendanceService.getMemberAttendance(profile.id),
   });
-
-  const dummyCheckins = [
-    { id: '1', check_in_time: new Date().toISOString(), method: 'qr' },
-    { id: '2', check_in_time: new Date(Date.now() - 86400000 * 2).toISOString(), method: 'manual' },
-    { id: '3', check_in_time: new Date(Date.now() - 86400000 * 5).toISOString(), method: 'qr' },
-  ];
-
-  const checkins = dbCheckins && dbCheckins.length > 0 ? dbCheckins : dummyCheckins;
 
   if (isLoading) {
     return (

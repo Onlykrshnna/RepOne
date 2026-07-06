@@ -25,37 +25,6 @@ export const Route = createFileRoute('/_member/buy-membership')({
   component: BuyMembershipPage,
 });
 
-const MOCK_PLANS = [
-  {
-    id: 'mock-basic',
-    name: 'Basic Pass',
-    description: 'Perfect for casual gym goers looking to stay active.',
-    price: 1999,
-    duration_days: 30,
-    features: ['Access to gym floor & weights', 'Standard locker access', '1 Trainer consult / month', 'Free high-speed WiFi'],
-    color: '#6366F1'
-  },
-  {
-    id: 'mock-elite',
-    name: 'Elite Gym Pass',
-    description: 'Our most popular option for dedicated fitness enthusiasts.',
-    price: 2999,
-    duration_days: 90,
-    features: ['24/7 Gym access', 'Unlimited fitness group classes', 'Free sauna & steam rooms', 'Personalized nutrition guide', '4 Trainer consults / month'],
-    color: '#4F46E5',
-    isFeatured: true
-  },
-  {
-    id: 'mock-vip',
-    name: 'VIP Unlimited',
-    description: 'All-inclusive premium experience with absolute freedom.',
-    price: 4999,
-    duration_days: 180,
-    features: ['All Elite features included', '1-on-1 Dedicated Trainer', 'Complimentary towels & laundry', 'VIP lounge access', 'Free pre-workout drinks', '10% Discount on merchandise'],
-    color: '#312E81'
-  }
-];
-
 function BuyMembershipPage() {
   const { planId } = Route.useSearch();
   const { profile } = useAuth();
@@ -73,8 +42,7 @@ function BuyMembershipPage() {
     queryFn: () => membershipService.getPlans(false),
   });
 
-  // Fallback to MOCK_PLANS if DB is empty
-  const plans = dbPlans && dbPlans.length > 0 ? dbPlans : MOCK_PLANS;
+  const plans = dbPlans || [];
 
   useEffect(() => {
     if (planId) {
@@ -94,31 +62,10 @@ function BuyMembershipPage() {
     mutationFn: async (variables) => {
       if (!selectedPlan) throw new Error('No plan selected');
       
-      let targetPlanId = selectedPlan.id;
-
-      // Provision mock plans dynamically if needed
-      if (selectedPlan.id.startsWith('mock-')) {
-        const { data: existingPlans } = await supabase.from('membership_plans').select('*');
-        const matched = existingPlans?.find(p => p.name === selectedPlan.name);
-        
-        if (matched) {
-          targetPlanId = matched.id;
-        } else {
-          toast.info('Initializing package configuration in database...');
-          const newDbPlan = await membershipService.createPlan({
-            name: selectedPlan.name,
-            description: selectedPlan.description || '',
-            price: selectedPlan.price,
-            duration_days: selectedPlan.duration_days,
-            features: selectedPlan.features || [],
-            is_active: true
-          });
-          targetPlanId = newDbPlan.id;
-        }
-      }
+      const targetPlanId = selectedPlan.id;
 
       return paymentService.createPaymentRequest({
-        member_id: profile!.id,
+        profile_id: profile!.id,
         membership_plan_id: targetPlanId,
         amount: selectedPlan.price,
         currency: 'INR',
@@ -129,32 +76,6 @@ function BuyMembershipPage() {
     },
     onSuccess: (data, variables) => {
       const actualMethod = variables?.razorpayPaymentId ? 'Razorpay Online (UPI/Cards/Net)' : (method === 'bank' ? 'Bank Transfer' : 'Cash');
-
-      // Ensure checkout member profile exists and has status = 'pending' in local storage
-      import('../services/members.service').then(({ MOCK_MEMBERS }) => {
-        const memIndex = MOCK_MEMBERS.findIndex(m => m.id === profile!.id);
-        if (memIndex !== -1) {
-          MOCK_MEMBERS[memIndex].membership_status = 'pending';
-          localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
-        } else {
-          MOCK_MEMBERS.push({
-            id: profile!.id,
-            first_name: profile!.first_name || '',
-            last_name: profile!.last_name || '',
-            email: profile!.email || '',
-            username: profile!.username || '',
-            phone: profile!.phone || '',
-            gender: profile!.gender || undefined,
-            role: 'member',
-            is_active: true,
-            membership_status: 'pending',
-            created_at: profile!.created_at || new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            member_memberships: []
-          });
-          localStorage.setItem('elevate_fitness_members', JSON.stringify(MOCK_MEMBERS));
-        }
-      }).catch(err => console.warn('Local storage member checkout synchronization failed:', err));
 
       // 1. Notify Admin Console
       adminNotificationsService.addNotification(
