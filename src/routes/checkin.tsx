@@ -69,7 +69,7 @@ function CheckInPage() {
   });
 
   const checkInMutation = useMutation({
-    mutationFn: () => attendanceService.checkIn(profile!.id, 'qr', navigator.userAgent),
+    mutationFn: () => attendanceService.checkIn(profile!.id, 'qr'),
     onSuccess: () => {
       setStatus('success');
     },

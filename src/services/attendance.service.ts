@@ -2,7 +2,7 @@ import { supabase } from '../lib/supabase';
 import { calculateStreaks } from './attendance.utils';
 
 export const attendanceService = {
-  async checkIn(profileId: string, method: 'qr' | 'manual' = 'qr', device?: string) {
+  async checkIn(profileId: string, method: 'qr' | 'manual' = 'qr') {
     // 1. Fetch member_id using profileId
     const { data: member, error: memberErr } = await supabase
       .from('members')
@@ -18,7 +18,6 @@ export const attendanceService = {
       .insert([{
         member_id: member.id,
         method,
-        device,
       }])
       .select('*')
       .single();
