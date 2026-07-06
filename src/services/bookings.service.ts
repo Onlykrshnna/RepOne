@@ -45,7 +45,7 @@ export const bookingsService = {
 
     // 3. Attempt Booking (Postgres insert trigger handles capacity/waiting list)
     const { data, error } = await supabase
-      .from('class_bookings')
+      .from('bookings')
       .insert([{
         gym_id,
         class_id: classId,
@@ -72,7 +72,7 @@ export const bookingsService = {
 
   async cancelBooking(bookingId: string) {
     const { data, error } = await supabase
-      .from('class_bookings')
+      .from('bookings')
       .update({
         status: 'cancelled',
         cancelled_at: new Date().toISOString()
@@ -87,7 +87,7 @@ export const bookingsService = {
 
   async getMemberBookings(memberId: string) {
     const { data, error } = await supabase
-      .from('class_bookings')
+      .from('bookings')
       .select(`
         *,
         classes (
@@ -114,7 +114,7 @@ export const bookingsService = {
 
   async getClassAttendees(classId: string) {
     const { data, error } = await supabase
-      .from('class_bookings')
+      .from('bookings')
       .select(`
         *,
         profiles (
@@ -135,7 +135,7 @@ export const bookingsService = {
 
   async updateAttendanceStatus(bookingId: string, status: 'attended' | 'no_show' | 'booked') {
     const { data, error } = await supabase
-      .from('class_bookings')
+      .from('bookings')
       .update({
         status,
         attended: status === 'attended'
@@ -155,7 +155,7 @@ export const bookingsService = {
     const todayName = weekdays[new Date().getDay()];
 
     const { data, error } = await supabase
-      .from('class_bookings')
+      .from('bookings')
       .select(`
         *,
         classes!inner (
@@ -205,7 +205,7 @@ export const bookingsService = {
 
     // 2. Get bookings
     const { data: bookings } = await supabase
-      .from('class_bookings')
+      .from('bookings')
       .select('status, class_id');
 
     // Filter today bookings (bookings for classes occurring today)

@@ -23,15 +23,10 @@ export const analyticsService = {
         name
       )
     `);
-    const { data: rawBookings } = await supabase.from('class_bookings').select(`
+    const { data: rawBookings } = await supabase.from('bookings').select(`
       *,
       classes (
         title
-      ),
-      profiles (
-        first_name,
-        last_name,
-        email
       )
     `);
     const { data: rawProgress } = await supabase.from('progress_tracking').select('*');
