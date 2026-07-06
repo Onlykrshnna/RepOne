@@ -11,7 +11,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-import { Html5QrcodeScanner, Html5QrcodeScanType, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const Route = createFileRoute('/checkin')({
@@ -29,7 +29,7 @@ function CheckInPage() {
   const [errorType, setErrorType] = useState<'camera_denied' | 'invalid_qr' | 'membership_pending' | 'membership_expired' | 'duplicate' | 'network_error' | 'unauthorized' | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   
-  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+  const scannerRef = useRef<Html5Qrcode | null>(null);
 
   // Device detection
   useEffect(() => {
@@ -115,32 +115,33 @@ function CheckInPage() {
         try {
           if (!document.getElementById('qr-reader')) return;
           
+          console.log('[CHECKIN] Initializing scanner');
+          
           if (scannerRef.current) {
-            scannerRef.current.clear().catch(console.error);
+            scannerRef.current.stop().then(() => {
+              scannerRef.current?.clear();
+            }).catch(console.error);
           }
 
-          const scanner = new Html5QrcodeScanner(
-            "qr-reader",
+          const html5QrCode = new Html5Qrcode("qr-reader");
+          scannerRef.current = html5QrCode;
+
+          console.log('[CHECKIN] Requesting camera permission');
+          
+          html5QrCode.start(
+            { facingMode: "environment" },
             { 
               fps: 10, 
-              qrbox: { width: 250, height: 250 },
-              supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-              formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
+              qrbox: { width: 250, height: 250 }
             },
-            /* verbose= */ false
-          );
-          
-          scannerRef.current = scanner;
-
-          scanner.render(
             (decodedText) => {
               // On successful scan
               if (decodedText === GYM_QR_PAYLOAD) {
-                scanner.clear();
+                html5QrCode.stop().then(() => html5QrCode.clear());
                 setStatus('checking');
                 checkInMutation.mutate();
               } else {
-                scanner.clear();
+                html5QrCode.stop().then(() => html5QrCode.clear());
                 setStatus('error');
                 setErrorType('invalid_qr');
                 setErrorMessage('This QR code does not belong to Elevate Fitness. Please scan the front desk code.');
@@ -149,9 +150,18 @@ function CheckInPage() {
             (error) => {
               // Ignore standard scan errors (e.g. no QR found yet)
             }
-          );
+          ).then(() => {
+             console.log('[CHECKIN] Camera permission granted');
+          }).catch((err) => {
+             console.log('[CHECKIN] Camera permission denied', err);
+             console.log('[CHECKIN] Camera initialization failed');
+             setStatus('error');
+             setErrorType('camera_denied');
+             setErrorMessage('Camera access was denied or is unavailable. Please check your browser permissions.');
+          });
         } catch (err) {
           console.error("Camera permission error or scanner init failed:", err);
+          console.log('[CHECKIN] Camera initialization failed');
           setStatus('error');
           setErrorType('camera_denied');
           setErrorMessage('Camera access was denied or is unavailable. Please check your browser permissions.');
@@ -163,7 +173,9 @@ function CheckInPage() {
 
       return () => {
         if (scannerRef.current) {
-          scannerRef.current.clear().catch(console.error);
+          scannerRef.current.stop().then(() => {
+            scannerRef.current?.clear();
+          }).catch(console.error);
           scannerRef.current = null;
         }
       };
@@ -245,7 +257,7 @@ function CheckInPage() {
             </div>
             
             <div className="w-full aspect-square bg-card rounded-3xl overflow-hidden border-2 border-indigo-500/30 shadow-2xl shadow-indigo-500/10 relative">
-              <div id="qr-reader" className="w-full h-full [&>div]:border-none [&_video]:object-cover [&>div>div:first-child]:!hidden" />
+              <div id="qr-reader" className="w-full h-full [&>div]:border-none [&_video]:object-cover" />
               {/* Overlay targeting crosshairs */}
               <div className="absolute inset-0 pointer-events-none border-[40px] border-background/80 flex items-center justify-center">
                 <div className="w-64 h-64 border-2 border-indigo-500 rounded-xl relative">
