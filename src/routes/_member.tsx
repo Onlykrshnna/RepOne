@@ -62,7 +62,7 @@ export const Route = createFileRoute('/_member')({
 
     // Non-active members restricted to specific details-only routes
     if (profile?.membership_status !== 'active') {
-      const allowedPaths = ['/dashboard', '/profile', '/membership-plans', '/buy-membership', '/payments', '/support', '/progress', '/notifications'];
+      const allowedPaths = ['/dashboard', '/profile', '/membership-plans', '/buy-membership', '/payments', '/support', '/progress', '/notifications', '/attendance'];
       const isAllowed = allowedPaths.some(p => location.pathname === p || location.pathname.startsWith(`${p}/`));
       
       if (!isAllowed) {
@@ -81,6 +81,7 @@ function getMemberNavItems(status: string) {
     { title: "Notifications", url: "/notifications", icon: Bell },
     { title: "My Profile", url: "/profile", icon: UserIcon },
     { title: "Progress", url: "/progress", icon: TrendingUp },
+    { title: "Attendance", url: "/attendance", icon: CalendarCheck },
     { title: "Classes", url: "/classes", icon: Dumbbell, isLocked: isRestricted },
     { title: "Membership Plans", url: "/membership-plans", icon: ShoppingBag },
     { title: "Buy Membership", url: "/buy-membership", icon: CreditCard },
