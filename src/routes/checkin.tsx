@@ -140,8 +140,27 @@ function CheckInPage() {
                  html5QrCode.pause();
               }
               
-              // On successful scan
-              const isValidQR = decodedText === GYM_QR_PAYLOAD || decodedText.includes('/checkin');
+              console.log('[CHECKIN] Scanned QR payload:', decodedText);
+
+              // Validate payload robustly
+              let isValidQR = false;
+              if (decodedText === GYM_QR_PAYLOAD) {
+                isValidQR = true;
+              } else {
+                try {
+                  const url = new URL(decodedText);
+                  // Check if the URL path relates to checkin
+                  if (url.pathname.includes('checkin')) {
+                    isValidQR = true;
+                  }
+                } catch (e) {
+                  // Fallback for non-URL strings or missing protocols
+                  if (decodedText.toLowerCase().includes('checkin')) {
+                    isValidQR = true;
+                  }
+                }
+              }
+              
               if (isValidQR) {
                 html5QrCode.stop().catch(console.error).finally(() => {
                   setStatus('checking');
