@@ -141,7 +141,8 @@ function CheckInPage() {
               }
               
               // On successful scan
-              if (decodedText === GYM_QR_PAYLOAD) {
+              const isValidQR = decodedText === GYM_QR_PAYLOAD || decodedText.includes('/checkin');
+              if (isValidQR) {
                 html5QrCode.stop().catch(console.error).finally(() => {
                   setStatus('checking');
                   checkInMutation.mutate();
