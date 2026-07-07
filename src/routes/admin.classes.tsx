@@ -437,22 +437,22 @@ function ClassesPage() {
                         <CardDescription className="line-clamp-2 text-muted-foreground text-sm mt-1">{cls.description || 'No description provided.'}</CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <div className="grid grid-cols-2 gap-3 text-sm text-muted-foreground bg-background p-3 rounded-lg border border-border/50">
-                          <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-muted-foreground/75" />
-                            <span>{formatTime12h(cls.start_time)}</span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-sm text-muted-foreground bg-background p-3 rounded-lg border border-border/50">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Clock className="h-4 w-4 shrink-0 text-indigo-500/70" />
+                            <span className="truncate">{formatTime12h(cls.start_time)}</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground/75" />
-                            <span className="truncate">{formatClassDays(cls.days)}</span>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Calendar className="h-4 w-4 shrink-0 text-indigo-500/70" />
+                            <span className="truncate" title={formatClassDays(cls.days)}>{formatClassDays(cls.days)}</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4 text-muted-foreground/75" />
-                            <span>{cls.room}</span>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <MapPin className="h-4 w-4 shrink-0 text-indigo-500/70" />
+                            <span className="truncate">{cls.room}</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-muted-foreground/75" />
-                            <span>{cls.duration} min</span>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <Users className="h-4 w-4 shrink-0 text-indigo-500/70" />
+                            <span className="truncate">{cls.duration} min</span>
                           </div>
                         </div>
 
@@ -681,8 +681,8 @@ function ClassesPage() {
                     </Button>
                   </div>
 
-                  <div className="overflow-x-auto w-full -mx-4 px-4 md:mx-0 md:px-0">
-                    <div className="min-w-[700px] pb-2">
+                  <div className="overflow-x-auto w-full pb-2">
+                    <div className="min-w-[700px]">
                       <div className="grid grid-cols-7 border-t border-l border-border rounded-lg overflow-hidden">
                         {/* Header */}
                         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
