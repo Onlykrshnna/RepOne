@@ -23,7 +23,7 @@ export function Nav() {
     <header className={cn("fixed inset-x-0 top-0 z-50 transition-all duration-500", scrolled ? "border-b border-white/[0.06] bg-[#080809]/85 backdrop-blur-xl" : "bg-transparent")}>
       <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 md:px-12 py-5">
         <a href="#top" className="flex items-center gap-2">
-          <img src="/logo.png" alt="Logo" className="h-8 object-contain" />
+          <img src="/logo.png" alt="Logo" className="h-16 object-contain" />
           <span className="hidden sm:inline text-[#F0EDE6]/35" style={{ fontFamily: "Inter", fontSize: "9px", letterSpacing: "0.22em", textTransform: "uppercase" }}>&middot; BY WEBFORGE</span>
           <div className="flex items-center gap-1.5 px-2 py-0.5 bg-[#BEFF00]/10 border border-[#BEFF00]/30 rounded text-[#BEFF00]" style={{ fontSize: "8px", fontFamily: "Inter", letterSpacing: "0.1em", fontWeight: 700 }}>
             DEMO: XYZ FITNESS

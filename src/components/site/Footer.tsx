@@ -3,7 +3,7 @@ export function Footer() {
     <footer className="bg-[#080809] pt-24 pb-12 border-t border-[#F0EDE6]/10 text-[#F0EDE6]">
       <div className="mx-auto max-w-[1440px] px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-16 md:gap-8 text-left">
         <div className="md:col-span-2">
-          <img src="/logo.png" alt="Logo" className="h-10 object-contain block mb-6" />
+          <img src="/logo.png" alt="Logo" className="h-20 object-contain block mb-6" />
           <p className="text-[#F0EDE6]/40 max-w-sm" style={{ fontFamily: "Inter", fontSize: "13px", lineHeight: "1.7" }}>
             A premium gym management platform designed to automate operations, reconcile payments, and elevate member experiences. Powered by WebForge.
           </p>
