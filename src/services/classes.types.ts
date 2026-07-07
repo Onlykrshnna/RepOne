@@ -1,3 +1,9 @@
+// Real DB schema for classes:
+// id, gym_id, class_name, start_time, end_time, capacity
+// Missing (code-only): trainer_id, title, description, category, room, days, duration,
+//   booked_count, waiting_list_count, difficulty_level, color_label, status, created_at
+// Missing tables: trainers
+
 export interface Trainer {
   id: string;
   gym_id: string;
@@ -12,42 +18,46 @@ export interface Trainer {
 
 export type ClassDifficulty = 'beginner' | 'intermediate' | 'advanced';
 
+// GymClass only contains columns that exist in production DB
 export interface GymClass {
   id: string;
   gym_id: string;
-  trainer_id?: string | null;
-  title: string;
-  description?: string | null;
-  category: string;
-  room: string;
+  class_name: string;
   capacity: number;
-  booked_count: number;
-  waiting_list_count: number;
-  duration: number; // in minutes
-  difficulty_level: ClassDifficulty;
-  days: string[]; // e.g. ['Monday', 'Wednesday']
-  start_time: string; // Time string e.g. "09:00:00"
-  end_time: string; // Time string e.g. "10:00:00"
-  status: 'active' | 'inactive';
+  start_time: string;
+  end_time: string;
+  // Optional columns that may not exist in all DB versions
+  trainer_id?: string | null;
+  title?: string | null;         // alias for class_name in UI
+  description?: string | null;
+  category?: string | null;
+  room?: string | null;
+  booked_count?: number;
+  waiting_list_count?: number;
+  duration?: number;
+  difficulty_level?: ClassDifficulty;
+  days?: string[];
+  status?: 'active' | 'inactive';
   cover_image?: string | null;
-  color_label: string; // Hex color
-  created_at: string;
-  trainers?: Trainer | null; // Joined trainer
+  color_label?: string;
+  created_at?: string;
+  trainers?: Trainer | null;
 }
 
+// BookingStatus – only 'booked' | 'cancelled' | 'waiting' are confirmed in DB
 export type BookingStatus = 'booked' | 'waiting' | 'attended' | 'no_show' | 'cancelled';
 
+// ClassBooking only contains columns confirmed to exist in production DB:
+// id, class_id, member_id, status, booking_date, created_at
 export interface ClassBooking {
   id: string;
-  gym_id: string;
   class_id: string;
   member_id: string;
   status: BookingStatus;
-  booked_at: string;
-  attended: boolean;
-  cancelled_at?: string | null;
-  position_in_waiting_list?: number | null;
-  classes?: GymClass; // Joined class
+  booking_date?: string;    // DB column name (not booked_at)
+  created_at?: string;
+  // Optional joined data
+  classes?: Partial<GymClass>;
   profiles?: {
     first_name: string;
     last_name: string;

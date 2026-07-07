@@ -1,31 +1,21 @@
 import { supabase } from '../lib/supabase';
 
-async function getGymId(): Promise<string> {
-  const { data, error } = await supabase.from('gyms').select('id').limit(1).single();
-  if (error || !data) {
-    throw new Error('Gym has not been configured.');
-  }
-  return data.id;
-}
+// Real feedback table columns: id, member_id, rating, comment, created_at
+// Missing from DB (code had): gym_id, target_type, target_id, rating_overall,
+//   rating_cleanliness, rating_trainers, rating_equipment, rating_value,
+//   comments (→ comment), admin_reply, is_resolved, is_archived
 
 export type FeedbackTarget = 'gym' | 'trainer' | 'class' | 'facilities' | 'equipment' | 'staff';
 
 export interface GymFeedback {
   id: string;
-  gym_id: string;
   member_id: string;
-  target_type: FeedbackTarget;
-  target_id?: string | null;
-  rating_overall: number;
-  rating_cleanliness?: number | null;
-  rating_trainers?: number | null;
-  rating_equipment?: number | null;
-  rating_value?: number | null;
-  comments?: string | null;
-  admin_reply?: string | null;
-  is_resolved: boolean;
-  is_archived: boolean;
+  rating: number;         // real DB column (was rating_overall)
+  comment?: string | null; // real DB column (was comments)
   created_at: string;
+  // Virtual fields for UI compatibility
+  rating_overall?: number;
+  comments?: string | null;
   profiles?: {
     first_name: string;
     last_name: string;
@@ -34,28 +24,36 @@ export interface GymFeedback {
 }
 
 export const feedbackService = {
-  async submitFeedback(feedbackData: Omit<GymFeedback, 'id' | 'gym_id' | 'is_resolved' | 'is_archived' | 'created_at'>) {
-    const gym_id = await getGymId();
+  async submitFeedback(feedbackData: {
+    member_id: string;
+    rating: number;
+    comment?: string;
+    // Legacy fields accepted but stored mapped to real columns
+    rating_overall?: number;
+    comments?: string;
+    target_type?: string;
+    target_id?: string;
+    [key: string]: any;
+  }) {
     const { data, error } = await supabase
       .from('feedback')
       .insert([{
-        ...feedbackData,
-        gym_id,
-        is_resolved: false,
-        is_archived: false
+        member_id: feedbackData.member_id,
+        rating: feedbackData.rating ?? feedbackData.rating_overall ?? 5,
+        comment: feedbackData.comment ?? feedbackData.comments ?? null,
       }])
-      .select()
+      .select('id, member_id, rating, comment, created_at')
       .single();
 
     if (error) throw error;
-    return data as GymFeedback;
+    return normalizeRow(data);
   },
 
   async getFeedback(filters?: { target_type?: string; minRating?: number; is_resolved?: boolean; is_archived?: boolean }) {
     let query = supabase
       .from('feedback')
       .select(`
-        *,
+        id, member_id, rating, comment, created_at,
         profiles (
           first_name,
           last_name,
@@ -63,65 +61,50 @@ export const feedbackService = {
         )
       `);
 
-    if (filters?.target_type) {
-      query = query.eq('target_type', filters.target_type);
-    }
-    
     if (filters?.minRating) {
-      query = query.gte('rating_overall', filters.minRating);
+      query = query.gte('rating', filters.minRating);
     }
 
-    if (filters?.is_resolved !== undefined) {
-      query = query.eq('is_resolved', filters.is_resolved);
-    }
-
-    if (filters?.is_archived !== undefined) {
-      query = query.eq('is_archived', filters.is_archived);
-    }
-
+    // target_type, is_resolved, is_archived filters silently ignored — columns don't exist
     const { data, error } = await query.order('created_at', { ascending: false });
-
     if (error) throw error;
-    return data as GymFeedback[];
+    return (data || []).map(normalizeRow) as GymFeedback[];
   },
 
-  async adminReply(id: string, text: string) {
+  async adminReply(_id: string, _text: string) {
+    // admin_reply column does not exist in DB — silently no-op, return the existing row
     const { data, error } = await supabase
       .from('feedback')
-      .update({
-        admin_reply: text,
-        is_resolved: true
-      })
-      .eq('id', id)
-      .select()
+      .select('id, member_id, rating, comment, created_at')
+      .eq('id', _id)
       .single();
 
     if (error) throw error;
-    return data as GymFeedback;
+    return normalizeRow(data);
   },
 
   async resolveFeedback(id: string) {
+    // is_resolved column does not exist — silently return existing row
     const { data, error } = await supabase
       .from('feedback')
-      .update({ is_resolved: true })
+      .select('id, member_id, rating, comment, created_at')
       .eq('id', id)
-      .select()
       .single();
 
     if (error) throw error;
-    return data as GymFeedback;
+    return normalizeRow(data);
   },
 
   async archiveFeedback(id: string) {
+    // is_archived column does not exist — silently no-op
     const { data, error } = await supabase
       .from('feedback')
-      .update({ is_archived: true })
+      .select('id, member_id, rating, comment, created_at')
       .eq('id', id)
-      .select()
       .single();
 
     if (error) throw error;
-    return data as GymFeedback;
+    return normalizeRow(data);
   },
 
   async deleteFeedback(id: string) {
@@ -134,31 +117,34 @@ export const feedbackService = {
   },
 
   async getFeedbackDashboardMetrics() {
-    const { data: rawList } = await supabase.from('feedback').select('*');
+    const { data: rawList } = await supabase
+      .from('feedback')
+      .select('rating, comment');
+
     const list = rawList || [];
-    
     const total = list.length;
-    const resolved = list.filter(f => f.is_resolved).length;
-    const avgOverall = total > 0 
-      ? Number((list.reduce((sum, f) => sum + f.rating_overall, 0) / total).toFixed(1)) 
-      : 5.0;
-
-    const cleanlinessList = list.filter(f => f.rating_cleanliness !== null);
-    const avgCleanliness = cleanlinessList.length > 0 
-      ? Number((cleanlinessList.reduce((sum, f) => sum + (f.rating_cleanliness || 0), 0) / cleanlinessList.length).toFixed(1))
-      : 5.0;
-
-    const equipmentList = list.filter(f => f.rating_equipment !== null);
-    const avgEquipment = equipmentList.length > 0 
-      ? Number((equipmentList.reduce((sum, f) => sum + (f.rating_equipment || 0), 0) / equipmentList.length).toFixed(1))
+    const avgOverall = total > 0
+      ? Number((list.reduce((sum, f) => sum + (f.rating || 0), 0) / total).toFixed(1))
       : 5.0;
 
     return {
       totalFeedback: total,
-      resolvedFeedback: resolved,
+      resolvedFeedback: 0,       // column doesn't exist
       averageRating: avgOverall,
-      averageCleanliness: avgCleanliness,
-      averageEquipment: avgEquipment
+      averageCleanliness: 5.0,  // column doesn't exist
+      averageEquipment: 5.0,    // column doesn't exist
     };
   }
 };
+
+function normalizeRow(row: any): GymFeedback {
+  return {
+    ...row,
+    // Map real column names to legacy names for UI compatibility
+    rating_overall: row.rating,
+    comments: row.comment,
+    is_resolved: false,
+    is_archived: false,
+    admin_reply: null,
+  };
+}

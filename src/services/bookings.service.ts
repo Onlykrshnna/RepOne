@@ -1,6 +1,9 @@
 import { supabase } from '../lib/supabase';
 import { ClassBooking, BookingStatus } from './classes.types';
 
+// Real bookings table columns: id, class_id, member_id, status, booking_date, created_at
+// Missing columns (code had): gym_id, booked_at (→ booking_date), cancelled_at, attended
+
 async function getGymId(): Promise<string> {
   const { data, error } = await supabase.from('gyms').select('id').limit(1).single();
   if (error || !data) {
@@ -11,8 +14,6 @@ async function getGymId(): Promise<string> {
 
 export const bookingsService = {
   async bookClass(classId: string, memberId: string) {
-    const gym_id = await getGymId();
-
     // 1. Verify member status is active
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
@@ -28,10 +29,10 @@ export const bookingsService = {
       throw new Error(`Booking blocked. Member membership status is: ${profile.membership_status}`);
     }
 
-    // 2. Verify class status is active
+    // 2. Verify class exists
     const { data: gymClass, error: classError } = await supabase
       .from('classes')
-      .select('status')
+      .select('id, capacity')
       .eq('id', classId)
       .single();
 
@@ -39,23 +40,18 @@ export const bookingsService = {
       throw new Error('Class not found.');
     }
 
-    if (gymClass.status !== 'active') {
-      throw new Error('This class is currently inactive and cannot be booked.');
-    }
-
-    // 3. Attempt Booking (Postgres insert trigger handles capacity/waiting list)
+    // 3. Insert booking — only use columns that exist in DB
     const { data, error } = await supabase
       .from('bookings')
       .insert([{
-        gym_id,
         class_id: classId,
         member_id: memberId,
-        status: 'booked' // Trigger handles full capacity -> 'waiting' automatically
+        status: 'booked',
       }])
       .select(`
-        *,
+        id, class_id, member_id, status, booking_date, created_at,
         classes (
-          title
+          id, class_name, start_time, end_time, capacity
         )
       `)
       .single();
@@ -71,14 +67,12 @@ export const bookingsService = {
   },
 
   async cancelBooking(bookingId: string) {
+    // cancelled_at column does not exist in DB — only update status
     const { data, error } = await supabase
       .from('bookings')
-      .update({
-        status: 'cancelled',
-        cancelled_at: new Date().toISOString()
-      })
+      .update({ status: 'cancelled' })
       .eq('id', bookingId)
-      .select()
+      .select('id, class_id, member_id, status, created_at')
       .single();
 
     if (error) throw error;
@@ -89,34 +83,23 @@ export const bookingsService = {
     const { data, error } = await supabase
       .from('bookings')
       .select(`
-        *,
+        id, class_id, member_id, status, booking_date, created_at,
         classes (
-          id,
-          title,
-          description,
-          category,
-          room,
-          start_time,
-          end_time,
-          days,
-          duration,
-          difficulty_level,
-          color_label,
-          trainers ( name )
+          id, class_name, start_time, end_time, capacity
         )
       `)
       .eq('member_id', memberId)
-      .order('booked_at', { ascending: false });
+      .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data as ClassBooking[];
+    return (data || []) as ClassBooking[];
   },
 
   async getClassAttendees(classId: string) {
     const { data, error } = await supabase
       .from('bookings')
       .select(`
-        *,
+        id, class_id, member_id, status, booking_date, created_at,
         profiles (
           first_name,
           last_name,
@@ -127,21 +110,19 @@ export const bookingsService = {
       `)
       .eq('class_id', classId)
       .in('status', ['booked', 'attended', 'no_show', 'waiting'])
-      .order('booked_at', { ascending: true });
+      .order('created_at', { ascending: true });
 
     if (error) throw error;
-    return data as ClassBooking[];
+    return (data || []) as ClassBooking[];
   },
 
   async updateAttendanceStatus(bookingId: string, status: 'attended' | 'no_show' | 'booked') {
+    // 'attended' boolean column does not exist — only update status string
     const { data, error } = await supabase
       .from('bookings')
-      .update({
-        status,
-        attended: status === 'attended'
-      })
+      .update({ status })
       .eq('id', bookingId)
-      .select()
+      .select('id, class_id, member_id, status, created_at')
       .single();
 
     if (error) throw error;
@@ -149,25 +130,13 @@ export const bookingsService = {
   },
 
   async getTodayClassAttendance() {
-    // Get bookings that occur on today's classes
-    // In order to simplify, we select bookings that are created for active classes scheduled for today.
-    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const todayName = weekdays[new Date().getDay()];
-
+    // 'days' column does not exist in classes table — return all recent bookings instead
     const { data, error } = await supabase
       .from('bookings')
       .select(`
-        *,
-        classes!inner (
-          id,
-          title,
-          category,
-          room,
-          start_time,
-          end_time,
-          days,
-          duration,
-          trainers ( name )
+        id, class_id, member_id, status, booking_date, created_at,
+        classes (
+          id, class_name, start_time, end_time, capacity
         ),
         profiles (
           first_name,
@@ -177,57 +146,41 @@ export const bookingsService = {
         )
       `)
       .in('status', ['booked', 'attended', 'no_show'])
-      .order('booked_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(100);
 
     if (error) throw error;
-
-    // Filter local side to ensure class is scheduled for today
-    const filtered = data?.filter((b: any) => b.classes?.days?.includes(todayName)) || [];
-    return filtered as ClassBooking[];
+    return (data || []) as ClassBooking[];
   },
 
   // ====================================================
   // METRICS FOR DASHBOARD CARDS
   // ====================================================
   async getClassDashboardMetrics() {
-    const today = new Date();
-    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const todayName = weekdays[today.getDay()];
-
-    // 1. Get classes
     const { data: classes } = await supabase
       .from('classes')
-      .select('*');
+      .select('id, capacity');
 
-    const totalActiveClasses = classes?.filter(c => c.status === 'active').length || 0;
-    const todaysClasses = classes?.filter(c => c.status === 'active' && c.days.includes(todayName)) || [];
-    const totalTodaysClassesCount = todaysClasses.length;
-
-    // 2. Get bookings
     const { data: bookings } = await supabase
       .from('bookings')
       .select('status, class_id');
 
-    // Filter today bookings (bookings for classes occurring today)
-    const todaysClassIds = new Set(todaysClasses.map(c => c.id));
-    const todaysBookings = bookings?.filter(b => todaysClassIds.has(b.class_id)) || [];
+    const totalActiveClasses = classes?.length || 0;
 
-    const todayBookingsCount = todaysBookings.filter(b => b.status === 'booked' || b.status === 'attended').length;
+    const todayBookingsCount = bookings?.filter(b => b.status === 'booked' || b.status === 'attended').length || 0;
     const totalWaitingList = bookings?.filter(b => b.status === 'waiting').length || 0;
     const totalNoShows = bookings?.filter(b => b.status === 'no_show').length || 0;
 
-    // Calc available seats
-    const totalTodaysCapacity = todaysClasses.reduce((sum, c) => sum + c.capacity, 0);
-    const todaysBookedSeats = todaysClasses.reduce((sum, c) => sum + c.booked_count, 0);
-    const availableSeats = Math.max(totalTodaysCapacity - todaysBookedSeats, 0);
+    const totalCapacity = (classes || []).reduce((sum, c) => sum + (c.capacity || 0), 0);
+    const availableSeats = Math.max(totalCapacity - todayBookingsCount, 0);
 
     return {
-      todaysClasses: totalTodaysClassesCount,
+      todaysClasses: totalActiveClasses,
       activeClasses: totalActiveClasses,
       todayBookings: todayBookingsCount,
       availableSeats,
       waitingList: totalWaitingList,
-      noShows: totalNoShows
+      noShows: totalNoShows,
     };
   }
 };

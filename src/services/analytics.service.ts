@@ -17,19 +17,18 @@ export const analyticsService = {
         name
       )
     `);
-    const { data: rawClasses } = await supabase.from('classes').select(`
-      *,
-      trainers (
-        name
-      )
-    `);
+    // trainers table does NOT exist in production — classes join removed
+    const { data: rawClasses } = await supabase.from('classes').select(
+      'id, gym_id, class_name, start_time, end_time, capacity'
+    );
     const { data: rawBookings } = await supabase.from('bookings').select(`
-      *,
+      id, class_id, member_id, status, created_at,
       classes (
-        title
+        class_name
       )
     `);
-    const { data: rawProgress } = await supabase.from('progress_tracking').select('*');
+    // progress_tracking table does NOT exist in production — omitted
+    const rawProgress: any[] = [];
 
     const profiles = rawProfiles || [];
     const membersList = rawMembers || [];
@@ -268,36 +267,28 @@ export const analyticsService = {
     // ====================================================
     // 6. CLASS ANALYTICS
     // ====================================================
-    const totalClasses = classes.filter(c => c.status === 'active').length;
+    // status column does not exist in classes — treat all as active
+    const totalClasses = classes.length;
     const totalBookings = bookings.filter(b => b.status === 'booked' || b.status === 'attended').length;
     
-    // Average Occupancy
-    const totalCapacity = classes.reduce((sum, c) => sum + c.capacity, 0);
-    const totalClassBooked = classes.reduce((sum, c) => sum + c.booked_count, 0);
+    // Average Occupancy — booked_count does not exist, use bookings table count
+    const totalCapacity = classes.reduce((sum, c) => sum + (c.capacity || 0), 0);
+    const bookingCountMap: Record<string, number> = {};
+    bookings.forEach(b => {
+      if (b.status === 'booked' || b.status === 'attended') {
+        bookingCountMap[b.class_id] = (bookingCountMap[b.class_id] || 0) + 1;
+      }
+    });
+    const totalClassBooked = Object.values(bookingCountMap).reduce((a, b) => a + b, 0);
     const occupancyRate = totalCapacity > 0 ? Math.round((totalClassBooked / totalCapacity) * 100) : 0;
 
-    // Trainer Performance
-    const trainerStats: Record<string, { count: number; booked: number; capacity: number }> = {};
-    classes.forEach(c => {
-      const name = c.trainers?.name || 'Unknown';
-      if (!trainerStats[name]) {
-        trainerStats[name] = { count: 0, booked: 0, capacity: 0 };
-      }
-      trainerStats[name].count += 1;
-      trainerStats[name].booked += c.booked_count;
-      trainerStats[name].capacity += c.capacity;
-    });
+    // Trainer Performance — trainers table does not exist in production
+    const trainerPerformance: any[] = [];
 
-    const trainerPerformance = Object.entries(trainerStats).map(([trainerName, stats]) => ({
-      trainerName,
-      count: stats.count,
-      occupancyRate: stats.capacity > 0 ? Math.round((stats.booked / stats.capacity) * 100) : 0
-    }));
-
-    // Class Popularity
+    // Class Popularity — based on booking counts from bookings table
     const classBookingsStats = classes.map(c => ({
-      title: c.title,
-      count: c.booked_count
+      title: c.class_name,
+      count: bookingCountMap[c.id] || 0
     })).sort((a, b) => b.count - a.count).slice(0, 5);
 
     const cancelledBookings = bookings.filter(b => b.status === 'cancelled').length;
@@ -323,43 +314,15 @@ export const analyticsService = {
 
     // ====================================================
     // 7. BODY PROGRESS ANALYTICS
+    // progress_tracking table does NOT exist in production — return zeroed stats
     // ====================================================
-    const updatedThisMonth = progress.filter(p => new Date(p.recorded_at) >= thisMonthStart).length;
-    const overdueUpdates = Math.max(totalMembers - updatedThisMonth, 0);
-
-    // Calc Average Weight change (comparison between first and last recording per user)
-    const weightChanges: number[] = [];
-    const memberProgressMap: Record<string, number[]> = {};
-    progress.forEach(p => {
-      if (p.member_id && p.weight_kg) {
-        if (!memberProgressMap[p.member_id]) {
-          memberProgressMap[p.member_id] = [];
-        }
-        memberProgressMap[p.member_id].push(Number(p.weight_kg));
-      }
-    });
-
-    Object.values(memberProgressMap).forEach(weights => {
-      if (weights.length >= 2) {
-        weightChanges.push(weights[weights.length - 1] - weights[0]);
-      }
-    });
-
-    const averageWeightChangeKg = weightChanges.length > 0 
-      ? Number((weightChanges.reduce((sum, c) => sum + c, 0) / weightChanges.length).toFixed(1))
-      : -1.2;
-
     const progressStats = {
-      updatedThisMonth,
-      overdueUpdates,
-      averageWeightChangeKg,
-      averageBmiChange: -0.4,
-      bodyFatTrends: [
-        { date: 'May', averageFat: 24.2 },
-        { date: 'Jun', averageFat: 23.8 },
-        { date: 'Jul', averageFat: 23.1 }
-      ],
-      progressCompletionPercent: totalMembers > 0 ? Math.round((updatedThisMonth / totalMembers) * 100) : 0
+      updatedThisMonth: 0,
+      overdueUpdates: totalMembers,
+      averageWeightChangeKg: 0,
+      averageBmiChange: 0,
+      bodyFatTrends: [],
+      progressCompletionPercent: 0
     };
 
     // ====================================================
