@@ -59,10 +59,10 @@ export function Hero() {
 
         {/* Heading */}
         <div className="space-y-4">
-          <h1 className="font-display leading-[0.95] tracking-[-0.03em] max-w-5xl text-left">
+          <h1 className="font-display leading-[0.9] tracking-[-0.02em] max-w-5xl text-left">
             <span className="block overflow-hidden pb-1 md:pb-2">
               <motion.span 
-                className="block text-[#F0EDE6] text-[clamp(2.3rem,7.5vw,7rem)] font-bold"
+                className="block text-[#F0EDE6] text-[clamp(2.5rem,7vw,7.5rem)]"
                 initial={{ y: "110%", opacity: 0 }}
                 animate={mounted ? { y: 0, opacity: 1 } : { y: "110%", opacity: 0 }}
                 transition={{ duration: 1.2, delay: 0.3, ease: [0.16,1,0.3,1] }}
@@ -72,7 +72,7 @@ export function Hero() {
             </span>
             <span className="block overflow-hidden pb-1 md:pb-2">
               <motion.span 
-                className="block italic text-[#BEFF00] text-[clamp(2.3rem,7.5vw,7rem)] font-bold"
+                className="block italic text-[#BEFF00] text-[clamp(2.5rem,7vw,7.5rem)]"
                 initial={{ y: "110%", opacity: 0 }}
                 animate={mounted ? { y: 0, opacity: 1 } : { y: "110%", opacity: 0 }}
                 transition={{ duration: 1.2, delay: 0.5, ease: [0.16,1,0.3,1] }}
