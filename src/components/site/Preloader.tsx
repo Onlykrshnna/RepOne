@@ -10,11 +10,12 @@ const LOADING_STEPS = [
 ];
 
 export function Preloader() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !sessionStorage.getItem("preloader_shown"));
   const [progress, setProgress] = useState(0);
   const [activeLog, setActiveLog] = useState("");
 
   useEffect(() => {
+    if (!loading) return;
     // Progress counter animation
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -44,6 +45,7 @@ export function Preloader() {
     if (progress >= 100) {
       const timeout = setTimeout(() => {
         setLoading(false);
+        sessionStorage.setItem("preloader_shown", "true");
       }, 600);
       return () => clearTimeout(timeout);
     }
