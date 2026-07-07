@@ -48,7 +48,7 @@ function MemberDashboard({ profile }: { profile: any }) {
   const BYPASS_STATUS_BLOCKS = false; // Set to true to allow testing all features with dummy data
 
   // --- STATE MACHINE ---
-  const status = displayProfile.membership_status || 'none';
+  const status = displayProfile.membership_status || 'pending';
 
   // Calculate if the membership has expired based on expiry date
   let hasExpiredPlan = false;

@@ -53,7 +53,7 @@ BEGIN
     COALESCE(NEW.raw_user_meta_data->>'last_name', ''),
     COALESCE(NEW.raw_user_meta_data->>'username', ''),
     'member',
-    'none',
+    'pending',
     NOW(),
     NOW()
   )

@@ -51,7 +51,7 @@ export function CompleteRegistrationForm({ profile, signOut }: CompleteRegistrat
         .update({
           username: formattedUsername,
           phone: phone.trim(),
-          membership_status: 'none' // Ensure they route to choose membership next
+          membership_status: 'pending' // Ensure they route to choose membership next
         })
         .eq('id', profile.id);
 

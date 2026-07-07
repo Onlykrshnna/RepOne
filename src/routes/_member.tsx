@@ -221,7 +221,7 @@ function MemberLayout() {
     );
   }
 
-  const navItems = profile ? getMemberNavItems(profile.membership_status || 'none') : [];
+  const navItems = profile ? getMemberNavItems(profile.membership_status || 'pending') : [];
   const currentNav = navItems.find(item => currentPath === item.url || currentPath.startsWith(item.url + '/')) || navItems[0];
 
   return (
