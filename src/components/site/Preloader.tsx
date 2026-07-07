@@ -1,9 +1,18 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const LOADING_STEPS = [
+  { range: [0, 20], text: "INITIALIZING REPO CONTEXT..." },
+  { range: [21, 45], text: "COMPILING WEBFORGE PRESETS..." },
+  { range: [46, 70], text: "ESTABLISHING PAYMENT ROUTER..." },
+  { range: [71, 90], text: "SYNCING WHITE-LABEL ASSETS..." },
+  { range: [91, 100], text: "REPONE CORE ENGAGED." },
+];
+
 export function Preloader() {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [activeLog, setActiveLog] = useState("");
 
   useEffect(() => {
     // Progress counter animation
@@ -13,84 +22,101 @@ export function Preloader() {
           clearInterval(interval);
           return 100;
         }
-        // Increment by random values to make it feel natural
-        const next = prev + Math.floor(Math.random() * 15) + 5;
+        const next = prev + Math.floor(Math.random() * 10) + 3;
         return next > 100 ? 100 : next;
       });
-    }, 120);
+    }, 80);
 
-    // Fade out load state after 1.8s
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-
+    // Fade out load state after progress is 100%
     return () => {
       clearInterval(interval);
-      clearTimeout(timeout);
     };
   }, []);
+
+  useEffect(() => {
+    const currentStep = LOADING_STEPS.find(
+      (step) => progress >= step.range[0] && progress <= step.range[1]
+    );
+    if (currentStep) {
+      setActiveLog(currentStep.text);
+    }
+
+    if (progress >= 100) {
+      const timeout = setTimeout(() => {
+        setLoading(false);
+      }, 600);
+      return () => clearTimeout(timeout);
+    }
+  }, [progress]);
 
   return (
     <AnimatePresence>
       {loading && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ 
+          exit={{
             opacity: 0,
-            y: -40,
-            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } 
+            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
           }}
-          className="fixed inset-0 z-[9999] bg-[#080809] flex flex-col items-center justify-center text-[#F0EDE6]"
+          className="fixed inset-0 z-[9999] bg-[#080809] flex flex-col justify-between p-8 md:p-16 text-[#F0EDE6] select-none"
         >
-          {/* Background grain */}
-          <div className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
+          {/* Subtle Grid Overlay */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:40px_40px]" />
+          
+          {/* Neon Scanner Sweep Line */}
+          <motion.div
+            initial={{ y: "-100%" }}
+            animate={{ y: "100%" }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#BEFF00]/20 to-transparent pointer-events-none"
+          />
 
-          <div className="relative flex flex-col items-center gap-6 max-w-xs w-full px-6">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center gap-2"
-            >
-              <span className="font-display text-4xl font-bold tracking-tight text-white">RepOne</span>
-              <span className="text-[#BEFF00] text-[8px] uppercase tracking-widest px-1.5 py-0.5 bg-[#BEFF00]/10 border border-[#BEFF00]/25 rounded font-sans font-bold">DEMO</span>
-            </motion.div>
+          {/* Top Row: System Status */}
+          <div className="relative z-10 flex items-center justify-between w-full">
+            <div className="flex items-center gap-3">
+              <span className="font-display tracking-tight text-lg text-white font-bold">RepOne</span>
+              <span className="text-[#BEFF00] text-[7px] uppercase tracking-widest px-1.5 py-0.5 bg-[#BEFF00]/10 border border-[#BEFF00]/25 rounded font-sans font-bold">SANDBOX DEV</span>
+            </div>
+            <div className="flex items-center gap-6 font-mono text-[9px] text-[#F0EDE6]/30">
+              <span className="hidden sm:inline">DB: CONNECTED</span>
+              <span>HOST: LOCALHOST</span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#BEFF00] animate-pulse" />
+                SYSTEM RUNNING
+              </span>
+            </div>
+          </div>
 
-            {/* Circular Indicator */}
-            <div className="relative w-24 h-24 flex items-center justify-center">
-              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="42"
-                  className="stroke-white/5"
-                  strokeWidth="3"
-                  fill="transparent"
-                />
-                <motion.circle
-                  cx="50"
-                  cy="50"
-                  r="42"
-                  className="stroke-[#BEFF00]"
-                  strokeWidth="3"
-                  fill="transparent"
-                  strokeDasharray="264"
-                  strokeDashoffset={264 - (264 * progress) / 100}
-                  transition={{ ease: "easeOut" }}
-                />
-              </svg>
-              <div className="absolute font-display text-lg font-bold text-white">
-                {progress}%
+          {/* Center Space (Empty to keep focus on corners/sides) */}
+          <div className="flex-1" />
+
+          {/* Bottom Row: Big Casing Number + Terminal Logs */}
+          <div className="relative z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-8">
+            {/* Left Lower Corner: Massive Numerical Loading */}
+            <div className="flex flex-col items-start">
+              <div className="flex items-baseline gap-1">
+                <span className="font-display font-black text-[22vw] sm:text-[16vw] md:text-[14vw] leading-[0.75] tracking-tighter text-[#BEFF00]">
+                  {String(progress).padStart(3, "0")}
+                </span>
+                <span className="font-display text-[6vw] sm:text-[4vw] md:text-[3vw] font-bold text-[#BEFF00]/40">%</span>
+              </div>
+              <div className="mt-4 flex flex-col gap-1 font-mono text-[10px] tracking-widest text-[#F0EDE6]/40 uppercase">
+                <span className="text-[#BEFF00] font-bold">SYSTEM BOOTSTRAP</span>
+                <span>STATUS: LOADING ENVIRONMENT</span>
               </div>
             </div>
 
-            <div className="space-y-1 text-center">
-              <span className="text-[9px] uppercase tracking-[0.25em] text-[#BEFF00]/80 font-semibold font-sans block animate-pulse">
-                Powering XYZ Fitness
-              </span>
-              <span className="text-[10px] text-[#F0EDE6]/30 font-sans block">
-                Loading sandbox environment...
-              </span>
+            {/* Right Lower Corner: Terminal Logging Output */}
+            <div className="flex flex-col items-start md:items-end font-mono text-[10px] tracking-wider text-[#F0EDE6]/50">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#BEFF00]" />
+                <span className="text-white font-bold">CONSOLE LOGGER</span>
+              </div>
+              <div className="bg-white/[0.02] border border-white/5 p-4 rounded-md min-w-[280px] text-left md:text-right">
+                <span className="text-[#BEFF00] block mb-1">{activeLog}</span>
+                <span className="text-white/30 block text-[9px]">STEP PROGRESS: {progress}%</span>
+                <span className="text-white/30 block text-[9px]">SYS FREQ: 9800.12MHz</span>
+              </div>
             </div>
           </div>
         </motion.div>
