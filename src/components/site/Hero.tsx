@@ -1,203 +1,225 @@
-import { useEffect, useState } from "react";
-import heroImg from "@/assets/hero.jpg";
+import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { useAuth } from "@/lib/auth-context";
-import { useScroll, useTransform, motion } from "framer-motion";
-import { AmbientEmissions } from "./AmbientEmissions";
-import { Bell } from "lucide-react";
-
-const LINE_1 = "Grow Your Gym.";
-const LINE_2 = "Automate Everything.";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Sparkles, ArrowRight, ArrowDown, Activity, Users, QrCode, ArrowUpRight } from "lucide-react";
 
 export function Hero() {
   const [mounted, setMounted] = useState(false);
-  const [showBadge, setShowBadge] = useState(true);
-  const { session, isLoading } = useAuth();
   const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 1000], [0, 300]);
-  const opacity = useTransform(scrollY, [0, 600], [1, 0]);
+  const y1 = useTransform(scrollY, [0, 1000], [0, 200]);
+  const y2 = useTransform(scrollY, [0, 1000], [0, -100]);
 
-  useEffect(() => { 
-    const t = requestAnimationFrame(() => setMounted(true)); 
-    return () => cancelAnimationFrame(t); 
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   return (
-    <section id="top" className="relative min-h-[100svh] w-full overflow-hidden bg-[#080809] flex flex-col justify-center pt-24 pb-12">
-      {/* Parallax image with intellectual grid */}
-      <motion.div 
-        className="absolute inset-[-10%] z-0" 
-        style={{ y, opacity }}
-      >
-        <img src={heroImg} alt="" aria-hidden className="w-full h-full object-cover opacity-25 mix-blend-luminosity" />
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(#BEFF00 1px, transparent 1px), linear-gradient(90deg, #BEFF00 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#080809]/60 via-[#080809]/80 to-[#080809]" />
-      </motion.div>
+    <section className="relative min-h-[100svh] w-full overflow-hidden bg-[#080809] text-[#F0EDE6] font-sans selection:bg-[#BEFF00] selection:text-[#080809] flex flex-col items-center pt-20 md:pt-28">
       
-      {/* Ambient Glow */}
-      <AmbientEmissions />
+      {/* Background Elements */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        {/* Subtle grid */}
+        <div 
+          className="absolute inset-0 opacity-[0.03]" 
+          style={{ 
+            backgroundImage: "linear-gradient(#BEFF00 1px, transparent 1px), linear-gradient(90deg, #BEFF00 1px, transparent 1px)", 
+            backgroundSize: "60px 60px" 
+          }} 
+        />
+        
+        {/* Radial Center Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-[#BEFF00]/5 rounded-full blur-[120px]" />
+        
+        {/* Animated Floating Diamonds (replacing the orange 3D rocks) */}
+        <motion.div style={{ y: y1 }} className="absolute top-[30%] left-[10%] md:left-[20%] w-16 h-16 bg-[#BEFF00]/20 rotate-45 blur-[2px] rounded-lg shadow-[0_0_50px_rgba(190,255,0,0.4)]" />
+        <motion.div style={{ y: y2 }} className="absolute bottom-[20%] right-[10%] md:right-[20%] w-24 h-24 bg-[#BEFF00]/15 rotate-12 blur-[4px] rounded-2xl shadow-[0_0_80px_rgba(190,255,0,0.3)]" />
+      </div>
 
-      {/* Grain */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay z-0" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
+      {/* Main Content Wrapper */}
+      <div className="relative z-10 w-full max-w-[1440px] px-6 md:px-12 pt-8 flex flex-col min-h-screen">
+        
 
-      {/* --- DESKTOP LAYOUT (Unchanged) --- */}
-      <div className="hidden md:flex flex-col justify-between flex-1 w-full relative z-10">
-        {/* Top Badges Row */}
-        <div className="relative px-6 md:px-12 max-w-[1440px] mx-auto w-full flex flex-row justify-between items-center gap-6 mt-8">
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }} 
-            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : -20 }} 
-            transition={{ duration: 1, delay: 0.2, ease: [0.16,1,0.3,1] }}
-            className="flex flex-col gap-1"
-          >
-            <div className="flex items-center gap-2">
-              <span className="font-display text-[#F0EDE6] text-xl font-bold tracking-tight">RepOne</span>
-              <span className="text-[#BEFF00] text-[8px] uppercase tracking-widest px-1.5 py-0.5 bg-[#BEFF00]/10 border border-[#BEFF00]/25 rounded font-sans font-bold">SaaS PLATFORM</span>
-            </div>
-            <span className="text-[#F0EDE6]/40 uppercase tracking-widest text-[9px]" style={{ fontFamily: "Inter", letterSpacing: "0.2em" }}>Powered by WebForge</span>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }} 
-            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : -20 }} 
-            transition={{ duration: 1, delay: 0.4, ease: [0.16,1,0.3,1] }}
-            className="text-right flex items-end flex-col gap-1"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-[#BEFF00] uppercase tracking-widest text-[9px] font-bold" style={{ fontFamily: "Inter", letterSpacing: "0.15em" }}>Demo Gym Website</span>
-              <span className="w-2 h-2 rounded-full bg-[#BEFF00] animate-pulse" />
-            </div>
-            <div className="font-display text-[#F0EDE6] text-2xl md:text-3xl leading-none">XYZ Fitness</div>
-          </motion.div>
-        </div>
-
-        {/* Headline */}
-        <div className="relative flex-1 flex flex-col justify-start pt-12 md:pt-20 px-6 md:px-12 max-w-[1440px] mx-auto w-full">
-          <h1 className="font-display leading-[0.9] tracking-[-0.02em] max-w-5xl text-left">
-            <span className="block overflow-hidden pb-1 md:pb-2">
-              <motion.span 
-                className="block text-[#F0EDE6] text-[clamp(2.5rem,7vw,7.5rem)]"
-                initial={{ y: "110%", opacity: 0 }}
-                animate={mounted ? { y: 0, opacity: 1 } : { y: "110%", opacity: 0 }}
-                transition={{ duration: 1.2, delay: 0.3, ease: [0.16,1,0.3,1] }}
-              >
-                {LINE_1}
-              </motion.span>
-            </span>
-            <span className="block overflow-hidden pb-1 md:pb-2">
-              <motion.span 
-                className="block italic text-[#BEFF00] text-[clamp(2.5rem,7vw,7.5rem)]"
-                initial={{ y: "110%", opacity: 0 }}
-                animate={mounted ? { y: 0, opacity: 1 } : { y: "110%", opacity: 0 }}
-                transition={{ duration: 1.2, delay: 0.5, ease: [0.16,1,0.3,1] }}
-              >
-                {LINE_2}
-              </motion.span>
-            </span>
-          </h1>
-        </div>
-
-        {/* Bottom Section */}
-        <div className="relative px-6 md:px-12 max-w-[1440px] mx-auto w-full pb-8">
+        {/* Hero Central Content */}
+        <div className="flex-1 flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto z-20 mt-[-40px]">
+          
+          {/* Floating Pill Badge */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
-            animate={mounted ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 1, delay: 0.7, ease: [0.16,1,0.3,1] }}
-            className="flex flex-row items-end justify-between gap-8 border-t border-[#F0EDE6]/10 pt-8"
+            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
+            className="flex items-center gap-3 bg-[#111113]/80 backdrop-blur-md border border-[#F0EDE6]/10 rounded-full p-1.5 pr-4 mb-4"
           >
-            <p className="max-w-xl text-[#F0EDE6]/60 text-sm md:text-base font-sans leading-relaxed">
-              This is a live demo website for <strong className="text-white">XYZ Fitness</strong>. Every feature&mdash;from online memberships and class bookings to QR attendance, admin management dashboard, and payment pipeline&mdash;is powered by <strong className="text-[#BEFF00]">RepOne</strong>.
-            </p>
-            
-            <div className="flex items-center gap-4 shrink-0">
-              <Link to="/signup" className="group relative overflow-hidden inline-flex items-center gap-2 bg-[#BEFF00] text-[#080809] px-6 py-4 hover:bg-white transition-colors duration-300" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600 }}>
-                <span className="relative z-10">Become a Member</span>
-              </Link>
-              
-              <a href="#book" className="group relative overflow-hidden inline-flex items-center gap-2 border border-[#F0EDE6]/20 text-[#F0EDE6]/80 px-6 py-4 hover:border-[#BEFF00] hover:text-[#BEFF00] transition-colors duration-300" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600 }}>
-                <span className="relative z-10">Book a Demo</span>
-              </a>
-            </div>
+            <span className="bg-[#2A2A2D] text-[#F0EDE6] text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-full font-semibold">
+              Gym Platform
+            </span>
+            <a href="#features" className="text-xs text-[#F0EDE6]/70 flex items-center gap-1 hover:text-[#BEFF00] transition-colors cursor-pointer group/link">
+              See how it works <ArrowRight className="w-3 h-3 transition-transform group-hover/link:translate-x-1" />
+            </a>
           </motion.div>
-        </div>
-      </div>
 
-      {/* --- MOBILE LAYOUT --- */}
-      <div className="flex md:hidden flex-col justify-center gap-8 px-6 py-12 flex-1 my-auto w-full relative z-10">
-        {/* Headline */}
-        <div className="space-y-4">
-          <h1 className="font-display leading-[0.9] tracking-[-0.02em] text-left">
-            <span className="block overflow-hidden pb-1">
-              <motion.span 
-                className="block text-[#F0EDE6] text-[clamp(2.3rem,7.5vw,4.5rem)]"
-                initial={{ y: "110%", opacity: 0 }}
-                animate={mounted ? { y: 0, opacity: 1 } : { y: "110%", opacity: 0 }}
-                transition={{ duration: 1.2, delay: 0.3, ease: [0.16,1,0.3,1] }}
-              >
-                {LINE_1}
-              </motion.span>
-            </span>
-            <span className="block overflow-hidden pb-1">
-              <motion.span 
-                className="block italic text-[#BEFF00] text-[clamp(2.3rem,7.5vw,4.5rem)]"
-                initial={{ y: "110%", opacity: 0 }}
-                animate={mounted ? { y: 0, opacity: 1 } : { y: "110%", opacity: 0 }}
-                transition={{ duration: 1.2, delay: 0.5, ease: [0.16,1,0.3,1] }}
-              >
-                {LINE_2}
-              </motion.span>
-            </span>
-          </h1>
-        </div>
+          {/* Headline */}
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
+            transition={{ delay: 0.1 }}
+            className="text-[clamp(1.75rem,5vw,3.5rem)] leading-[1.05] md:leading-[1.1] font-display tracking-tight text-[#F0EDE6] mb-4"
+          >
+            A <span className="text-[#BEFF00]">beautifully designed</span>, intuitive gym <br className="hidden md:block" />
+            experience that <span className="text-[#BEFF00]">puts you in control</span>
+          </motion.h1>
 
-        {/* Description + Buttons */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={mounted ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 1, delay: 0.7, ease: [0.16,1,0.3,1] }}
-          className="flex flex-col gap-6 border-t border-[#F0EDE6]/10 pt-6"
-        >
-          <p className="max-w-xl text-[#F0EDE6]/60 text-sm font-sans leading-relaxed">
-            A live interactive prototype of <strong className="text-white">XYZ Fitness</strong> powered on autopilot by the <strong className="text-[#BEFF00]">RepOne</strong> platform.
-          </p>
-          
-          <div className="flex flex-col gap-3 w-full">
-            <Link to="/signup" className="text-center bg-[#BEFF00] text-[#080809] py-3.5 hover:bg-white transition-colors duration-300 font-bold tracking-wider text-[10px] uppercase font-sans">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: mounted ? 1 : 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center gap-2 text-xs text-[#F0EDE6]/50 uppercase tracking-widest mb-6"
+          >
+            <span className="w-4 h-4 bg-[#2A2A2D] rounded flex items-center justify-center">✦</span>
+            Our distinctive expertise
+          </motion.div>
+
+          {/* Functional Dashboard Representation */}
+          <div className="relative w-full max-w-[400px] md:max-w-[500px] mx-auto mb-8 md:mb-12 mt-6 md:mt-8 perspective-1000 group">
+            
+            {/* Background Glow */}
+            <div className="absolute inset-0 bg-[#BEFF00]/5 blur-3xl rounded-3xl" />
+            
+            {/* Horizontal Fanning Decorative Stacked Cards */}
+            
+            {/* Left Background Card (Analytics Mock) */}
+            <div className="absolute inset-0 bg-[#0F0F11] border border-[#F0EDE6]/10 rounded-2xl -translate-x-[4%] rotate-[-3deg] md:-translate-x-[8%] md:rotate-[-5deg] scale-[0.9] opacity-60 shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-x-[8%] group-hover:rotate-[-6deg] md:group-hover:-translate-x-[16%] md:group-hover:rotate-[-8deg] overflow-hidden flex flex-col p-4 md:p-6 origin-bottom-left">
+              <div className="w-1/2 h-3 md:h-4 bg-[#2A2A2D]/50 rounded-full mb-6" />
+              <div className="flex-1 bg-[#1A1A1D]/50 rounded-xl border border-[#F0EDE6]/5 p-3 flex items-end gap-2">
+                <div className="w-full bg-[#BEFF00]/20 rounded-t h-[40%]" />
+                <div className="w-full bg-[#BEFF00]/40 rounded-t h-[60%]" />
+                <div className="w-full bg-[#BEFF00]/60 rounded-t h-[80%]" />
+                <div className="w-full bg-[#BEFF00]/80 rounded-t h-[50%]" />
+              </div>
+            </div>
+
+            {/* Right Background Card (Members Mock) */}
+            <div className="absolute inset-0 bg-[#0F0F11] border border-[#F0EDE6]/10 rounded-2xl translate-x-[4%] rotate-[3deg] md:translate-x-[8%] md:rotate-[5deg] scale-[0.9] opacity-60 shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[8%] group-hover:rotate-[6deg] md:group-hover:translate-x-[16%] md:group-hover:rotate-[8deg] overflow-hidden flex flex-col p-4 md:p-6 origin-bottom-right">
+              <div className="w-1/3 h-3 md:h-4 bg-[#2A2A2D]/50 rounded-full mb-6 ml-auto" />
+              <div className="flex flex-col gap-3">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="flex gap-3 items-center bg-[#1A1A1D]/50 p-2 rounded-lg border border-[#F0EDE6]/5">
+                    <div className="w-6 h-6 md:w-8 md:h-8 bg-[#2A2A2D]/80 rounded-full shrink-0" />
+                    <div className="flex flex-col gap-1.5 w-full">
+                      <div className="h-1.5 md:h-2 bg-[#2A2A2D]/80 rounded-full w-3/4" />
+                      <div className="h-1.5 md:h-2 bg-[#2A2A2D]/40 rounded-full w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Main Dashboard Panel */}
+            <motion.div 
+              initial={{ y: 50, opacity: 0, rotateX: 10 }}
+              animate={mounted ? { y: 0, opacity: 1, rotateX: 0 } : { y: 50, opacity: 0, rotateX: 10 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+              className="relative w-full bg-[#0F0F11]/90 backdrop-blur-xl border border-[#F0EDE6]/10 rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.6)] p-4 md:p-5 overflow-hidden flex flex-col gap-4 transform-gpu hover:-translate-y-2 transition-transform duration-500"
+            >
+              {/* Top Bar */}
+              <div className="flex items-center justify-between border-b border-[#F0EDE6]/5 pb-3 md:pb-4">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="w-7 h-7 md:w-8 h-8 rounded-full bg-[#BEFF00]/10 flex items-center justify-center shrink-0">
+                    <Activity className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#BEFF00]" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-[11px] md:text-xs font-semibold text-[#F0EDE6]">Live Gym Activity</div>
+                    <div className="text-[9px] md:text-[10px] text-[#F0EDE6]/50">RepOne Platform</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 px-2 md:px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[8px] md:text-[9px] uppercase tracking-wider font-bold whitespace-nowrap">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="hidden sm:inline">System </span>Online
+                </div>
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
+                <div className="bg-[#1A1A1D]/50 rounded-xl p-3 md:p-4 border border-[#F0EDE6]/5 flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <Users className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#F0EDE6]/40" />
+                    <ArrowUpRight className="w-3 h-3 text-[#BEFF00]" />
+                  </div>
+                  <div>
+                    <div className="text-xl md:text-2xl font-display text-[#F0EDE6]">1,248</div>
+                    <div className="text-[8px] md:text-[10px] text-[#F0EDE6]/40 uppercase tracking-widest mt-0.5 md:mt-1">Active Members</div>
+                  </div>
+                </div>
+
+                <div className="bg-[#1A1A1D]/50 rounded-xl p-3 md:p-4 border border-[#F0EDE6]/5 flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <QrCode className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#F0EDE6]/40" />
+                    <ArrowUpRight className="w-3 h-3 text-[#BEFF00]" />
+                  </div>
+                  <div>
+                    <div className="text-xl md:text-2xl font-display text-[#F0EDE6]">342</div>
+                    <div className="text-[8px] md:text-[10px] text-[#F0EDE6]/40 uppercase tracking-widest mt-0.5 md:mt-1">Scans Today</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recent Activity Bar */}
+              <div className="mt-2 md:mt-auto bg-[#1A1A1D] rounded-lg p-2.5 md:p-3 border border-[#F0EDE6]/5 flex items-center gap-2.5 md:gap-3">
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded bg-[#2A2A2D] flex items-center justify-center shrink-0">
+                  <span className="text-[#F0EDE6] text-[10px] md:text-xs font-bold">JD</span>
+                </div>
+                <div className="flex-1 text-left min-w-0">
+                  <div className="text-[10px] md:text-xs text-[#F0EDE6] truncate">John Doe <span className="text-[#F0EDE6]/40">checked in</span></div>
+                  <div className="text-[8.5px] md:text-[10px] text-[#BEFF00] truncate">Pro Membership • Just now</div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* CTAs under the card */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
+            transition={{ delay: 0.6 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 z-20 w-full px-4 md:px-0"
+          >
+            <Link to="/signup" className="w-full sm:w-auto text-center bg-gradient-to-r from-[#BEFF00] to-[#9acc00] text-[#080809] px-6 md:px-8 py-3 md:py-3.5 rounded-full font-bold text-xs md:text-sm hover:shadow-[0_0_25px_rgba(190,255,0,0.4)] transition-all">
               Become a Member
             </Link>
-            
-            <a href="#book" className="text-center border border-[#F0EDE6]/20 text-[#F0EDE6]/80 py-3.5 hover:border-[#BEFF00] hover:text-[#BEFF00] transition-colors duration-300 font-bold tracking-wider text-[10px] uppercase font-sans">
+            <a href="#demo" className="w-full sm:w-auto text-center bg-[#1A1A1D]/80 backdrop-blur border border-[#F0EDE6]/10 text-[#F0EDE6] px-6 md:px-8 py-3 md:py-3.5 rounded-full font-bold text-xs md:text-sm hover:bg-[#2A2A2D] transition-colors">
               Book a Demo
             </a>
+          </motion.div>
+
+        </div>
+
+        {/* Footer Area */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: mounted ? 1 : 0 }}
+          transition={{ delay: 0.8 }}
+          className="w-full pb-4 pt-6 mt-auto flex flex-col md:flex-row items-center md:items-end justify-between gap-4 text-center md:text-left text-[10px] uppercase tracking-widest text-[#F0EDE6]/50"
+        >
+          <div className="max-w-[280px] leading-relaxed">
+            Manage your gym effortlessly with a sleek, user-friendly app designed for modern facilities, offering seamless scheduling, and real-time insights.
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-2">
+              (SCROLL DOWN)
+              <ArrowDown className="w-3 h-3" />
+            </span>
+            <span className="hidden md:inline">✦</span>
+            <span className="hidden md:inline">(TO DISCOVER MORE)</span>
           </div>
         </motion.div>
+
       </div>
-
-      {/* Floating Demo Badge */}
-      {showBadge && (
-        <div className="fixed bottom-6 right-6 z-50 max-w-sm bg-[#0C0C0E]/95 border border-[#BEFF00]/30 p-5 shadow-2xl backdrop-blur-md flex flex-col gap-4 text-left rounded" style={{ boxShadow: "0 20px 40px rgba(0,0,0,0.5)" }}>
-          <div className="flex items-center justify-between border-b border-[#F0EDE6]/10 pb-2">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#BEFF00] animate-pulse" />
-              <span className="text-[#F0EDE6] font-display text-[11px] uppercase tracking-widest font-bold">RepOne Sandbox Badge</span>
-            </div>
-            <button onClick={() => setShowBadge(false)} className="text-[#F0EDE6]/40 hover:text-white transition-colors text-sm font-bold px-1">&times;</button>
-          </div>
-          <p className="text-[#F0EDE6]/70 text-[12px] font-sans leading-relaxed">
-            You're viewing a demo website for <strong className="text-[#BEFF00]">XYZ Fitness</strong>. Everything on this website&mdash;including memberships, QR check-in, payments, member portal, and admin dashboard&mdash;is powered by <strong className="text-white">RepOne</strong>.
-          </p>
-          <div className="flex gap-2">
-            <Link to="/signup" className="flex-1 text-center py-2.5 bg-[#BEFF00] text-[#080809] text-[9px] uppercase tracking-wider font-bold hover:bg-white transition-colors" style={{ fontFamily: "Inter" }}>
-              Sign Up
-            </Link>
-            <Link to="/login" className="flex-1 text-center py-2.5 border border-[#F0EDE6]/20 text-[#F0EDE6] text-[9px] uppercase tracking-wider font-bold hover:border-[#BEFF00] hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter" }}>
-              Login
-            </Link>
-          </div>
-        </div>
-      )}
-
-      <style>{`@keyframes scrollpulse{0%{transform:translateY(-100%)}70%{transform:translateY(200%)}100%{transform:translateY(200%)}}`}</style>
+      
+      {/* Include the global framer motion perspective utility if needed */}
+      <style>{`
+        .perspective-1000 {
+          perspective: 1000px;
+        }
+      `}</style>
     </section>
   );
 }
