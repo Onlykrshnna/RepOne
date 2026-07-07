@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { Reveal } from "./Reveal";
 
 const TESTIMONIALS = [
-  { text: "Web Forge stripped away the noise. It's just clean code, and engineering that scales.", author: "James M.", role: "CTO, TechCorp" },
-  { text: "The architecture respects our goals. Our platform is faster at 100k users than it was at 1k.", author: "Sarah T.", role: "Product Lead" },
-  { text: "No bloated templates. Just pixel-perfect execution that actually changes how users interact.", author: "David L.", role: "Founder, Startup Inc" },
+  { text: "RepOne replaced three different software subscriptions. Our admin work cut in half!", author: "Marcus A.", role: "Owner, Iron House Gym" },
+  { text: "Our attendance process became completely paperless. Members check in using the QR code in 2 seconds.", author: "Sarah T.", role: "Founder, Titan Strength" },
+  { text: "Payments are now verified in under a minute, drastically reducing unverified gym entries.", author: "Elena R.", role: "Manager, Elite Fitness Club" },
 ];
 
 export function Testimonials() {

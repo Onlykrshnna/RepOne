@@ -131,7 +131,7 @@ function MemberLayout() {
         <Sidebar variant="inset" className="bg-card border-r-border">
           <SidebarHeader className="border-b border-border p-4">
             <Link to="/" className="flex items-center gap-2">
-              <span className="font-display tracking-tight text-xl text-foreground">ATLAS</span>
+              <span className="font-display tracking-tight text-xl text-foreground">XYZ Fitness</span>
               <span className="text-xs text-gold/80">MEMBER</span>
             </Link>
           </SidebarHeader>

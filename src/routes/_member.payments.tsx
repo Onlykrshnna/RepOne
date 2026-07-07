@@ -195,7 +195,7 @@ function PaymentHistoryPage() {
         </Card>
 
         {/* Payment History Table */}
-        <Card className="md:col-span-2 bg-card border-border text-foreground">
+        <Card className="md:col-span-2 bg-card border-border text-foreground min-w-0 overflow-hidden">
           <CardHeader>
             <CardTitle className="text-lg">Payment History</CardTitle>
             <CardDescription className="text-muted-foreground">View and download your past invoices.</CardDescription>

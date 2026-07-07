@@ -6,8 +6,8 @@ interface MarqueeStripProps {
 }
 
 const DEFAULT_ITEMS = [
-  "STRENGTH", "CONDITIONING", "RECOVERY", "PRIVATE COACHING",
-  "EST. 2014", "LONDON", "240 MEMBERS", "11 YEARS ON FLOOR",
+  "QR ATTENDANCE", "PAYMENTS", "MEMBERSHIPS", "ADMIN DASHBOARD",
+  "MOBILE APP", "ANALYTICS", "RepOne",
 ];
 
 export function MarqueeStrip({

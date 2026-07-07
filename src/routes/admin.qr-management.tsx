@@ -15,7 +15,7 @@ function AdminQRManagement() {
   const checkinUrl = `${window.location.origin}/checkin`;
 
   const handleDownloadAttendanceQR = () => {
-    downloadQRAsPNG('attendance-qr', 'atlas-attendance-qr');
+    downloadQRAsPNG('attendance-qr', 'xyz-fitness-attendance-qr');
     toast.success('Attendance QR downloaded!');
   };
 

@@ -79,11 +79,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Atlas · A Private Strength Club" },
+      { title: "RepOne · Gym Management Platform & Demo" },
       {
         name: "description",
         content:
-          "Atlas is a members-only strength club. Coached training, refined recovery, and a room built to disappear.",
+          "RepOne is a modern gym management platform. Manage memberships, payments, QR check-ins, class schedules, and trainer portals in one place.",
       },
     ],
     links: [

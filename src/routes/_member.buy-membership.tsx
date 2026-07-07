@@ -88,10 +88,10 @@ function BuyMembershipPage() {
       if (profile?.email) {
         emailService.send({
           to: profile.email,
-          subject: 'Membership Order Awaiting Verification - Atlas Gym',
+          subject: 'Membership Order Awaiting Verification - XYZ Fitness',
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #fafafa; color: #333;">
-              <h2 style="color: #4F46E5; margin-bottom: 5px;">Atlas Gym Elevate</h2>
+              <h2 style="color: #4F46E5; margin-bottom: 5px;">XYZ Fitness</h2>
               <p style="font-size: 14px; color: #666; margin-top: 0;">Order Confirmation & Receipt</p>
               <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;" />
               <p>Hello <strong>${profile.first_name}</strong>,</p>
@@ -121,7 +121,7 @@ function BuyMembershipPage() {
 
               <p>Your membership access will be unlocked automatically as soon as the payment confirmation review completes. You can check your status anytime on your member dashboard.</p>
               <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;" />
-              <p style="font-size: 12px; color: #999; text-align: center;">Thank you for training with Atlas Gym! <br/>© 2026 Atlas Gym Elevate. All rights reserved.</p>
+              <p style="font-size: 12px; color: #999; text-align: center;">Thank you for training with XYZ Fitness! <br/>© 2026 XYZ Fitness. All rights reserved.</p>
             </div>
           `
         }).catch(err => console.warn('Email receipt transmission failed:', err));

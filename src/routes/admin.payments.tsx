@@ -130,7 +130,7 @@ function AdminPaymentsPage() {
         </Card>
       </div>
 
-      <Card className="bg-card border-border text-foreground">
+      <Card className="bg-card border-border text-foreground min-w-0 overflow-hidden">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <div className="relative flex-1">

@@ -107,7 +107,7 @@ function CopyButton({ text }: { text: string }) {
 function GuestQRModal({ pass }: { pass: GuestPass }) {
   const [open, setOpen] = useState(false);
   const checkinUrl = `${window.location.origin}/checkin?guestId=${pass.id}`;
-  const whatsappUrl = `whatsapp://send?text=Here is your guest pass for Atlas Gym! %0A%0AClick the link to check in: %0A${encodeURIComponent(checkinUrl)}`;
+  const whatsappUrl = `whatsapp://send?text=Here is your guest pass for XYZ Fitness! %0A%0AClick the link to check in: %0A${encodeURIComponent(checkinUrl)}`;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

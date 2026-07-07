@@ -6,11 +6,12 @@ import { useScroll, useTransform, motion } from "framer-motion";
 import { AmbientEmissions } from "./AmbientEmissions";
 import { Bell } from "lucide-react";
 
-const WORDS = ["BUILD", "DIGITAL", "EXPERIENCES"];
-const LIME_WORD = "THAT PERFORM.";
+const WORDS = ["GROW YOUR GYM.", "AUTOMATE"];
+const LIME_WORD = "EVERYTHING.";
 
 export function Hero() {
   const [mounted, setMounted] = useState(false);
+  const [showBadge, setShowBadge] = useState(true);
   const { session, isLoading } = useAuth();
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 1000], [0, 300]);
@@ -28,7 +29,7 @@ export function Hero() {
         className="absolute inset-[-10%] z-0" 
         style={{ y, opacity }}
       >
-        <img src={heroImg} alt="" aria-hidden className="w-full h-full object-cover opacity-30 mix-blend-luminosity" />
+        <img src={heroImg} alt="" aria-hidden className="w-full h-full object-cover opacity-25 mix-blend-luminosity" />
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(#BEFF00 1px, transparent 1px), linear-gradient(90deg, #BEFF00 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
         <div className="absolute inset-0 bg-gradient-to-b from-[#080809]/60 via-[#080809]/80 to-[#080809]" />
       </motion.div>
@@ -39,16 +40,19 @@ export function Hero() {
       {/* Grain */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay z-0" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
 
-      {/* Top badges (Relative flow) */}
+      {/* Top badges (Relative flow showing new brand hierarchy) */}
       <div className="relative z-10 px-6 md:px-12 max-w-[1440px] mx-auto w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mt-8">
         <motion.div 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : -20 }} 
           transition={{ duration: 1, delay: 0.2, ease: [0.16,1,0.3,1] }}
-          className="flex items-center gap-3"
+          className="flex flex-col gap-1"
         >
-          <span className="block w-5 h-[1px] bg-[#BEFF00]" />
-          <span className="text-[#F0EDE6]/55" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>A Live Demo &middot; Web Forge</span>
+          <div className="flex items-center gap-2">
+            <span className="font-display text-[#F0EDE6] text-xl font-bold tracking-tight">RepOne</span>
+            <span className="text-[#BEFF00] text-[8px] uppercase tracking-widest px-1.5 py-0.5 bg-[#BEFF00]/10 border border-[#BEFF00]/25 rounded font-sans font-bold">SaaS PLATFORM</span>
+          </div>
+          <span className="text-[#F0EDE6]/40 uppercase tracking-widest text-[9px]" style={{ fontFamily: "Inter", letterSpacing: "0.2em" }}>Powered by WebForge</span>
         </motion.div>
 
         <motion.div 
@@ -58,10 +62,10 @@ export function Hero() {
           className="text-left sm:text-right flex items-start sm:items-end flex-col gap-1"
         >
           <div className="flex items-center gap-2">
-            <Bell className="w-5 h-5 text-[#BEFF00] animate-pulse" />
-            <div className="font-display text-[#BEFF00] text-3xl md:text-4xl leading-none">DEMO</div>
+            <span className="text-[#BEFF00] uppercase tracking-widest text-[9px] font-bold" style={{ fontFamily: "Inter", letterSpacing: "0.15em" }}>Demo Gym Website</span>
+            <span className="w-2 h-2 rounded-full bg-[#BEFF00] animate-pulse" />
           </div>
-          <div className="text-[#F0EDE6]/35" style={{ fontFamily: "Inter", fontSize: "9px", letterSpacing: "0.24em", textTransform: "uppercase" }}>Showcase Project</div>
+          <div className="font-display text-[#F0EDE6] text-2xl md:text-3xl leading-none">XYZ Fitness</div>
         </motion.div>
       </div>
 
@@ -99,34 +103,47 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={mounted ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 1, delay: 1, ease: [0.16,1,0.3,1] }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-t border-[#F0EDE6]/10 pt-8"
+          className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-t border-[#F0EDE6]/10 pt-8"
         >
-          <p className="max-w-sm text-[#F0EDE6]/50" style={{ fontFamily: "Inter", fontSize: "14px", lineHeight: "1.6" }}>
-            This is a functional gym prototype designed by Web Forge. High-end design, seamless user flows, and real backend logic &mdash; no smoke and mirrors.
+          <p className="max-w-xl text-[#F0EDE6]/60" style={{ fontFamily: "Inter", fontSize: "14px", lineHeight: "1.7" }}>
+            This is a live demo website for <strong className="text-white">XYZ Fitness</strong>. Every feature&mdash;from online memberships and class bookings to QR attendance, admin management dashboard, and payment pipeline&mdash;is powered by <strong className="text-[#BEFF00]">RepOne</strong>.
           </p>
           
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col items-center gap-3 mr-8 hidden md:flex">
-              <span className="text-[#F0EDE6]/40" style={{ fontFamily: "Inter", fontSize: "9px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Scroll</span>
-              <div className="relative h-14 w-[1px] overflow-hidden bg-[#F0EDE6]/15">
-                <div className="absolute top-0 left-0 h-1/2 w-full bg-[#BEFF00]" style={{ animation: "scrollpulse 2.4s ease-in-out infinite" }} />
-              </div>
-            </div>
-
-            {!isLoading && session ? (
-              <Link to="/dashboard" className="group relative overflow-hidden inline-flex items-center gap-3 bg-[#BEFF00] text-[#080809] px-8 py-5 hover:bg-white transition-colors duration-300" style={{ fontFamily: "Inter", fontSize: "11px", letterSpacing: "0.26em", textTransform: "uppercase", fontWeight: 500 }}>
-                <span className="relative z-10">Explore Dashboard</span>
-                <span className="relative z-10 group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
-              </Link>
-            ) : (
-              <Link to="/signup" className="group relative overflow-hidden inline-flex items-center gap-3 bg-[#BEFF00] text-[#080809] px-8 py-5 hover:bg-white transition-colors duration-300" style={{ fontFamily: "Inter", fontSize: "11px", letterSpacing: "0.26em", textTransform: "uppercase", fontWeight: 500 }}>
-                <span className="relative z-10">Explore Demo</span>
-                <span className="relative z-10 group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
-              </Link>
-            )}
+          <div className="flex flex-wrap items-center gap-4">
+            <Link to="/signup" className="group relative overflow-hidden inline-flex items-center gap-2 bg-[#BEFF00] text-[#080809] px-6 py-4 hover:bg-white transition-colors duration-300" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600 }}>
+              <span className="relative z-10">Become a Member</span>
+            </Link>
+            
+            <a href="#book" className="group relative overflow-hidden inline-flex items-center gap-2 border border-[#F0EDE6]/20 text-[#F0EDE6]/80 px-6 py-4 hover:border-[#BEFF00] hover:text-[#BEFF00] transition-colors duration-300" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600 }}>
+              <span className="relative z-10">Book a Demo</span>
+            </a>
           </div>
         </motion.div>
       </div>
+
+      {/* Floating Demo Badge */}
+      {showBadge && (
+        <div className="fixed bottom-6 right-6 z-50 max-w-sm bg-[#0C0C0E]/95 border border-[#BEFF00]/30 p-5 shadow-2xl backdrop-blur-md flex flex-col gap-4 text-left rounded" style={{ boxShadow: "0 20px 40px rgba(0,0,0,0.5)" }}>
+          <div className="flex items-center justify-between border-b border-[#F0EDE6]/10 pb-2">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#BEFF00] animate-pulse" />
+              <span className="text-[#F0EDE6] font-display text-[11px] uppercase tracking-widest font-bold">RepOne Sandbox Badge</span>
+            </div>
+            <button onClick={() => setShowBadge(false)} className="text-[#F0EDE6]/40 hover:text-white transition-colors text-sm font-bold px-1">&times;</button>
+          </div>
+          <p className="text-[#F0EDE6]/70 text-[12px] font-sans leading-relaxed">
+            You're viewing a demo website for <strong className="text-[#BEFF00]">XYZ Fitness</strong>. Everything on this website&mdash;including memberships, QR check-in, payments, member portal, and admin dashboard&mdash;is powered by <strong className="text-white">RepOne</strong>.
+          </p>
+          <div className="flex gap-2">
+            <Link to="/signup" className="flex-1 text-center py-2.5 bg-[#BEFF00] text-[#080809] text-[9px] uppercase tracking-wider font-bold hover:bg-white transition-colors" style={{ fontFamily: "Inter" }}>
+              Member App
+            </Link>
+            <Link to="/login" className="flex-1 text-center py-2.5 border border-[#F0EDE6]/20 text-[#F0EDE6] text-[9px] uppercase tracking-wider font-bold hover:border-[#BEFF00] hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter" }}>
+              Admin Portal
+            </Link>
+          </div>
+        </div>
+      )}
 
       <style>{`@keyframes scrollpulse{0%{transform:translateY(-100%)}70%{transform:translateY(200%)}100%{transform:translateY(200%)}}`}</style>
     </section>

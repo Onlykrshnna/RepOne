@@ -369,7 +369,7 @@ function MembershipPlansPage() {
               ? 'Your membership is expiring soon. Renew your current plan or switch to a better one.'
               : hasMembership
               ? 'Upgrade anytime. Your new plan will begin after your current one is approved.'
-              : 'Unlock full access to Atlas. Choose the plan that fits your training goals.'}
+              : 'Unlock full access to XYZ Fitness. Choose the plan that fits your training goals.'}
           </p>
         </div>
 

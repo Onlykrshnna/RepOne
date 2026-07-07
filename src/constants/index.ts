@@ -21,105 +21,105 @@ export const trainers = [
 
 export const quotes = [
   {
-    q: "The first gym I've belonged to that treats coaching as a craft. Two years in, my body reads younger than it did at thirty.",
+    q: "RepOne replaced three different software subscriptions. Our admin work cut in half!",
+    name: "Marcus A.",
+    detail: "Owner, Iron House Gym · 450+ Active Members",
+  },
+  {
+    q: "Our attendance process became completely paperless. Members check in using the QR code in 2 seconds.",
+    name: "Sarah T.",
+    detail: "Founder, Titan Strength · Capped at 300 Members",
+  },
+  {
+    q: "Payments are now verified in under a minute, drastically reducing unverified gym entries.",
     name: "Elena R.",
-    detail: "Member since 2022 · Down 14 kg, up 40 kg on the deadlift",
-  },
-  {
-    q: "It's the quietest room in London and the hardest hour of my week. Both, by design.",
-    name: "David M.",
-    detail: "Member since 2019 · First unassisted pull-up at 47",
-  },
-  {
-    q: "James rebuilt me around an old back injury without ever making it the subject of a session. That's the whole difference.",
-    name: "Priya S.",
-    detail: "Member since 2020 · Half-marathon PR, injury-free",
+    detail: "Manager, Elite Fitness Club · 3 Locations",
   },
 ];
 
 export const stats = [
-  { end: 1240, label: "Members trained", suffix: "" },
-  { end: 11, label: "Years on the floor", suffix: "" },
-  { end: 42, label: "Weekly coached sessions", suffix: "" },
-  { end: 96, label: "Member retention", suffix: "%" },
+  { end: 100, label: "Attendance in 2s", suffix: "%" },
+  { end: 24, label: "Online Membership", suffix: "x7" },
+  { end: 1, label: "Payment Approval", suffix: " Min" },
+  { end: 0, label: "Manual Paperwork", suffix: "%" },
 ];
 
 export const programs = [
   {
     n: "01",
-    name: "Strength",
-    tag: "Barbell · Kettlebell · Structural",
-    copy: "Progressive periodization built around your lifts. Twelve-week arcs, weekly reads.",
+    name: "Member Portal",
+    tag: "Mobile App · QR Attendance · Workout Logs",
+    copy: "Empower members to buy passes, register for classes, view their attendance, and check in via their personal QR codes.",
     img: strength,
   },
   {
     n: "02",
-    name: "Conditioning",
-    tag: "HIIT · Zone 2 · Interval",
-    copy: "Precisely dosed intensity. Heart-rate governed sessions in small groups of six.",
+    name: "Admin Dashboard",
+    tag: "Revenue Tracking · Memberships · Reports",
+    copy: "A birds-eye view of your business. Track monthly recurring revenue, approve payments, and view active check-ins in real-time.",
     img: hiit,
   },
   {
     n: "03",
-    name: "Recovery",
-    tag: "Sauna · Ice · Mobility",
-    copy: "A full recovery suite. Contrast therapy, guided mobility, sleep and nutrition coaching.",
+    name: "Payment Pipeline",
+    tag: "Automated Verifications · Receipts",
+    copy: "Verify and reconcile payments instantly. Avoid manual bank transfer checks and spreadsheet double-entry.",
     img: recovery,
   },
   {
     n: "04",
-    name: "Private Coaching",
-    tag: "1:1 · Assessment · Programming",
-    copy: "A named coach, quarterly assessments, and a plan that adapts to your life outside.",
+    name: "White-Label Brand",
+    tag: "Your Logo · Your Colors · Your Domain",
+    copy: "SaaS that adapts to you. Deliver a premium, bespoke digital experience under your own gym brand, not ours.",
     img: pt,
   },
 ];
 
 export const links = [
-  { label: "Philosophy", href: "#philosophy" },
-  { label: "Programs", href: "#programs" },
-  { label: "Trainers", href: "#trainers" },
-  { label: "Facility", href: "#facility" },
-  { label: "Membership", href: "#membership" },
+  { label: "Why RepOne", href: "#why-repone" },
+  { label: "Features", href: "#features" },
+  { label: "Showcase", href: "#showcase" },
+  { label: "Adaptability", href: "#brand" },
+  { label: "Packages", href: "#packages" },
 ];
 
 export const tiers = [
   {
-    name: "Foundation",
-    price: "180",
-    period: "/ month",
+    name: "Basic",
+    price: "₹1,999",
+    period: "month",
     features: [
-      "Access to open training floor",
-      "Two coached group sessions weekly",
-      "Recovery suite",
-      "Member events",
+      "Up to 100 active members",
+      "Online registration & memberships",
+      "Basic reports & dashboard",
+      "Standard email support",
     ],
-    cta: "Apply",
+    cta: "Start Free Trial",
   },
   {
-    name: "Signature",
-    price: "340",
-    period: "/ month",
+    name: "Premium",
+    price: "₹3,999",
+    period: "month",
     featured: true,
     features: [
-      "Everything in Foundation",
-      "Unlimited coached group sessions",
-      "Quarterly performance assessment",
-      "Guest privileges · 2 per month",
+      "Up to 500 active members",
+      "QR code attendance tracking",
+      "Trainer & class management",
+      "Priority email & chat support",
     ],
-    cta: "Apply",
+    cta: "Start Free Trial",
   },
   {
-    name: "Private",
-    price: "On request",
+    name: "Enterprise",
+    price: "Custom",
     period: "",
     features: [
-      "Everything in Signature",
-      "Named private coach · weekly",
-      "Custom programming & nutrition",
-      "Concierge scheduling",
+      "Unlimited active members",
+      "Custom domain & full branding",
+      "Advanced CRM integrations",
+      "24/7 Dedicated account support",
     ],
-    cta: "Enquire",
+    cta: "Book Demo",
   },
 ];
 

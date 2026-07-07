@@ -339,7 +339,7 @@ function ClassesPage() {
 
       {/* Main Tabs */}
       <Tabs defaultValue="classes" className="space-y-6">
-        <TabsList className="bg-muted border border-border w-full sm:w-auto p-1 rounded-lg">
+        <TabsList className="bg-muted border border-border w-full sm:w-auto p-1 rounded-lg flex overflow-x-auto whitespace-nowrap scrollbar-none">
           <TabsTrigger value="classes" className="data-[state=active]:bg-white data-[state=active]:text-slate-900 text-muted-foreground px-4 py-2 font-medium">Classes Grid</TabsTrigger>
           <TabsTrigger value="calendar" className="data-[state=active]:bg-white data-[state=active]:text-slate-900 text-muted-foreground px-4 py-2 font-medium">Calendar View</TabsTrigger>
           <TabsTrigger value="trainers" className="data-[state=active]:bg-white data-[state=active]:text-slate-900 text-muted-foreground px-4 py-2 font-medium">Trainers Directory</TabsTrigger>
@@ -681,41 +681,45 @@ function ClassesPage() {
                     </Button>
                   </div>
 
-                  <div className="grid grid-cols-7 border-t border-l border-border rounded-lg overflow-hidden">
-                    {/* Header */}
-                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                      <div key={day} className="bg-background p-2 text-center text-xs font-semibold text-muted-foreground border-r border-b border-border">
-                        {day}
-                      </div>
-                    ))}
-                    {/* Days */}
-                    {generateMonthDays().map((day, idx) => {
-                      const dayClasses = getDayClasses(day);
-                      const isCurrentMonth = isSameMonth(day, calendarDate);
-                      const isToday = isSameDay(day, new Date());
-
-                      return (
-                        <div 
-                          key={idx} 
-                          className={`min-h-[100px] p-2 border-r border-b border-border flex flex-col justify-between transition-colors ${!isCurrentMonth ? 'bg-slate-50/50 opacity-40' : 'bg-card'} ${isToday ? 'bg-indigo-50/20' : ''}`}
-                        >
-                          <span className={`text-[10px] font-bold self-start w-5 h-5 flex items-center justify-center rounded-full ${isToday ? 'bg-indigo-600 text-white' : 'text-muted-foreground/75'}`}>
-                            {format(day, 'd')}
-                          </span>
-                          
-                          <div className="space-y-1 mt-2">
-                            {dayClasses.slice(0, 2).map(cls => (
-                              <div key={cls.id} className="text-[9px] font-semibold p-1 rounded border border-border/50 truncate text-foreground/90" style={{ borderLeft: `2.5px solid ${cls.color_label}` }}>
-                                {cls.title}
-                              </div>
-                            ))}
-                            {dayClasses.length > 2 && (
-                              <div className="text-[8px] font-bold text-muted-foreground/75 text-right">+{dayClasses.length - 2} more</div>
-                            )}
+                  <div className="overflow-x-auto w-full -mx-4 px-4 md:mx-0 md:px-0">
+                    <div className="min-w-[700px] pb-2">
+                      <div className="grid grid-cols-7 border-t border-l border-border rounded-lg overflow-hidden">
+                        {/* Header */}
+                        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                          <div key={day} className="bg-background p-2 text-center text-xs font-semibold text-muted-foreground border-r border-b border-border">
+                            {day}
                           </div>
-                        </div>
-                      );
-                    })}
+                        ))}
+                        {/* Days */}
+                        {generateMonthDays().map((day, idx) => {
+                          const dayClasses = getDayClasses(day);
+                          const isCurrentMonth = isSameMonth(day, calendarDate);
+                          const isToday = isSameDay(day, new Date());
+
+                          return (
+                            <div 
+                              key={idx} 
+                              className={`min-h-[100px] p-2 border-r border-b border-border flex flex-col justify-between transition-colors ${!isCurrentMonth ? 'bg-slate-50/50 opacity-40' : 'bg-card'} ${isToday ? 'bg-indigo-50/20' : ''}`}
+                            >
+                              <span className={`text-[10px] font-bold self-start w-5 h-5 flex items-center justify-center rounded-full ${isToday ? 'bg-indigo-600 text-white' : 'text-muted-foreground/75'}`}>
+                                {format(day, 'd')}
+                              </span>
+                              
+                              <div className="space-y-1 mt-2">
+                                {dayClasses.slice(0, 2).map(cls => (
+                                  <div key={cls.id} className="text-[9px] font-semibold p-1 rounded border border-border/50 truncate text-foreground/90" style={{ borderLeft: `2.5px solid ${cls.color_label}` }}>
+                                    {cls.title}
+                                  </div>
+                                ))}
+                                {dayClasses.length > 2 && (
+                                  <div className="text-[8px] font-bold text-muted-foreground/75 text-right">+{dayClasses.length - 2} more</div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}

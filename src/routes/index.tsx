@@ -4,6 +4,7 @@ import { Nav } from "@/components/site/Nav";
 import { Hero } from "@/components/site/Hero";
 import { Philosophy } from "@/components/site/Philosophy";
 import { MarqueeStrip } from "@/components/site/MarqueeStrip";
+import { Comparison } from "@/components/site/Comparison";
 import { Programs } from "@/components/site/Programs";
 import { Stats } from "@/components/site/Stats";
 import { Trainers } from "@/components/site/Trainers";
@@ -17,17 +18,17 @@ import { CustomCursor } from "@/components/site/CustomCursor";
 export const Route = createFileRoute("/")(  {
   head: () => ({
     meta: [
-      { title: "Atlas · A Private Strength Club, London" },
+      { title: "RepOne · Gym Management Platform & Demo" },
       {
         name: "description",
         content:
-          "Atlas is a members-only strength club in East London. Coached training, refined recovery, and a room built to disappear.",
+          "Explore the live interactive demo of XYZ Fitness powered by RepOne, a premium gym management platform.",
       },
-      { property: "og:title", content: "Atlas · A Private Strength Club, London" },
+      { property: "og:title", content: "RepOne · Gym Management Platform" },
       {
         property: "og:description",
         content:
-          "Coached strength, precise conditioning, and a full recovery suite. Membership capped at 240.",
+          "Automated memberships, payments, QR attendance, trainer dashboards, and member portals.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -45,6 +46,7 @@ function Index() {
         <Hero />
         <Philosophy />
         <MarqueeStrip />
+        <Comparison />
         <Programs />
         <Stats />
         <Trainers />
