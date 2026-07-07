@@ -78,7 +78,7 @@ export function Preloader() {
           {/* Top Row: System Status */}
           <div className="relative z-10 flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="Logo" className="h-[100px] object-contain" />
+              <img src="/logo.png" alt="Logo" className="h-16 md:h-[100px] object-contain" />
               <span className="text-[#BEFF00] text-[7px] uppercase tracking-widest px-1.5 py-0.5 bg-[#BEFF00]/10 border border-[#BEFF00]/25 rounded font-sans font-bold">SANDBOX DEV</span>
             </div>
             <div className="flex items-center gap-6 font-mono text-[9px] text-[#F0EDE6]/30">
