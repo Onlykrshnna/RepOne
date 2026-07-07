@@ -84,6 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "RepOne is a modern gym management platform. Manage memberships, payments, QR check-ins, class schedules, and trainer portals in one place.",
       },
+      { property: "og:url", content: "https://repone.web-forge.in" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

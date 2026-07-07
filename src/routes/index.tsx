@@ -32,6 +32,7 @@ export const Route = createFileRoute("/")(  {
           "Automated memberships, payments, QR attendance, trainer dashboards, and member portals.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://repone.web-forge.in" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),

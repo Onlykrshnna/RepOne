@@ -105,7 +105,7 @@ export function Trainers() {
                       <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                       <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
                     </div>
-                    <span className="text-[10px] text-white/30 font-sans tracking-wide bg-black/40 px-3 py-0.5 rounded">admin.repone.co/xyz-fitness</span>
+                    <span className="text-[10px] text-white/30 font-sans tracking-wide bg-black/40 px-3 py-0.5 rounded">repone.web-forge.in/admin</span>
                     <div className="w-4" />
                   </div>
                   {/* Dashboard body */}
