@@ -15,7 +15,7 @@ export function Stats() {
         {STATS.map((s, i) => (
           <Reveal key={s.lbl} delay={i * 100}>
             <div className="flex flex-col border-t-2 border-[#080809]/20 pt-6">
-              <span className="font-display text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight mb-3 whitespace-nowrap">
+              <span className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight mb-3">
                 {s.val}
               </span>
               <span className="font-sans text-[10px] font-bold tracking-[0.15em] uppercase opacity-75">
