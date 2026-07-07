@@ -87,7 +87,7 @@ function AdminLayoutInner({ currentPath, adminNavItems, currentNav, signOut }: a
       <Sidebar variant="inset" className="bg-card border-r-border">
         <SidebarHeader className="border-b border-border p-4">
           <Link to="/admin/dashboard" className="flex items-center gap-2" onClick={() => setOpenMobile(false)}>
-            <span className="font-display tracking-tight text-xl text-foreground">XYZ Fitness</span>
+            <img src="/logo.png" alt="Logo" className="h-6 object-contain dark:invert-0 invert" />
             <span className="text-xs text-indigo-600 font-semibold tracking-wide">ADMIN</span>
           </Link>
         </SidebarHeader>

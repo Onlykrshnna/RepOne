@@ -39,8 +39,8 @@ function Signup() {
       
       <div className="w-full max-w-sm relative z-10 py-12">
         <div className="text-center mb-12">
-          <Link to="/" className="inline-block font-display text-[26px] tracking-tight leading-none text-[#F0EDE6] hover:text-[#BEFF00] transition-colors">
-            XYZ Fitness
+          <Link to="/" className="inline-block">
+            <img src="/logo.png" alt="Logo" className="h-10 object-contain hover:opacity-80 transition-opacity" />
           </Link>
           <div className="mt-4 flex items-center justify-center gap-4">
             <span className="block h-[1px] w-6 bg-[#F0EDE6]/15" />
