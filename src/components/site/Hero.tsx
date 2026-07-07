@@ -42,21 +42,6 @@ export function Hero() {
 
       {/* Centered content wrapper */}
       <div className="relative z-10 mx-auto max-w-[1440px] px-6 md:px-12 w-full flex flex-col gap-8 md:gap-12 justify-center my-auto">
-        {/* Brand row */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-[#F0EDE6]/10 pb-6">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <span className="font-display text-[#F0EDE6] text-xl font-bold tracking-tight">XYZ Fitness</span>
-              <span className="text-[#BEFF00] text-[8px] uppercase tracking-widest px-1.5 py-0.5 bg-[#BEFF00]/10 border border-[#BEFF00]/25 rounded font-sans font-bold">DEMO SYSTEM</span>
-            </div>
-            <span className="text-[#F0EDE6]/40 uppercase tracking-widest text-[9px]" style={{ fontFamily: "Inter", letterSpacing: "0.2em" }}>Powered by RepOne</span>
-          </div>
-          <div className="flex flex-col gap-1 sm:items-end">
-            <span className="text-white/30 uppercase tracking-widest text-[9px] font-sans font-bold">Built by WebForge</span>
-            <span className="text-[10px] text-[#BEFF00] font-sans">Live Active Sandbox</span>
-          </div>
-        </div>
-
         {/* Heading */}
         <div className="space-y-4">
           <h1 className="font-display leading-[0.9] tracking-[-0.02em] max-w-5xl text-left">
@@ -91,7 +76,7 @@ export function Hero() {
           className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-t border-[#F0EDE6]/10 pt-8"
         >
           <p className="max-w-xl text-[#F0EDE6]/60 text-sm md:text-base font-sans leading-relaxed">
-            This is a live demo website for <strong className="text-white">XYZ Fitness</strong>. Every feature&mdash;from online memberships and class bookings to QR attendance, admin management dashboard, and payment pipeline&mdash;is powered by <strong className="text-[#BEFF00]">RepOne</strong>.
+            A live interactive prototype of <strong className="text-white">XYZ Fitness</strong> powered on autopilot by the <strong className="text-[#BEFF00]">RepOne</strong> platform.
           </p>
           
           <div className="flex flex-wrap items-center gap-4 shrink-0">
