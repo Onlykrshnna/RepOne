@@ -136,10 +136,10 @@ export function Hero() {
           </p>
           <div className="flex gap-2">
             <Link to="/signup" className="flex-1 text-center py-2.5 bg-[#BEFF00] text-[#080809] text-[9px] uppercase tracking-wider font-bold hover:bg-white transition-colors" style={{ fontFamily: "Inter" }}>
-              Member App
+              Sign Up
             </Link>
             <Link to="/login" className="flex-1 text-center py-2.5 border border-[#F0EDE6]/20 text-[#F0EDE6] text-[9px] uppercase tracking-wider font-bold hover:border-[#BEFF00] hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter" }}>
-              Admin Portal
+              Login
             </Link>
           </div>
         </div>

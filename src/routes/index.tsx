@@ -14,6 +14,7 @@ import { Testimonials } from "@/components/site/Testimonials";
 import { CTASection } from "@/components/site/CTASection";
 import { Footer } from "@/components/site/Footer";
 import { CustomCursor } from "@/components/site/CustomCursor";
+import { Preloader } from "@/components/site/Preloader";
 
 export const Route = createFileRoute("/")(  {
   head: () => ({
@@ -40,6 +41,7 @@ export const Route = createFileRoute("/")(  {
 function Index() {
   return (
     <SiteThemeProvider>
+      <Preloader />
       <main className="bg-[#F8F7F4] dark:bg-[#080809] text-[#0E0E10] dark:text-[#F0EDE6] overflow-x-clip">
         <CustomCursor />
         <Nav />
