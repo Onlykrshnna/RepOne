@@ -16,6 +16,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
   SidebarInset,
+  useSidebar,
 } from '../components/ui/sidebar';
 import { 
   LayoutDashboard, 
@@ -78,6 +79,90 @@ const adminNavItems = [
   { title: "Feedback", url: "/admin/feedback", icon: MessageSquare },
 ];
 
+function AdminLayoutInner({ currentPath, adminNavItems, currentNav, signOut }: any) {
+  const { setOpenMobile } = useSidebar();
+  
+  return (
+    <>
+      <Sidebar variant="inset" className="bg-card border-r-border">
+        <SidebarHeader className="border-b border-border p-4">
+          <Link to="/admin/dashboard" className="flex items-center gap-2" onClick={() => setOpenMobile(false)}>
+            <span className="font-display tracking-tight text-xl text-foreground">XYZ Fitness</span>
+            <span className="text-xs text-indigo-600 font-semibold tracking-wide">ADMIN</span>
+          </Link>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-muted-foreground">Console</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {adminNavItems.map((item: any) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={currentPath === item.url || currentPath.startsWith(item.url + '/')} tooltip={item.title}>
+                      <Link to={item.url} className="text-foreground/80 hover:text-foreground" onClick={() => setOpenMobile(false)}>
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter className="border-t border-border p-2">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Settings">
+                <Link to="/admin/settings" className="text-foreground/80 hover:text-foreground" onClick={() => setOpenMobile(false)}>
+                  <Settings className="h-4 w-4" />
+                  <span>Settings</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={() => { signOut(); setOpenMobile(false); }} className="text-foreground/80 hover:text-foreground">
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+      
+      <SidebarInset className="bg-card text-foreground min-h-screen overflow-x-hidden max-w-[100vw]">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+            <Separator orientation="vertical" className="mr-2 h-4 bg-muted" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="/admin/dashboard" className="text-muted-foreground hover:text-foreground">
+                    Admin Portal
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="text-foreground font-medium">
+                    {currentNav?.title || 'Dashboard'}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
+          </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 md:p-8 pt-0 mt-8 w-full">
+          <Outlet />
+        </div>
+      </SidebarInset>
+    </>
+  );
+}
+
 function AdminLayout() {
   const location = useLocation();
   const { signOut, profile } = useAuth();
@@ -90,81 +175,7 @@ function AdminLayout() {
   return (
     <ThemeProvider>
       <SidebarProvider>
-        <Sidebar variant="inset" className="bg-card border-r-border">
-          <SidebarHeader className="border-b border-border p-4">
-            <Link to="/admin/dashboard" className="flex items-center gap-2">
-              <span className="font-display tracking-tight text-xl text-foreground">XYZ Fitness</span>
-              <span className="text-xs text-indigo-600 font-semibold tracking-wide">ADMIN</span>
-            </Link>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-muted-foreground">Console</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {adminNavItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild isActive={currentPath === item.url || currentPath.startsWith(item.url + '/')} tooltip={item.title}>
-                        <Link to={item.url} className="text-foreground/80 hover:text-foreground">
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-          <SidebarFooter className="border-t border-border p-2">
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Settings">
-                  <Link to="/admin/settings" className="text-foreground/80 hover:text-foreground">
-                    <Settings className="h-4 w-4" />
-                    <span>Settings</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={signOut} className="text-foreground/80 hover:text-foreground">
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
-        </Sidebar>
-        
-        <SidebarInset className="bg-card text-foreground min-h-screen">
-          <header className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-              <Separator orientation="vertical" className="mr-2 h-4 bg-muted" />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="/admin/dashboard" className="text-muted-foreground hover:text-foreground">
-                      Admin Portal
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage className="text-foreground font-medium">
-                      {currentNav?.title || 'Dashboard'}
-                    </BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-            </div>
-            <div className="flex items-center gap-4">
-              <ThemeToggle />
-            </div>
-          </header>
-          <div className="flex flex-1 flex-col gap-4 p-4 md:p-8 pt-0 mt-8">
-            <Outlet />
-          </div>
-        </SidebarInset>
+        <AdminLayoutInner currentPath={currentPath} adminNavItems={adminNavItems} currentNav={currentNav} signOut={signOut} />
       </SidebarProvider>
     </ThemeProvider>
   );

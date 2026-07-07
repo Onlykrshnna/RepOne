@@ -223,3 +223,8 @@
   }
   .reveal { opacity: 1 !important; filter: none !important; transform: none !important; }
 }
+
+/* Hide Lovable Badge */
+#lovable-badge, .lovable-badge, [id^="lovable-"], [class^="lovable-"] {
+  display: none !important;
+}
