@@ -9,8 +9,10 @@ const LOADING_STEPS = [
   { range: [91, 100], text: "REPONE CORE ENGAGED." },
 ];
 
+let hasShownPreloader = false;
+
 export function Preloader() {
-  const [loading, setLoading] = useState(() => !sessionStorage.getItem("preloader_shown"));
+  const [loading, setLoading] = useState(() => !hasShownPreloader);
   const [progress, setProgress] = useState(0);
   const [activeLog, setActiveLog] = useState("");
 
@@ -45,7 +47,7 @@ export function Preloader() {
     if (progress >= 100) {
       const timeout = setTimeout(() => {
         setLoading(false);
-        sessionStorage.setItem("preloader_shown", "true");
+        hasShownPreloader = true;
       }, 600);
       return () => clearTimeout(timeout);
     }
