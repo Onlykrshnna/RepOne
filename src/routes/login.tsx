@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate, Link } from '@tanstack/react-router';
 import { authService } from '../services/auth.service';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../lib/auth-context';
+import { supabase } from '../lib/supabase';
 
 export const Route = createFileRoute('/login')({
   component: Login,
@@ -16,6 +17,24 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { signOut } = useAuth();
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    setError('');
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/dashboard',
+        },
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      setError(err.message || 'Failed to initialize Google Sign-In.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,6 +95,40 @@ function Login() {
             {error || authError}
           </div>
         )}
+
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          disabled={isLoading}
+          className="w-full border border-[#F0EDE6]/10 text-white bg-[#0E0E10] hover:bg-white hover:text-[#080809] py-4 flex items-center justify-center transition-all duration-300 font-medium tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ fontFamily: "Inter", fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase" }}
+        >
+          <svg className="w-4 h-4 mr-3 shrink-0" viewBox="0 0 24 24">
+            <path
+              fill="#EA4335"
+              d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.355 0 3.36 2.664 1.39 6.555l3.876 3.21z"
+            />
+            <path
+              fill="#34A853"
+              d="M16.04 15.345c-1.073.745-2.455 1.19-4.04 1.19a7.077 7.077 0 0 1-6.734-4.855L1.39 14.89C3.36 18.78 7.355 21.445 12 21.445c2.945 0 5.864-1.027 7.91-2.91l-3.87-3.19z"
+            />
+            <path
+              fill="#4285F4"
+              d="M23.49 12.275c0-.827-.073-1.627-.21-2.4H12v4.61h6.47c-.28 1.48-1.12 2.74-2.39 3.59l3.87 3.19c2.26-2.09 3.54-5.17 3.54-8.99z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M5.266 11.68a7.077 7.077 0 0 1 0-2.44L1.39 6.555a11.95 11.95 0 0 0 0 8.335l3.876-3.21z"
+            />
+          </svg>
+          Continue with Google
+        </button>
+
+        <div className="flex items-center gap-4 my-8">
+          <span className="h-[1px] flex-1 bg-[#F0EDE6]/10" />
+          <span className="text-[#F0EDE6]/30 text-[9px] tracking-widest font-semibold font-sans uppercase">OR</span>
+          <span className="h-[1px] flex-1 bg-[#F0EDE6]/10" />
+        </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-1 group">

@@ -10,6 +10,7 @@ interface AuthContextType {
   profile: Profile | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
+  refetchProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   isLoading: true,
   signOut: async () => {},
+  refetchProfile: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -85,6 +87,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
+  const refetchProfile = async () => {
+    if (user) {
+      const profileData = await profileService.getProfile(user.id, true); // bypass cache
+      setProfile(profileData);
+    }
+  };
+
   const signOut = async () => {
     setIsLoading(true);
     setSession(null);
@@ -103,7 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, profile, isLoading, signOut }}>
+    <AuthContext.Provider value={{ session, user, profile, isLoading, signOut, refetchProfile }}>
       {children}
     </AuthContext.Provider>
   );

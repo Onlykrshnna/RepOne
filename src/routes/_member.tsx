@@ -41,6 +41,7 @@ import { Separator } from '../components/ui/separator';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '../components/ui/breadcrumb';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { ThemeProvider } from '../lib/theme-context';
+import { CompleteRegistrationForm } from '../components/CompleteRegistrationForm';
 
 export const Route = createFileRoute('/_member')({
   beforeLoad: async ({ location }) => {
@@ -211,6 +212,15 @@ function MemberLayout() {
   const { signOut, profile } = useAuth();
   
   const currentPath = location.pathname;
+  
+  if (profile && !profile.username) {
+    return (
+      <ThemeProvider>
+        <CompleteRegistrationForm profile={profile} signOut={signOut} />
+      </ThemeProvider>
+    );
+  }
+
   const navItems = profile ? getMemberNavItems(profile.membership_status || 'none') : [];
   const currentNav = navItems.find(item => currentPath === item.url || currentPath.startsWith(item.url + '/')) || navItems[0];
 
