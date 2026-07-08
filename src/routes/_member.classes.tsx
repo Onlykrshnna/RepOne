@@ -27,12 +27,12 @@ function MemberClassesPage() {
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
 
-  const { data: dbClasses, isLoading } = useQuery({
+  const { data: dbClasses, isLoading, refetch: refetchClasses } = useQuery({
     queryKey: ['classes'],
     queryFn: () => classesService.getClasses({ status: 'active' }),
   });
 
-  const { data: memberBookings } = useQuery({
+  const { data: memberBookings, refetch: refetchBookings } = useQuery({
     queryKey: ['member-bookings', profile?.id],
     queryFn: () => bookingsService.getMemberBookings(profile!.id),
     enabled: !!profile?.id,
@@ -72,6 +72,8 @@ function MemberClassesPage() {
       }
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       queryClient.invalidateQueries({ queryKey: ['member-bookings'] });
+      refetchClasses();
+      refetchBookings();
     },
     onError: (e: any) => toast.error(e.message || 'Failed to book class'),
   });

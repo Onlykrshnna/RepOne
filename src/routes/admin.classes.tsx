@@ -64,13 +64,13 @@ function ClassesPage() {
   const [selectedTrainer, setSelectedTrainer] = useState<any>(null);
 
   // Queries
-  const { data: dbClasses, isLoading: classesLoading } = useQuery({
+  const { data: dbClasses, isLoading: classesLoading, refetch: refetchClasses } = useQuery({
     queryKey: ['classes', search, category, trainerId, status],
     queryFn: () => classesService.getClasses({ 
       search: search || undefined, 
       category: category || undefined, 
       trainerId: trainerId || undefined,
-      status: profile?.role === 'admin' ? undefined : 'active'
+      status: status || undefined
     }),
   });
 
@@ -89,7 +89,7 @@ function ClassesPage() {
     enabled: !!selectedClass?.id,
   });
 
-  const { data: reportData, isLoading: reportLoading } = useQuery({
+  const { data: reportData, isLoading: reportLoading, refetch: refetchReport } = useQuery({
     queryKey: ['classes-report'],
     queryFn: classesService.getClassesReport,
     enabled: profile?.role === 'admin',
@@ -105,6 +105,8 @@ function ClassesPage() {
       toast.success(selectedClass ? 'Class updated successfully' : 'Class created successfully');
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       queryClient.invalidateQueries({ queryKey: ['classes-report'] });
+      refetchClasses();
+      if (refetchReport) refetchReport();
       setIsClassModalOpen(false);
       setSelectedClass(null);
     },
@@ -117,6 +119,8 @@ function ClassesPage() {
       toast.success('Class deleted successfully');
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       queryClient.invalidateQueries({ queryKey: ['classes-report'] });
+      refetchClasses();
+      if (refetchReport) refetchReport();
     },
     onError: (e: any) => toast.error(e.message || 'Failed to delete class'),
   });
@@ -126,6 +130,8 @@ function ClassesPage() {
     onSuccess: () => {
       toast.success('Class duplicated successfully');
       queryClient.invalidateQueries({ queryKey: ['classes'] });
+      refetchClasses();
+      if (refetchReport) refetchReport();
     },
     onError: (e: any) => toast.error(e.message || 'Failed to duplicate class'),
   });
@@ -133,12 +139,27 @@ function ClassesPage() {
   const cancelClassMutation = useMutation({
     mutationFn: (id: string) => classesService.cancelClass(id),
     onSuccess: () => {
-      toast.success('Class cancelled! All bookings have been updated to cancelled.');
+      toast.success('Class deactivated! All bookings have been updated to cancelled.');
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       queryClient.invalidateQueries({ queryKey: ['classes-report'] });
       queryClient.invalidateQueries({ queryKey: ['class-dashboard-metrics'] });
+      refetchClasses();
+      if (refetchReport) refetchReport();
     },
     onError: (e: any) => toast.error(e.message || 'Failed to cancel class'),
+  });
+
+  const activateClassMutation = useMutation({
+    mutationFn: (id: string) => classesService.activateClass(id),
+    onSuccess: () => {
+      toast.success('Class reactivated successfully');
+      queryClient.invalidateQueries({ queryKey: ['classes'] });
+      queryClient.invalidateQueries({ queryKey: ['classes-report'] });
+      queryClient.invalidateQueries({ queryKey: ['class-dashboard-metrics'] });
+      refetchClasses();
+      if (refetchReport) refetchReport();
+    },
+    onError: (e: any) => toast.error(e.message || 'Failed to reactivate class'),
   });
 
   const trainerMutation = useMutation({
@@ -173,6 +194,8 @@ function ClassesPage() {
         toast.success('Class booked successfully!');
       }
       queryClient.invalidateQueries({ queryKey: ['classes'] });
+      queryClient.invalidateQueries({ queryKey: ['class-dashboard-metrics'] });
+      refetchClasses();
     },
     onError: (e: any) => toast.error(e.message || 'Failed to book class'),
   });
@@ -183,6 +206,9 @@ function ClassesPage() {
     onSuccess: () => {
       toast.success('Attendance updated');
       refetchAttendees();
+      queryClient.invalidateQueries({ queryKey: ['classes'] });
+      queryClient.invalidateQueries({ queryKey: ['class-dashboard-metrics'] });
+      refetchClasses();
     },
     onError: (e: any) => toast.error(e.message || 'Failed to update attendance'),
   });
@@ -327,6 +353,14 @@ function ClassesPage() {
         </div>
         {profile?.role === 'admin' && (
           <div className="flex gap-2">
+            <Button 
+              disabled
+              variant="outline" 
+              className="border-border text-muted-foreground bg-card cursor-not-allowed opacity-60"
+              title="Trainer Management is not configured."
+            >
+              <Plus className="mr-2 h-4 w-4" /> Add Trainer
+            </Button>
             <Button onClick={() => handleOpenClassModal()} className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-sm transition-all duration-300">
               <Plus className="mr-2 h-4 w-4" /> Create Class
             </Button>
@@ -501,20 +535,27 @@ function ClassesPage() {
                               </Button>
                               {cls.status === 'active' ? (
                                 <Button variant="outline" size="sm" className="border-amber-200 text-amber-600 hover:bg-amber-50" onClick={() => {
-                                  if (confirm('Cancel this class? This will deactivate the class and cancel all active bookings.')) {
+                                  if (confirm('Deactivate this class? This will cancel all active bookings.')) {
                                     cancelClassMutation.mutate(cls.id);
                                   }
-                                }}>
+                                }} title="Deactivate Class">
                                   <Ban className="h-4 w-4" />
                                 </Button>
                               ) : (
-                                <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50" onClick={() => {
-                                  if (confirm('Are you sure you want to permanently delete this class?')) {
-                                    deleteClassMutation.mutate(cls.id);
-                                  }
-                                }}>
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                                <>
+                                  <Button variant="outline" size="sm" className="border-emerald-200 text-emerald-600 hover:bg-emerald-50" onClick={() => {
+                                    activateClassMutation.mutate(cls.id);
+                                  }} title="Reactivate Class">
+                                    <Check className="h-4 w-4" />
+                                  </Button>
+                                  <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50" onClick={() => {
+                                    if (confirm('Are you sure you want to permanently delete this class?')) {
+                                      deleteClassMutation.mutate(cls.id);
+                                    }
+                                  }} title="Delete Class">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </>
                               )}
                             </>
                           ) : (

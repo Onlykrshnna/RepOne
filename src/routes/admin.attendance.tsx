@@ -36,7 +36,7 @@ function AdminAttendancePage() {
     ? rawTodayAttendance
     : [];
 
-  const { data: classBookings = [], isLoading: classLoading } = useQuery({
+  const { data: classBookings = [], isLoading: classLoading, refetch: refetchClassBookings } = useQuery({
     queryKey: ['today-class-attendance'],
     queryFn: bookingsService.getTodayClassAttendance,
   });
@@ -48,6 +48,7 @@ function AdminAttendancePage() {
       toast.success('Attendance updated');
       queryClient.invalidateQueries({ queryKey: ['today-class-attendance'] });
       queryClient.invalidateQueries({ queryKey: ['class-dashboard-metrics'] });
+      refetchClassBookings();
     },
     onError: (e: any) => {
       toast.error(e.message || 'Failed to update attendance');

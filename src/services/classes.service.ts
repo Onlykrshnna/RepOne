@@ -14,27 +14,6 @@ async function getGymId(): Promise<string> {
   return data.id;
 }
 
-// Normalize a DB row to our GymClass interface, mapping class_name → title
-function normalizeClass(row: any): GymClass {
-  return {
-    id: row.id,
-    gym_id: row.gym_id,
-    class_name: row.class_name,
-    title: row.class_name,   // alias for UI compatibility
-    capacity: row.capacity ?? 0,
-    start_time: row.start_time,
-    end_time: row.end_time,
-    booked_count: 0,
-    waiting_list_count: 0,
-    status: 'active' as const, // assumed active since DB has no status column
-    trainers: null,
-    category: row.category || 'Fitness',
-    duration: row.duration || 60,
-    difficulty_level: row.difficulty_level || 'beginner',
-    days: row.days || [],
-  };
-}
-
 export const classesService = {
   // ====================================================
   // TRAINERS MANAGEMENT — table does not exist in production DB
@@ -62,6 +41,7 @@ export const classesService = {
   // Real columns: id, gym_id, class_name, start_time, end_time, capacity
   // ====================================================
   async getClasses(filters?: { search?: string; category?: string; trainerId?: string; status?: 'active' | 'inactive' }) {
+    // 1. Fetch raw classes
     let query = supabase
       .from('classes')
       .select('id, gym_id, class_name, start_time, end_time, capacity');
@@ -70,21 +50,94 @@ export const classesService = {
       query = query.ilike('class_name', `%${filters.search}%`);
     }
 
-    // category, trainerId, status filters silently ignored — columns don't exist in DB
-    const { data, error } = await query.order('start_time', { ascending: true });
-    if (error) throw error;
-    return (data || []).map(normalizeClass) as GymClass[];
+    const { data: classesData, error: classesError } = await query.order('start_time', { ascending: true });
+    if (classesError) throw classesError;
+
+    // 2. Fetch all bookings to calculate booked_count and waiting_list_count
+    const { data: bookingsData, error: bookingsError } = await supabase
+      .from('bookings')
+      .select('class_id, status');
+
+    const bookings = bookingsData || [];
+    const bookedCounts: Record<string, number> = {};
+    const waitingCounts: Record<string, number> = {};
+
+    bookings.forEach(b => {
+      if (b.status === 'booked' || b.status === 'attended') {
+        bookedCounts[b.class_id] = (bookedCounts[b.class_id] || 0) + 1;
+      } else if (b.status === 'waiting') {
+        waitingCounts[b.class_id] = (waitingCounts[b.class_id] || 0) + 1;
+      }
+    });
+
+    // 3. Map and normalize results
+    let result = (classesData || []).map(row => {
+      const isInactive = (row.class_name || '').startsWith('[INACTIVE] ');
+      const cleanName = isInactive ? row.class_name.replace('[INACTIVE] ', '') : row.class_name;
+      return {
+        id: row.id,
+        gym_id: row.gym_id,
+        class_name: cleanName,
+        title: cleanName,
+        capacity: row.capacity ?? 0,
+        start_time: row.start_time,
+        end_time: row.end_time,
+        booked_count: bookedCounts[row.id] || 0,
+        waiting_list_count: waitingCounts[row.id] || 0,
+        status: isInactive ? 'inactive' : 'active',
+        trainers: null,
+        category: 'Fitness',
+        duration: 60,
+        difficulty_level: 'beginner',
+        days: [],
+      } as GymClass;
+    });
+
+    if (filters?.status) {
+      result = result.filter(cls => cls.status === filters.status);
+    }
+
+    return result;
   },
 
   async getClassById(id: string) {
-    const { data, error } = await supabase
+    const { data: row, error } = await supabase
       .from('classes')
       .select('id, gym_id, class_name, start_time, end_time, capacity')
       .eq('id', id)
       .single();
 
     if (error) throw error;
-    return normalizeClass(data) as GymClass;
+
+    // Fetch counts
+    const { data: bookings } = await supabase
+      .from('bookings')
+      .select('status')
+      .eq('class_id', id);
+
+    const bookedCount = bookings?.filter(b => b.status === 'booked' || b.status === 'attended').length || 0;
+    const waitingCount = bookings?.filter(b => b.status === 'waiting').length || 0;
+
+    const isInactive = (row.class_name || '').startsWith('[INACTIVE] ');
+    const cleanName = isInactive ? row.class_name.replace('[INACTIVE] ', '') : row.class_name;
+
+    return {
+      id: row.id,
+      gym_id: row.gym_id,
+      class_name: cleanName,
+      title: cleanName,
+      capacity: row.capacity ?? 0,
+      start_time: row.start_time,
+      end_time: row.end_time,
+      booked_count: bookedCount,
+      waiting_list_count: waitingCount,
+      status: isInactive ? 'inactive' : 'active',
+      trainers: null,
+      category: 'Fitness',
+      duration: 60,
+      difficulty_level: 'beginner',
+      days: [],
+    } as GymClass;
   },
 
   async createClass(classData: { class_name?: string; title?: string; start_time: string; end_time: string; capacity: number; [key: string]: any }) {
@@ -104,13 +157,17 @@ export const classesService = {
       .single();
 
     if (error) throw error;
-    return normalizeClass(data) as GymClass;
+    return this.getClassById(data.id);
   },
 
   async updateClass(id: string, classData: Partial<GymClass>) {
     const payload: any = {};
-    if (classData.class_name || classData.title) {
-      payload.class_name = classData.class_name || classData.title;
+    if (classData.class_name !== undefined || classData.title !== undefined) {
+      // Retain the [INACTIVE] prefix if the class is currently inactive
+      const current = await this.getClassById(id);
+      const isInactive = current.status === 'inactive';
+      const rawName = classData.class_name || classData.title || 'Unnamed Class';
+      payload.class_name = isInactive ? `[INACTIVE] ${rawName}` : rawName;
     }
     if (classData.start_time !== undefined) payload.start_time = classData.start_time;
     if (classData.end_time !== undefined) payload.end_time = classData.end_time;
@@ -120,15 +177,13 @@ export const classesService = {
       return this.getClassById(id);
     }
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('classes')
       .update(payload)
-      .eq('id', id)
-      .select('id, gym_id, class_name, start_time, end_time, capacity')
-      .single();
+      .eq('id', id);
 
     if (error) throw error;
-    return normalizeClass(data) as GymClass;
+    return this.getClassById(id);
   },
 
   async deleteClass(id: string) {
@@ -141,8 +196,19 @@ export const classesService = {
   },
 
   async cancelClass(id: string) {
-    // 'status' column does not exist in classes table — just cancel all bookings
-    // 'class_bookings' table does not exist — real table is 'bookings'
+    // Deactivate Class — prefix name with [INACTIVE] to simulate status without schema changes
+    const current = await this.getClassById(id);
+    if (current.status !== 'inactive') {
+      const newName = `[INACTIVE] ${current.class_name}`;
+      const { error: updateError } = await supabase
+        .from('classes')
+        .update({ class_name: newName })
+        .eq('id', id);
+
+      if (updateError) throw updateError;
+    }
+
+    // Cancel all active bookings
     const { error: bookingError } = await supabase
       .from('bookings')
       .update({ status: 'cancelled' })
@@ -150,6 +216,20 @@ export const classesService = {
       .in('status', ['booked', 'waiting']);
 
     if (bookingError) throw bookingError;
+  },
+
+  async activateClass(id: string) {
+    // Reactivate Class — remove [INACTIVE] prefix from class name
+    const current = await this.getClassById(id);
+    if (current.class_name.startsWith('[INACTIVE] ')) {
+      const newName = current.class_name.replace('[INACTIVE] ', '');
+      const { error: updateError } = await supabase
+        .from('classes')
+        .update({ class_name: newName })
+        .eq('id', id);
+
+      if (updateError) throw updateError;
+    }
   },
 
   async duplicateClass(id: string) {
