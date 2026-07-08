@@ -19,6 +19,7 @@ export type GuestPass = {
   // Virtual aliases for UI compatibility
   generated_by?: string;
   profiles?: { first_name: string; last_name: string; email: string };
+  notes?: string;
 };
 
 export type CreateGuestPassDto = {
@@ -27,6 +28,7 @@ export type CreateGuestPassDto = {
   guest_phone?: string;
   guest_email?: string;
   valid_days?: number;        // default 1
+  notes?: string;
 };
 
 function generatePassCode(): string {

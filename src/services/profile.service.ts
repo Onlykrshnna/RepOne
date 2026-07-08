@@ -57,5 +57,27 @@ export const profileService = {
 
   clearProfileCache() {
     cachedProfile = null;
+  },
+
+  async checkUsernameUnique(username: string, excludeUserId?: string): Promise<boolean> {
+    if (!username) return true;
+    
+    let query = supabase
+      .from('profiles')
+      .select('id')
+      .ilike('username', username);
+      
+    if (excludeUserId) {
+      query = query.neq('id', excludeUserId);
+    }
+    
+    const { data, error } = await query.limit(1);
+    
+    if (error) {
+      console.error('Error checking username uniqueness:', error);
+      return false; // Safest to return false on error
+    }
+    
+    return data.length === 0;
   }
 };

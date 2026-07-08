@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Sparkles, ArrowRight, ArrowDown, Activity, Users, QrCode, ArrowUpRight } from "lucide-react";
+import { useAuth } from "../../lib/auth-context";
 
 export function Hero() {
   const [mounted, setMounted] = useState(false);
+  const { session } = useAuth();
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 1000], [0, 200]);
   const y2 = useTransform(scrollY, [0, 1000], [0, -100]);
@@ -181,9 +183,15 @@ export function Hero() {
             transition={{ delay: 0.6 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 z-20 w-full px-4 md:px-0"
           >
-            <Link to="/signup" className="w-full sm:w-auto text-center bg-gradient-to-r from-[#BEFF00] to-[#9acc00] text-[#080809] px-6 md:px-8 py-3 md:py-3.5 rounded-full font-bold text-xs md:text-sm hover:shadow-[0_0_25px_rgba(190,255,0,0.4)] transition-all">
-              Become a Member
-            </Link>
+            {session ? (
+              <Link to="/dashboard" className="w-full sm:w-auto text-center bg-gradient-to-r from-[#BEFF00] to-[#9acc00] text-[#080809] px-6 md:px-8 py-3 md:py-3.5 rounded-full font-bold text-xs md:text-sm hover:shadow-[0_0_25px_rgba(190,255,0,0.4)] transition-all">
+                Go to Dashboard
+              </Link>
+            ) : (
+              <Link to="/signup" className="w-full sm:w-auto text-center bg-gradient-to-r from-[#BEFF00] to-[#9acc00] text-[#080809] px-6 md:px-8 py-3 md:py-3.5 rounded-full font-bold text-xs md:text-sm hover:shadow-[0_0_25px_rgba(190,255,0,0.4)] transition-all">
+                Become a Member
+              </Link>
+            )}
             <a href="#demo" className="w-full sm:w-auto text-center bg-[#1A1A1D]/80 backdrop-blur border border-[#F0EDE6]/10 text-[#F0EDE6] px-6 md:px-8 py-3 md:py-3.5 rounded-full font-bold text-xs md:text-sm hover:bg-[#2A2A2D] transition-colors">
               Book a Demo
             </a>

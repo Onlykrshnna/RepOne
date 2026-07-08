@@ -305,7 +305,7 @@ function FeedbackPage() {
                       </CardHeader>
                       <CardContent className="space-y-3">
                         <div className="flex gap-4 items-center">
-                          {renderStarsDisplay(review.rating_overall)}
+                          {renderStarsDisplay(review.rating_overall || review.rating)}
                           {review.is_resolved && (
                             <Badge className="bg-emerald-50 text-emerald-600 border border-emerald-100 text-[10px] font-medium">
                               Resolved

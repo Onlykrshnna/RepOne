@@ -63,8 +63,8 @@ export function Membership() {
                           {tier.cta}
                         </a>
                       ) : (
-                        <Link to="/signup" className={`block w-full text-center py-4 transition-colors duration-300 font-bold ${isFeatured ? "bg-[#080809] text-[#BEFF00] hover:bg-white hover:text-[#080809]" : "bg-[#F0EDE6]/10 text-[#F0EDE6] hover:bg-[#F0EDE6] hover:text-[#080809]"}`} style={{ fontFamily: "Inter", fontSize: "11px", letterSpacing: "0.26em", textTransform: "uppercase" }}>
-                          {tier.cta}
+                        <Link to={session ? "/dashboard" : "/signup"} className={`block w-full text-center py-4 transition-colors duration-300 font-bold ${isFeatured ? "bg-[#080809] text-[#BEFF00] hover:bg-white hover:text-[#080809]" : "bg-[#F0EDE6]/10 text-[#F0EDE6] hover:bg-[#F0EDE6] hover:text-[#080809]"}`} style={{ fontFamily: "Inter", fontSize: "11px", letterSpacing: "0.26em", textTransform: "uppercase" }}>
+                          {session ? "Go to Dashboard" : tier.cta}
                         </Link>
                       )}
                     </div>

@@ -81,7 +81,7 @@ function ClassesPage() {
     queryFn: classesService.getTrainers,
   });
 
-  const trainers = dbTrainers && dbTrainers.length > 0 ? dbTrainers : [];
+  const trainers: any[] = dbTrainers && dbTrainers.length > 0 ? dbTrainers : [];
 
   const { data: attendees = [], refetch: refetchAttendees } = useQuery({
     queryKey: ['class-attendees', selectedClass?.id],

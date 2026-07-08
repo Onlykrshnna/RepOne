@@ -16,6 +16,14 @@ export interface GymFeedback {
   // Virtual fields for UI compatibility
   rating_overall?: number;
   comments?: string | null;
+  target_type?: string;
+  is_resolved?: boolean;
+  is_archived?: boolean;
+  admin_reply?: string | null;
+  rating_cleanliness?: number;
+  rating_trainers?: number;
+  rating_equipment?: number;
+  rating_value?: number;
   profiles?: {
     first_name: string;
     last_name: string;

@@ -30,14 +30,14 @@ export interface GymClass {
   trainer_id?: string | null;
   title?: string | null;         // alias for class_name in UI
   description?: string | null;
-  category?: string | null;
+  category: string;
   room?: string | null;
-  booked_count?: number;
-  waiting_list_count?: number;
-  duration?: number;
-  difficulty_level?: ClassDifficulty;
-  days?: string[];
-  status?: 'active' | 'inactive';
+  booked_count: number;
+  waiting_list_count: number;
+  duration: number;
+  difficulty_level: ClassDifficulty;
+  days: string[];
+  status: 'active' | 'inactive';
   cover_image?: string | null;
   color_label?: string;
   created_at?: string;
@@ -63,8 +63,10 @@ export interface ClassBooking {
     last_name: string;
     email: string;
     phone?: string | null;
+    avatar_url?: string | null;
     membership_status: string;
-  };
+  } | any;
+  position_in_waiting_list?: number;
 }
 
 export interface ClassReportMetrics {

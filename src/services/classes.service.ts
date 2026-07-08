@@ -28,6 +28,10 @@ function normalizeClass(row: any): GymClass {
     waiting_list_count: 0,
     status: 'active' as const, // assumed active since DB has no status column
     trainers: null,
+    category: row.category || 'Fitness',
+    duration: row.duration || 60,
+    difficulty_level: row.difficulty_level || 'beginner',
+    days: row.days || [],
   };
 }
 
@@ -36,7 +40,7 @@ export const classesService = {
   // TRAINERS MANAGEMENT — table does not exist in production DB
   // All trainer operations silently no-op or return empty data
   // ====================================================
-  async getTrainers() {
+  async getTrainers(): Promise<any[]> {
     console.warn('[Schema] trainers table does not exist in production DB. Returning empty list.');
     return [];
   },

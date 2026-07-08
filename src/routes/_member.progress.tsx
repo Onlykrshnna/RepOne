@@ -134,7 +134,7 @@ function ProgressPage() {
                       <div>
                         <div className="font-medium text-sm">{o.member.name}</div>
                         <div className="text-xs text-muted-foreground/75">
-                          {o.latest ? `Last logged: ${new Date(o.latest.recorded_at).toLocaleDateString()}` : 'No records'}
+                          {o.latest ? `Last logged: ${new Date((o.latest as any).recorded_at).toLocaleDateString()}` : 'No records'}
                         </div>
                       </div>
                     </div>
