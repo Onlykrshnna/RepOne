@@ -270,7 +270,7 @@ function AdminAttendancePage() {
                           {booking.classes?.title}
                         </TableCell>
                         <TableCell className="text-muted-foreground">
-                          {booking.classes?.trainers?.name || 'N/A'}
+                           {booking.classes?.trainers?.name || 'Trainer will be assigned'}
                         </TableCell>
                         <TableCell className="text-muted-foreground">
                           {formatTime12h(booking.classes?.start_time)} ({booking.classes?.duration}m)

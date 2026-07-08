@@ -2,7 +2,7 @@ import { supabase } from '../lib/supabase';
 import { ClassBooking, BookingStatus } from './classes.types';
 
 // Real bookings table columns: id, class_id, member_id, status, booking_date, created_at
-// Missing columns (code had): gym_id, booked_at (→ booking_date), cancelled_at, attended
+// bookings.member_id references members.id (not profiles.id)
 
 async function getGymId(): Promise<string> {
   const { data, error } = await supabase.from('gyms').select('id').limit(1).single();
@@ -13,12 +13,12 @@ async function getGymId(): Promise<string> {
 }
 
 export const bookingsService = {
-  async bookClass(classId: string, memberId: string) {
-    // 1. Verify member status is active
+  async bookClass(classId: string, profileId: string) {
+    // 1. Verify member status is active from profiles table
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('membership_status')
-      .eq('id', memberId)
+      .eq('id', profileId)
       .single();
 
     if (profileError || !profile) {
@@ -29,7 +29,18 @@ export const bookingsService = {
       throw new Error(`Booking blocked. Member membership status is: ${profile.membership_status}`);
     }
 
-    // 2. Verify class exists
+    // 2. Resolve members.id from profiles.id
+    const { data: member, error: memberError } = await supabase
+      .from('members')
+      .select('id')
+      .eq('profile_id', profileId)
+      .single();
+
+    if (memberError || !member) {
+      throw new Error('Member record not found.');
+    }
+
+    // 3. Verify class exists
     const { data: gymClass, error: classError } = await supabase
       .from('classes')
       .select('id, capacity')
@@ -40,12 +51,12 @@ export const bookingsService = {
       throw new Error('Class not found.');
     }
 
-    // 3. Insert booking — only use columns that exist in DB
+    // 4. Insert booking
     const { data, error } = await supabase
       .from('bookings')
       .insert([{
         class_id: classId,
-        member_id: memberId,
+        member_id: member.id,
         status: 'booked',
       }])
       .select(`
@@ -67,7 +78,6 @@ export const bookingsService = {
   },
 
   async cancelBooking(bookingId: string) {
-    // cancelled_at column does not exist in DB — only update status
     const { data, error } = await supabase
       .from('bookings')
       .update({ status: 'cancelled' })
@@ -79,7 +89,19 @@ export const bookingsService = {
     return data as ClassBooking;
   },
 
-  async getMemberBookings(memberId: string) {
+  async getMemberBookings(profileId: string) {
+    // 1. Resolve members.id from profiles.id
+    const { data: member, error: memberError } = await supabase
+      .from('members')
+      .select('id')
+      .eq('profile_id', profileId)
+      .single();
+
+    if (memberError || !member) {
+      return [];
+    }
+
+    // 2. Query bookings using members.id
     const { data, error } = await supabase
       .from('bookings')
       .select(`
@@ -88,7 +110,7 @@ export const bookingsService = {
           id, class_name, start_time, end_time, capacity
         )
       `)
-      .eq('member_id', memberId)
+      .eq('member_id', member.id)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -96,16 +118,19 @@ export const bookingsService = {
   },
 
   async getClassAttendees(classId: string) {
+    // bookings -> members -> profiles
     const { data, error } = await supabase
       .from('bookings')
       .select(`
         id, class_id, member_id, status, booking_date, created_at,
-        profiles (
-          first_name,
-          last_name,
-          email,
-          phone,
-          membership_status
+        members (
+          profiles (
+            first_name,
+            last_name,
+            email,
+            phone,
+            membership_status
+          )
         )
       `)
       .eq('class_id', classId)
@@ -113,11 +138,19 @@ export const bookingsService = {
       .order('created_at', { ascending: true });
 
     if (error) throw error;
-    return (data || []) as ClassBooking[];
+    
+    return (data || []).map(row => ({
+      id: row.id,
+      class_id: row.class_id,
+      member_id: row.member_id,
+      status: row.status,
+      booking_date: row.booking_date,
+      created_at: row.created_at,
+      profiles: (row.members as any)?.profiles || null,
+    })) as ClassBooking[];
   },
 
   async updateAttendanceStatus(bookingId: string, status: 'attended' | 'no_show' | 'booked') {
-    // 'attended' boolean column does not exist — only update status string
     const { data, error } = await supabase
       .from('bookings')
       .update({ status })
@@ -130,7 +163,6 @@ export const bookingsService = {
   },
 
   async getTodayClassAttendance() {
-    // 'days' column does not exist in classes table — return all recent bookings instead
     const { data, error } = await supabase
       .from('bookings')
       .select(`
@@ -138,11 +170,13 @@ export const bookingsService = {
         classes (
           id, class_name, start_time, end_time, capacity
         ),
-        profiles (
-          first_name,
-          last_name,
-          email,
-          avatar_url
+        members (
+          profiles (
+            first_name,
+            last_name,
+            email,
+            avatar_url
+          )
         )
       `)
       .in('status', ['booked', 'attended', 'no_show'])
@@ -150,7 +184,17 @@ export const bookingsService = {
       .limit(100);
 
     if (error) throw error;
-    return (data || []) as ClassBooking[];
+    
+    return (data || []).map(row => ({
+      id: row.id,
+      class_id: row.class_id,
+      member_id: row.member_id,
+      status: row.status,
+      booking_date: row.booking_date,
+      created_at: row.created_at,
+      classes: row.classes,
+      profiles: (row.members as any)?.profiles || null,
+    })) as ClassBooking[];
   },
 
   // ====================================================

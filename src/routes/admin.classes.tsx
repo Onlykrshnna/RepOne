@@ -327,9 +327,6 @@ function ClassesPage() {
         </div>
         {profile?.role === 'admin' && (
           <div className="flex gap-2">
-            <Button onClick={() => handleOpenTrainerModal()} variant="outline" className="border-border text-foreground/80 bg-card hover:bg-muted/50">
-              <Plus className="mr-2 h-4 w-4" /> Add Trainer
-            </Button>
             <Button onClick={() => handleOpenClassModal()} className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-sm transition-all duration-300">
               <Plus className="mr-2 h-4 w-4" /> Create Class
             </Button>
@@ -373,16 +370,7 @@ function ClassesPage() {
               </select>
             </div>
 
-            <div className="relative">
-              <select
-                value={trainerId}
-                onChange={(e) => setTrainerId(e.target.value)}
-                className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
-              >
-                <option value="">All Trainers</option>
-                {trainers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-              </select>
-            </div>
+
 
             {profile?.role === 'admin' && (
               <div className="relative">
@@ -471,7 +459,7 @@ function ClassesPage() {
                         </div>
 
                         {/* Instructor Info */}
-                        {cls.trainers && (
+                        {cls.trainers ? (
                           <div 
                             className="flex items-center gap-3 cursor-pointer p-2 hover:bg-muted/50 rounded-lg transition-colors border border-transparent hover:border-slate-100"
                             onClick={() => {
@@ -487,6 +475,11 @@ function ClassesPage() {
                               <div className="text-sm font-semibold text-foreground/90">{cls.trainers.name}</div>
                             </div>
                             <Info className="h-3 w-3 text-muted-foreground/75 ml-auto" />
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-3 p-2 rounded-lg border border-dashed border-border/70 text-muted-foreground">
+                            <Award className="h-4 w-4 text-muted-foreground/50 shrink-0" />
+                            <span className="text-xs italic font-medium">Trainer will be assigned</span>
                           </div>
                         )}
 
@@ -607,7 +600,7 @@ function ClassesPage() {
                               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground font-medium">
                                 <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {formatTime12h(cls.start_time)} ({cls.duration} min)</span>
                                 <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {cls.room}</span>
-                                {cls.trainers && <span className="flex items-center gap-1"><Award className="h-3.5 w-3.5" /> {cls.trainers.name}</span>}
+                                <span className="flex items-center gap-1"><Award className="h-3.5 w-3.5" /> {cls.trainers?.name || 'Trainer will be assigned'}</span>
                               </div>
                             </div>
                           </div>
@@ -736,8 +729,8 @@ function ClassesPage() {
           ) : trainers.length === 0 ? (
             <div className="text-center py-12 bg-card border border-border border-dashed rounded-xl">
               <Award className="h-12 w-12 text-muted-foreground/75 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-foreground/90">No trainer profiles found</h3>
-              <p className="text-muted-foreground text-sm mt-1">Add trainer profiles to assign classes.</p>
+              <h3 className="text-lg font-bold text-foreground/90">Trainer Management is Disabled</h3>
+              <p className="text-muted-foreground text-sm mt-1">Trainer database table is not currently configured.</p>
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
