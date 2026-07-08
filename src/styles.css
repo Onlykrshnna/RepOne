@@ -228,3 +228,11 @@
 #lovable-badge, .lovable-badge, [id^="lovable-"], [class^="lovable-"] {
   display: none !important;
 }
+
+@utility scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  &::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+}
