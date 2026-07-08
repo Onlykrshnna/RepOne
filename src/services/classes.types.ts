@@ -8,12 +8,15 @@ export interface Trainer {
   id: string;
   gym_id: string;
   name: string;
-  photo_url?: string | null;
+  email: string;
+  phone?: string | null;
   specialization?: string | null;
-  experience?: string | null;
+  experience_years?: number | null;
   bio?: string | null;
-  contact?: string | null;
-  created_at: string;
+  photo_url?: string | null;
+  status: 'active' | 'inactive';
+  created_at?: string;
+  updated_at?: string;
 }
 
 export type ClassDifficulty = 'beginner' | 'intermediate' | 'advanced';

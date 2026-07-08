@@ -43,11 +43,16 @@ function ClassesPage() {
   const queryClient = useQueryClient();
   useClassesRealtime(); // Activate realtime updates
 
-  // Search & Filter State
+  // Search & Filter State (Classes)
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [trainerId, setTrainerId] = useState('');
   const [status, setStatus] = useState<'active' | 'inactive'>('active');
+
+  // Search & Filter State (Trainers)
+  const [trainerSearch, setTrainerSearch] = useState('');
+  const [trainerStatusFilter, setTrainerStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [trainerSpecFilter, setTrainerSpecFilter] = useState('');
 
   // Calendar View Local States
   const [calendarDate, setCalendarDate] = useState<Date>(new Date());
@@ -76,12 +81,20 @@ function ClassesPage() {
 
   const classes = dbClasses && dbClasses.length > 0 ? dbClasses : [];
 
-  const { data: dbTrainers, isLoading: trainersLoading } = useQuery({
-    queryKey: ['trainers'],
-    queryFn: classesService.getTrainers,
+  const { data: dbTrainers, isLoading: trainersLoading, refetch: refetchTrainers } = useQuery({
+    queryKey: ['trainers', trainerSearch, trainerStatusFilter],
+    queryFn: () => classesService.getTrainers({
+      search: trainerSearch || undefined,
+      status: trainerStatusFilter === 'all' ? undefined : trainerStatusFilter
+    }),
   });
 
-  const trainers: any[] = dbTrainers && dbTrainers.length > 0 ? dbTrainers : [];
+  const trainers: any[] = dbTrainers && dbTrainers.length > 0 
+    ? dbTrainers.filter(t => {
+        if (!trainerSpecFilter) return true;
+        return (t.specialization || '').toLowerCase().includes(trainerSpecFilter.toLowerCase());
+      })
+    : [];
 
   const { data: attendees = [], refetch: refetchAttendees } = useQuery({
     queryKey: ['class-attendees', selectedClass?.id],
@@ -170,6 +183,7 @@ function ClassesPage() {
     onSuccess: () => {
       toast.success(selectedTrainer ? 'Trainer updated successfully' : 'Trainer profile added');
       queryClient.invalidateQueries({ queryKey: ['trainers'] });
+      if (refetchTrainers) refetchTrainers();
       setIsTrainerModalOpen(false);
       setSelectedTrainer(null);
     },
@@ -181,6 +195,7 @@ function ClassesPage() {
     onSuccess: () => {
       toast.success('Trainer removed successfully');
       queryClient.invalidateQueries({ queryKey: ['trainers'] });
+      if (refetchTrainers) refetchTrainers();
     },
     onError: (e: any) => toast.error(e.message || 'Failed to delete trainer'),
   });
@@ -232,11 +247,13 @@ function ClassesPage() {
 
   const [trainerForm, setTrainerForm] = useState({
     name: '',
+    email: '',
+    phone: '',
     specialization: '',
-    experience: '',
+    experience_years: 0,
     bio: '',
-    contact: '',
-    photo_url: ''
+    photo_url: '',
+    status: 'active' as 'active' | 'inactive'
   });
 
   const handleOpenClassModal = (cls?: any) => {
@@ -283,21 +300,25 @@ function ClassesPage() {
       setSelectedTrainer(trainer);
       setTrainerForm({
         name: trainer.name,
+        email: trainer.email || '',
+        phone: trainer.phone || '',
         specialization: trainer.specialization || '',
-        experience: trainer.experience || '',
+        experience_years: trainer.experience_years || 0,
         bio: trainer.bio || '',
-        contact: trainer.contact || '',
-        photo_url: trainer.photo_url || ''
+        photo_url: trainer.photo_url || '',
+        status: trainer.status || 'active'
       });
     } else {
       setSelectedTrainer(null);
       setTrainerForm({
         name: '',
+        email: '',
+        phone: '',
         specialization: '',
-        experience: '',
+        experience_years: 0,
         bio: '',
-        contact: '',
-        photo_url: ''
+        photo_url: '',
+        status: 'active'
       });
     }
     setIsTrainerModalOpen(true);
@@ -354,10 +375,9 @@ function ClassesPage() {
         {profile?.role === 'admin' && (
           <div className="flex gap-2">
             <Button 
-              disabled
+              onClick={() => handleOpenTrainerModal()} 
               variant="outline" 
-              className="border-border text-muted-foreground bg-card cursor-not-allowed opacity-60"
-              title="Trainer Management is not configured yet."
+              className="border-border text-foreground bg-card hover:bg-muted/50"
             >
               <Plus className="mr-2 h-4 w-4" /> Add Trainer
             </Button>
@@ -763,26 +783,72 @@ function ClassesPage() {
 
         {/* --- TRAINERS CONTENT --- */}
         <TabsContent value="trainers" className="space-y-6">
+          {/* Trainers Filter Bar */}
+          <div className="bg-card border border-border p-4 rounded-xl shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="flex-1 w-full relative">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search trainers by name..."
+                value={trainerSearch}
+                onChange={(e) => setTrainerSearch(e.target.value)}
+                className="pl-9 bg-background border-border text-foreground w-full"
+              />
+            </div>
+            <div className="flex flex-wrap gap-4 w-full md:w-auto">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <select
+                  value={trainerStatusFilter}
+                  onChange={(e) => setTrainerStatusFilter(e.target.value as any)}
+                  className="flex h-10 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none"
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="active">Active Only</option>
+                  <option value="inactive">Inactive Only</option>
+                </select>
+              </div>
+              <Input
+                placeholder="Filter by specialization..."
+                value={trainerSpecFilter}
+                onChange={(e) => setTrainerSpecFilter(e.target.value)}
+                className="bg-background border-border text-foreground w-full md:w-48"
+              />
+            </div>
+          </div>
+
           {trainersLoading ? (
             <div className="grid gap-6 md:grid-cols-3">
-              {[1, 2].map(i => <Card key={i} className="h-48 bg-card border-border"><CardContent><Skeleton className="h-full w-full" /></CardContent></Card>)}
+              {[1, 2, 3].map(i => <Card key={i} className="h-48 bg-card border-border"><CardContent><Skeleton className="h-full w-full" /></CardContent></Card>)}
             </div>
           ) : trainers.length === 0 ? (
             <div className="text-center py-12 bg-card border border-border border-dashed rounded-xl">
               <Award className="h-12 w-12 text-muted-foreground/75 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-foreground/90">Trainer Management is Disabled</h3>
-              <p className="text-muted-foreground text-sm mt-1">Trainer database table is not currently configured.</p>
+              <h3 className="text-lg font-bold text-foreground/90">No trainers registered</h3>
+              <p className="text-muted-foreground text-sm mt-1">Click "Add Trainer" to add your first instructor.</p>
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {trainers.map((trainer) => (
                 <Card key={trainer.id} className="bg-card border-border shadow-sm relative overflow-hidden flex flex-col justify-between hover:shadow-md transition-shadow">
                   <CardHeader className="pb-3 flex flex-row gap-4 items-start">
-                    <div className="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xl font-bold uppercase border border-indigo-200">
-                      {trainer.name[0]}
-                    </div>
-                    <div className="space-y-1">
-                      <CardTitle className="text-lg font-bold text-foreground">{trainer.name}</CardTitle>
+                    {trainer.photo_url ? (
+                      <img 
+                        src={trainer.photo_url} 
+                        alt={trainer.name} 
+                        className="w-14 h-14 object-cover rounded-full border border-border"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xl font-bold uppercase border border-indigo-200">
+                        {trainer.name[0]}
+                      </div>
+                    )}
+                    <div className="space-y-1 flex-1">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg font-bold text-foreground">{trainer.name}</CardTitle>
+                        <Badge className={trainer.status === 'active' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-red-50 text-red-600 border border-red-200'}>
+                          {trainer.status === 'active' ? 'Active' : 'Inactive'}
+                        </Badge>
+                      </div>
                       <Badge variant="secondary" className="bg-indigo-50 text-indigo-600 border border-indigo-100 text-xs font-semibold">
                         {trainer.specialization || 'General Fitness'}
                       </Badge>
@@ -791,8 +857,9 @@ function ClassesPage() {
                   <CardContent className="space-y-3 flex-1">
                     <p className="text-xs text-muted-foreground line-clamp-3">{trainer.bio || 'No bio provided.'}</p>
                     <div className="text-xs text-muted-foreground space-y-1 border-t border-border/50 pt-2">
-                      <div><strong>Exp:</strong> {trainer.experience || 'Not specified'}</div>
-                      <div><strong>Contact:</strong> {trainer.contact || 'No contact provided'}</div>
+                      <div><strong>Exp:</strong> {trainer.experience_years ? `${trainer.experience_years} Years` : 'Not specified'}</div>
+                      <div><strong>Email:</strong> {trainer.email}</div>
+                      {trainer.phone && <div><strong>Phone:</strong> {trainer.phone}</div>}
                     </div>
                   </CardContent>
                   {profile?.role === 'admin' && (
@@ -1064,7 +1131,9 @@ function ClassesPage() {
                   className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
                 >
                   <option value="">Select trainer...</option>
-                  {trainers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                  {trainers.filter(t => t.status === 'active' || t.id === classForm.trainer_id).map(t => (
+                    <option key={t.id} value={t.id}>{t.name}{t.status === 'inactive' ? ' (Inactive)' : ''}</option>
+                  ))}
                 </select>
               </div>
 
@@ -1137,48 +1206,87 @@ function ClassesPage() {
             e.preventDefault();
             trainerMutation.mutate({ id: selectedTrainer?.id, trainerData: trainerForm });
           }} className="space-y-4 pt-2">
-            <div className="space-y-2">
-              <Label htmlFor="trainer_name">Trainer Name *</Label>
-              <Input 
-                id="trainer_name" 
-                value={trainerForm.name} 
-                onChange={(e) => setTrainerForm(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Full Name"
-                className="bg-background border-border text-foreground"
-                required 
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="trainer_spec">Specialization</Label>
-              <Input 
-                id="trainer_spec" 
-                value={trainerForm.specialization} 
-                onChange={(e) => setTrainerForm(prev => ({ ...prev, specialization: e.target.value }))}
-                placeholder="e.g. Yoga, Bodybuilding"
-                className="bg-background border-border text-foreground"
-              />
-            </div>
-            <div className="grid gap-4 grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="trainer_exp">Experience</Label>
+                <Label htmlFor="trainer_name">Trainer Name *</Label>
                 <Input 
+                  id="trainer_name" 
+                  value={trainerForm.name} 
+                  onChange={(e) => setTrainerForm(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Full Name"
+                  className="bg-background border-border text-foreground"
+                  required 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="trainer_email">Email *</Label>
+                <Input 
+                  type="email"
+                  id="trainer_email" 
+                  value={trainerForm.email} 
+                  onChange={(e) => setTrainerForm(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="trainer@elevate.com"
+                  className="bg-background border-border text-foreground"
+                  required 
+                />
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="trainer_phone">Phone</Label>
+                <Input 
+                  id="trainer_phone" 
+                  value={trainerForm.phone} 
+                  onChange={(e) => setTrainerForm(prev => ({ ...prev, phone: e.target.value }))}
+                  placeholder="+1234567890"
+                  className="bg-background border-border text-foreground"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="trainer_spec">Specialization</Label>
+                <Input 
+                  id="trainer_spec" 
+                  value={trainerForm.specialization} 
+                  onChange={(e) => setTrainerForm(prev => ({ ...prev, specialization: e.target.value }))}
+                  placeholder="e.g. Yoga, Bodybuilding"
+                  className="bg-background border-border text-foreground"
+                />
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="trainer_exp">Experience (Years)</Label>
+                <Input 
+                  type="number"
                   id="trainer_exp" 
-                  value={trainerForm.experience} 
-                  onChange={(e) => setTrainerForm(prev => ({ ...prev, experience: e.target.value }))}
-                  placeholder="e.g. 5+ Years"
+                  value={trainerForm.experience_years} 
+                  onChange={(e) => setTrainerForm(prev => ({ ...prev, experience_years: parseInt(e.target.value) || 0 }))}
+                  placeholder="5"
                   className="bg-background border-border text-foreground"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="trainer_contact">Contact Phone/Email</Label>
-                <Input 
-                  id="trainer_contact" 
-                  value={trainerForm.contact} 
-                  onChange={(e) => setTrainerForm(prev => ({ ...prev, contact: e.target.value }))}
-                  placeholder="Phone or email"
-                  className="bg-background border-border text-foreground"
-                />
+                <Label htmlFor="trainer_status">Status</Label>
+                <select
+                  id="trainer_status"
+                  value={trainerForm.status}
+                  onChange={(e) => setTrainerForm(prev => ({ ...prev, status: e.target.value as any }))}
+                  className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="trainer_photo">Photo URL</Label>
+              <Input 
+                id="trainer_photo" 
+                value={trainerForm.photo_url} 
+                onChange={(e) => setTrainerForm(prev => ({ ...prev, photo_url: e.target.value }))}
+                placeholder="https://..."
+                className="bg-background border-border text-foreground"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="trainer_bio">Bio / Achievements</Label>

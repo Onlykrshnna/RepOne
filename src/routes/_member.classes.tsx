@@ -202,10 +202,33 @@ function MemberClassesPage() {
                       <MapPin className="h-4 w-4 text-indigo-400 shrink-0" />
                       <span className="truncate">{cls.room}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-xs sm:text-sm font-medium min-w-0">
-                      <Award className="h-4 w-4 text-indigo-400 shrink-0" />
-                      <span className="truncate">{cls.trainers?.name || 'No Trainer'}</span>
-                    </div>
+                    {cls.trainers ? (
+                      <div className="flex items-center gap-3 mt-4 p-2 rounded-xl bg-indigo-50/50 border border-indigo-100/40">
+                        {cls.trainers.photo_url ? (
+                          <img 
+                            src={cls.trainers.photo_url} 
+                            alt={cls.trainers.name} 
+                            className="w-10 h-10 object-cover rounded-full border border-indigo-200"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xs font-bold uppercase border border-indigo-200">
+                            {cls.trainers.name[0]}
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[10px] text-muted-foreground/75 font-semibold uppercase tracking-wider">Trainer</div>
+                          <div className="text-sm font-bold text-foreground truncate">{cls.trainers.name}</div>
+                          <div className="text-xs text-muted-foreground truncate font-medium">
+                            {cls.trainers.specialization || 'Fitness Specialist'} • {cls.trainers.experience_years ? `${cls.trainers.experience_years}y Exp` : 'Exp not specified'}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3 mt-4 p-2 rounded-xl border border-dashed border-border/70 text-muted-foreground">
+                        <Award className="h-5 w-5 text-muted-foreground/50 shrink-0" />
+                        <span className="text-xs italic font-semibold">Trainer will be assigned</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Progress / seats */}

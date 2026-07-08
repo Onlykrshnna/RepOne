@@ -66,9 +66,9 @@ function FeedbackPage() {
     queryFn: () => classesService.getClasses({ status: 'active' }),
   });
 
-  const { data: trainers = [] } = useQuery({
+  const { data: trainers = [] } = useQuery<any[]>({
     queryKey: ['trainers'],
-    queryFn: classesService.getTrainers,
+    queryFn: () => classesService.getTrainers(),
   });
 
   const { data: metrics } = useQuery({

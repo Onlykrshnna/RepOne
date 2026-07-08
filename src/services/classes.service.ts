@@ -1,10 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { GymClass, ClassReportMetrics } from './classes.types';
-
-// NOTE: The 'trainers' table does NOT exist in production.
-// Classes table real columns: id, gym_id, class_name, start_time, end_time, capacity, status
-// All other columns (trainer_id, title, description, category, days, etc.)
-// do NOT exist in production — queries are guarded to use only real columns.
+import { GymClass, ClassReportMetrics, Trainer } from './classes.types';
 
 async function getGymId(): Promise<string> {
   const { data, error } = await supabase.from('gyms').select('id').limit(1).single();
@@ -16,35 +11,59 @@ async function getGymId(): Promise<string> {
 
 export const classesService = {
   // ====================================================
-  // TRAINERS MANAGEMENT — table does not exist in production DB
-  // All trainer operations silently no-op or return empty data
+  // TRAINERS MANAGEMENT
   // ====================================================
-  async getTrainers(): Promise<any[]> {
-    console.warn('[Schema] trainers table does not exist in production DB. Returning empty list.');
-    return [];
+  async getTrainers(filters?: { status?: 'active' | 'inactive'; search?: string }): Promise<Trainer[]> {
+    let query = supabase.from('trainers').select('*');
+    if (filters?.status) {
+      query = query.eq('status', filters.status);
+    }
+    if (filters?.search) {
+      query = query.ilike('name', `%${filters.search}%`);
+    }
+    const { data, error } = await query.order('name', { ascending: true });
+    if (error) throw error;
+    return data || [];
   },
 
-  async createTrainer(_trainerData: any) {
-    throw new Error('Trainer management is not available in the current database configuration.');
+  async createTrainer(trainerData: Omit<Trainer, 'id' | 'gym_id' | 'created_at' | 'updated_at'>) {
+    const gym_id = await getGymId();
+    const { data, error } = await supabase
+      .from('trainers')
+      .insert([{ ...trainerData, gym_id }])
+      .select('*')
+      .single();
+    if (error) throw error;
+    return data;
   },
 
-  async updateTrainer(_id: string, _trainerData: any) {
-    throw new Error('Trainer management is not available in the current database configuration.');
+  async updateTrainer(id: string, trainerData: Partial<Trainer>) {
+    const { data, error } = await supabase
+      .from('trainers')
+      .update(trainerData)
+      .eq('id', id)
+      .select('*')
+      .single();
+    if (error) throw error;
+    return data;
   },
 
-  async deleteTrainer(_id: string) {
-    throw new Error('Trainer management is not available in the current database configuration.');
+  async deleteTrainer(id: string) {
+    const { error } = await supabase
+      .from('trainers')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
   },
 
   // ====================================================
   // CLASSES MANAGEMENT
-  // Real columns: id, gym_id, class_name, start_time, end_time, capacity, status
   // ====================================================
   async getClasses(filters?: { search?: string; category?: string; trainerId?: string; status?: 'active' | 'inactive' }) {
-    // 1. Fetch raw classes
+    // 1. Fetch raw classes with joined trainers
     let query = supabase
       .from('classes')
-      .select('id, gym_id, class_name, start_time, end_time, capacity, status');
+      .select('id, gym_id, class_name, start_time, end_time, capacity, status, trainer_id, trainers(*)');
 
     if (filters?.search) {
       query = query.ilike('class_name', `%${filters.search}%`);
@@ -52,6 +71,10 @@ export const classesService = {
 
     if (filters?.status) {
       query = query.eq('status', filters.status);
+    }
+
+    if (filters?.trainerId) {
+      query = query.eq('trainer_id', filters.trainerId);
     }
 
     const { data: classesData, error: classesError } = await query.order('start_time', { ascending: true });
@@ -87,7 +110,8 @@ export const classesService = {
         booked_count: bookedCounts[row.id] || 0,
         waiting_list_count: waitingCounts[row.id] || 0,
         status: row.status === 'inactive' ? 'inactive' : 'active',
-        trainers: null,
+        trainer_id: row.trainer_id,
+        trainers: (Array.isArray(row.trainers) ? row.trainers[0] : row.trainers) || null,
         category: 'Fitness',
         duration: 60,
         difficulty_level: 'beginner',
@@ -99,7 +123,7 @@ export const classesService = {
   async getClassById(id: string) {
     const { data: row, error } = await supabase
       .from('classes')
-      .select('id, gym_id, class_name, start_time, end_time, capacity, status')
+      .select('id, gym_id, class_name, start_time, end_time, capacity, status, trainer_id, trainers(*)')
       .eq('id', id)
       .single();
 
@@ -125,7 +149,8 @@ export const classesService = {
       booked_count: bookedCount,
       waiting_list_count: waitingCount,
       status: row.status === 'inactive' ? 'inactive' : 'active',
-      trainers: null,
+      trainer_id: row.trainer_id,
+      trainers: (Array.isArray(row.trainers) ? row.trainers[0] : row.trainers) || null,
       category: 'Fitness',
       duration: 60,
       difficulty_level: 'beginner',
@@ -133,7 +158,7 @@ export const classesService = {
     } as GymClass;
   },
 
-  async createClass(classData: { class_name?: string; title?: string; start_time: string; end_time: string; capacity: number; [key: string]: any }) {
+  async createClass(classData: { class_name?: string; title?: string; start_time: string; end_time: string; capacity: number; trainer_id?: string | null; [key: string]: any }) {
     const gym_id = await getGymId();
     const payload = {
       gym_id,
@@ -142,12 +167,13 @@ export const classesService = {
       end_time: classData.end_time,
       capacity: classData.capacity,
       status: 'active',
+      trainer_id: classData.trainer_id || null,
     };
 
     const { data, error } = await supabase
       .from('classes')
       .insert([payload])
-      .select('id, gym_id, class_name, start_time, end_time, capacity, status')
+      .select('id')
       .single();
 
     if (error) throw error;
@@ -163,6 +189,7 @@ export const classesService = {
     if (classData.end_time !== undefined) payload.end_time = classData.end_time;
     if (classData.capacity !== undefined) payload.capacity = classData.capacity;
     if (classData.status !== undefined) payload.status = classData.status;
+    if (classData.trainer_id !== undefined) payload.trainer_id = classData.trainer_id || null;
 
     if (Object.keys(payload).length === 0) {
       return this.getClassById(id);
@@ -222,6 +249,7 @@ export const classesService = {
       start_time: classToCopy.start_time,
       end_time: classToCopy.end_time,
       capacity: classToCopy.capacity,
+      trainer_id: classToCopy.trainer_id,
     });
   },
 
