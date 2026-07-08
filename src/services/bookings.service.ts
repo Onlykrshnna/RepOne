@@ -40,15 +40,19 @@ export const bookingsService = {
       throw new Error('Member record not found.');
     }
 
-    // 3. Verify class exists
+    // 3. Verify class exists and is active
     const { data: gymClass, error: classError } = await supabase
       .from('classes')
-      .select('id, capacity')
+      .select('id, capacity, status')
       .eq('id', classId)
       .single();
 
     if (classError || !gymClass) {
       throw new Error('Class not found.');
+    }
+
+    if (gymClass.status !== 'active') {
+      throw new Error('This class is currently unavailable.');
     }
 
     // 4. Insert booking

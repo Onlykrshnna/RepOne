@@ -116,7 +116,7 @@ function ClassesPage() {
   const deleteClassMutation = useMutation({
     mutationFn: (id: string) => classesService.deleteClass(id),
     onSuccess: () => {
-      toast.success('Class deleted successfully');
+      toast.success('Class deleted successfully.');
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       queryClient.invalidateQueries({ queryKey: ['classes-report'] });
       refetchClasses();
@@ -139,7 +139,7 @@ function ClassesPage() {
   const cancelClassMutation = useMutation({
     mutationFn: (id: string) => classesService.cancelClass(id),
     onSuccess: () => {
-      toast.success('Class deactivated! All bookings have been updated to cancelled.');
+      toast.success('Class deactivated successfully.');
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       queryClient.invalidateQueries({ queryKey: ['classes-report'] });
       queryClient.invalidateQueries({ queryKey: ['class-dashboard-metrics'] });
@@ -152,7 +152,7 @@ function ClassesPage() {
   const activateClassMutation = useMutation({
     mutationFn: (id: string) => classesService.activateClass(id),
     onSuccess: () => {
-      toast.success('Class reactivated successfully');
+      toast.success('Class activated successfully.');
       queryClient.invalidateQueries({ queryKey: ['classes'] });
       queryClient.invalidateQueries({ queryKey: ['classes-report'] });
       queryClient.invalidateQueries({ queryKey: ['class-dashboard-metrics'] });
@@ -357,7 +357,7 @@ function ClassesPage() {
               disabled
               variant="outline" 
               className="border-border text-muted-foreground bg-card cursor-not-allowed opacity-60"
-              title="Trainer Management is not configured."
+              title="Trainer Management is not configured yet."
             >
               <Plus className="mr-2 h-4 w-4" /> Add Trainer
             </Button>
