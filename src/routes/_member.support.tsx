@@ -181,7 +181,7 @@ function SupportPage() {
       case 'Resolved':
         return <Badge className="bg-emerald-50 text-emerald-600 border border-emerald-200">Resolved</Badge>;
       case 'Closed':
-        return <Badge variant="outline" className="border-slate-300 text-muted-foreground/75">Closed</Badge>;
+        return <Badge variant="outline" className="border-border text-muted-foreground/75">Closed</Badge>;
     }
   };
 
@@ -235,7 +235,7 @@ function SupportPage() {
                 placeholder="Search subject..."
                 value={ticketSearch}
                 onChange={(e) => setTicketSearch(e.target.value)}
-                className="pl-9 bg-background border-border text-slate-950 w-full sm:w-[200px] h-9"
+                className="pl-9 bg-background border-border text-foreground w-full sm:w-[200px] h-9"
               />
             </div>
             <select
@@ -259,7 +259,7 @@ function SupportPage() {
           ) : tickets.length === 0 ? (
             <div className="p-12 text-center text-muted-foreground/75 italic">No tickets found.</div>
           ) : (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-border">
               {tickets
                 .filter(t => t.subject.toLowerCase().includes(ticketSearch.toLowerCase()))
                 .map((ticket) => (
@@ -271,7 +271,7 @@ function SupportPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-bold text-foreground text-base">{ticket.subject}</span>
-                        <Badge variant="outline" className="border-indigo-100 text-indigo-600 bg-indigo-50 text-[10px] uppercase font-bold">
+                        <Badge variant="outline" className="border-indigo-500/20 text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 text-[10px] uppercase font-bold">
                           {ticket.category}
                         </Badge>
                       </div>
@@ -422,7 +422,7 @@ function SupportPage() {
               </div>
 
               {/* Chat Thread Container */}
-              <div className="flex-1 overflow-y-auto space-y-3 p-3 bg-slate-50/50 border border-border/50 rounded-xl my-3">
+              <div className="flex-1 overflow-y-auto space-y-3 p-3 bg-muted/30 border border-border/50 rounded-xl my-3">
                 {replies.length === 0 ? (
                   <div className="text-center text-xs text-muted-foreground/75 py-12 italic">No replies posted. Type message below to start chat.</div>
                 ) : (

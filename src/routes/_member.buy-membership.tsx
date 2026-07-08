@@ -347,7 +347,7 @@ function BuyMembershipPage() {
                     className={`flex flex-col items-start gap-1.5 p-3 rounded-xl border transition-all duration-300 relative overflow-hidden text-left ${
                       isSelected 
                         ? 'border-indigo-600 bg-indigo-500/5 text-indigo-600 shadow-sm' 
-                        : 'border-border bg-card text-muted-foreground hover:border-slate-300 dark:hover:border-slate-800'
+                        : 'border-border bg-card text-muted-foreground hover:border-border/80'
                     }`}
                   >
                     {m.highlight && (
@@ -366,7 +366,7 @@ function BuyMembershipPage() {
             </div>
 
             {/* Channel-specific input panel */}
-            <div className="flex-1 bg-slate-50/50 dark:bg-slate-900/30 rounded-xl border border-border/50 p-4">
+            <div className="flex-1 bg-muted/30 rounded-xl border border-border p-4">
               <form id="checkout-form" onSubmit={submitPayment} className="h-full flex flex-col justify-center">
                 {method === 'razorpay' ? (
                   <div className="flex flex-col items-center text-center space-y-2 py-2">

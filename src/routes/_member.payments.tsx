@@ -157,8 +157,8 @@ function PaymentHistoryPage() {
               
               if (!plan) {
                 return (
-                  <div className="bg-gradient-to-br from-slate-50 to-slate-100 border border-border rounded-lg p-6 text-center space-y-3">
-                    <div className="h-10 w-10 rounded-full bg-slate-200 flex items-center justify-center mx-auto">
+                  <div className="bg-gradient-to-br from-muted/50 to-muted border border-border rounded-lg p-6 text-center space-y-3">
+                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center mx-auto">
                       <CreditCard className="h-5 w-5 text-muted-foreground" />
                     </div>
                     <div className="text-foreground font-bold text-lg">No Active Plan</div>
@@ -170,11 +170,11 @@ function PaymentHistoryPage() {
               }
 
               return (
-                <div className="bg-gradient-to-br from-indigo-50 to-slate-50 border border-indigo-100 rounded-lg p-6 text-center space-y-3">
-                  <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center mx-auto">
-                    <CreditCard className="h-5 w-5 text-indigo-600" />
+                <div className="bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 border border-indigo-500/20 rounded-lg p-6 text-center space-y-3">
+                  <div className="h-10 w-10 rounded-full bg-indigo-500/20 flex items-center justify-center mx-auto">
+                    <CreditCard className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                   </div>
-                  <div className="text-indigo-600 font-bold text-lg">{plan.membership_plans?.name}</div>
+                  <div className="text-indigo-600 dark:text-indigo-400 font-bold text-lg">{plan.membership_plans?.name}</div>
                   <div className="text-sm text-muted-foreground">
                     Valid until {new Date(plan.end_date).toLocaleDateString()}
                   </div>

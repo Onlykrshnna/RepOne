@@ -223,10 +223,10 @@ function ProfileForm({ profile }: { profile: any }) {
                   <img 
                     src={displayProfile.avatar_url} 
                     alt="Profile" 
-                    className="w-full h-full object-cover rounded-full shadow-md border-4 border-white transition-all duration-300 group-hover:brightness-75"
+                    className="w-full h-full object-cover rounded-full shadow-md border-4 border-card transition-all duration-300 group-hover:brightness-75"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white rounded-full flex items-center justify-center text-4xl font-bold shadow-md border-4 border-white transition-all duration-300 group-hover:brightness-75">
+                  <div className="w-full h-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white rounded-full flex items-center justify-center text-4xl font-bold shadow-md border-4 border-card transition-all duration-300 group-hover:brightness-75">
                     {displayProfile?.first_name?.[0] || 'U'}{displayProfile?.last_name?.[0] || ''}
                   </div>
                 )}
@@ -242,7 +242,7 @@ function ProfileForm({ profile }: { profile: any }) {
                 {displayProfile?.avatar_url && !isUploading && (
                   <button 
                     onClick={handleRemoveAvatar}
-                    className="absolute top-0 right-0 bg-white rounded-full p-1 shadow-md hover:bg-red-50 text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                    className="absolute top-0 right-0 bg-card rounded-full p-1 shadow-md hover:bg-red-50 dark:hover:bg-red-950/20 text-red-500 transition-colors opacity-0 group-hover:opacity-100 border border-border"
                     title="Remove Photo"
                   >
                     <X className="h-4 w-4" />
@@ -264,8 +264,8 @@ function ProfileForm({ profile }: { profile: any }) {
                 variant="outline" 
                 className={`uppercase tracking-wider font-semibold py-1 px-3 ${
                   displayProfile.membership_status === 'active' 
-                    ? 'border-emerald-500 text-emerald-600 bg-emerald-50' 
-                    : 'border-indigo-600 text-indigo-600 bg-indigo-50'
+                    ? 'border-emerald-500/30 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10' 
+                    : 'border-indigo-500/30 text-indigo-600 dark:text-indigo-400 bg-indigo-500/10'
                 }`}
               >
                 {displayProfile.membership_status}

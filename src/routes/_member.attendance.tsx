@@ -165,7 +165,7 @@ function MemberAttendanceBody({ profile }: { profile: any }) {
                     dataKey="dayName" 
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontSize: 12, fill: '#888888' }}
+                    tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }}
                     dy={10}
                   />
                   <YAxis hide domain={[0, 1]} />

@@ -127,7 +127,7 @@ function ProgressPage() {
                     }}
                   >
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10 border border-slate-300">
+                      <Avatar className="h-10 w-10 border border-border">
                         <AvatarImage src={o.member.avatar} />
                          <AvatarFallback className="bg-muted text-xs">{o.member?.name?.[0] || 'M'}</AvatarFallback>
                       </Avatar>
@@ -252,13 +252,13 @@ function ProgressPage() {
                 {chartData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-                      <XAxis dataKey="date" stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} />
-                      <YAxis yAxisId="left" stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} />
-                      <YAxis yAxisId="right" orientation="right" stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                      <XAxis dataKey="date" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
+                      <YAxis yAxisId="left" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
+                      <YAxis yAxisId="right" orientation="right" stroke="var(--muted-foreground)" fontSize={12} tickLine={false} axisLine={false} />
                       <Tooltip 
-                        contentStyle={{ backgroundColor: '#18181b', borderColor: '#27272a', color: '#fff' }}
-                        itemStyle={{ color: '#fff' }}
+                        contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', color: 'var(--foreground)' }}
+                        itemStyle={{ color: 'var(--foreground)' }}
                       />
                       <Legend wrapperStyle={{ fontSize: '12px' }}/>
                       <Line yAxisId="left" type="monotone" name="Weight (kg)" dataKey="weight" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981', strokeWidth: 0 }} activeDot={{ r: 6 }} />

@@ -402,9 +402,9 @@ function MembershipPlansPage() {
                 >
                   <Card className={`relative flex flex-col w-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
                     isCurrentPlan && !isExpired && !isExpiringSoon
-                      ? 'border-emerald-600/40 bg-emerald-950/10 ring-1 ring-emerald-600/20'
+                      ? 'border-emerald-600/40 bg-emerald-500/10 ring-1 ring-emerald-600/20'
                       : isFeatured
-                      ? 'border-indigo-600/50 bg-indigo-950/10 shadow-md ring-1 ring-indigo-600/20'
+                      ? 'border-indigo-600/50 bg-indigo-500/10 shadow-md ring-1 ring-indigo-600/20'
                       : 'bg-card border-border shadow-sm'
                   }`}>
                     {/* Badges */}

@@ -152,13 +152,13 @@ function MemberDashboard({ profile }: { profile: any }) {
           <p className="text-muted-foreground text-xs mt-1">Ready to crush your goals today?</p>
         </div>
         <Badge className={`px-4 py-1.5 text-xs font-semibold tracking-wide uppercase rounded-full ${
-          isNone ? 'bg-slate-500/10 text-slate-500 border border-slate-500/20' : 
-          isPending ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
-          isRejected ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
-          isExpired ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
-          isSuspended ? 'bg-red-500/10 text-red-500 border border-red-500/20' :
-          isActive ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
-          'bg-slate-500/10 text-slate-500 border border-slate-500/20'
+          isNone ? 'bg-muted text-muted-foreground border border-border' : 
+          isPending ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20' :
+          isRejected ? 'bg-destructive/10 text-destructive border border-destructive/20' :
+          isExpired ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20' :
+          isSuspended ? 'bg-destructive/10 text-destructive border border-destructive/20' :
+          isActive ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' :
+          'bg-muted text-muted-foreground border border-border'
         }`}>
           {
             isNone ? 'Incomplete Registration' : 
@@ -173,54 +173,54 @@ function MemberDashboard({ profile }: { profile: any }) {
       </div>
 
       {isNone && (
-        <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg shadow-emerald-900/5 gap-4 transition-colors">
+        <div className="bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg shadow-emerald-900/5 gap-4 transition-colors">
           <div className="flex items-center gap-4">
-            <div className="bg-emerald-100 dark:bg-emerald-500/20 p-2 rounded-full">
-              <CreditCard className="h-6 w-6 text-emerald-600 dark:text-emerald-500" />
+            <div className="bg-emerald-500/20 p-2 rounded-full">
+              <CreditCard className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <h4 className="text-emerald-800 dark:text-emerald-500 font-semibold text-lg">Complete Registration</h4>
-              <p className="text-emerald-600 dark:text-emerald-200/80 text-sm">Purchase a membership plan to unlock all gym features.</p>
+              <h4 className="text-emerald-800 dark:text-emerald-400 font-semibold text-lg">Complete Registration</h4>
+              <p className="text-emerald-600 dark:text-emerald-400/90 text-sm">Purchase a membership plan to unlock all gym features.</p>
             </div>
           </div>
-          <Button asChild className="bg-emerald-600 text-white hover:bg-emerald-500 font-medium shadow-md w-full md:w-auto">
+          <Button asChild className="bg-emerald-600 text-white hover:bg-emerald-750 font-medium shadow-md w-full md:w-auto border-none">
             <Link to="/buy-membership">View Plans</Link>
           </Button>
         </div>
       )}
 
       {isPending && (
-        <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg shadow-amber-900/5 gap-4 transition-colors">
+        <div className="bg-amber-500/10 border border-amber-500/20 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg shadow-amber-900/5 gap-4 transition-colors">
           <div className="flex items-center gap-4">
-            <div className="bg-amber-100 dark:bg-amber-500/20 p-2 rounded-full">
-              <Clock className="h-6 w-6 text-amber-600 dark:text-amber-500" />
+            <div className="bg-amber-500/20 p-2 rounded-full">
+              <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <h4 className="text-amber-800 dark:text-amber-500 font-semibold text-lg font-bold">Payment Submitted</h4>
-              <p className="text-amber-600 dark:text-amber-200/80 text-sm">Waiting for Admin Approval. Your access will unlock shortly!</p>
+              <h4 className="text-amber-800 dark:text-amber-400 font-semibold text-lg font-bold">Payment Submitted</h4>
+              <p className="text-amber-600 dark:text-amber-400/90 text-sm">Waiting for Admin Approval. Your access will unlock shortly!</p>
             </div>
           </div>
-          <Button disabled className="opacity-50 cursor-not-allowed bg-amber-200 text-amber-800 border-amber-300 w-full md:w-auto font-medium shadow-md">
+          <Button disabled className="opacity-50 cursor-not-allowed bg-amber-600 text-white w-full md:w-auto font-medium shadow-md border-none">
             Purchase Disabled
           </Button>
         </div>
       )}
 
       {isRejected && (
-        <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg shadow-red-900/5 gap-4 transition-colors">
+        <div className="bg-destructive/10 border border-destructive/20 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg shadow-red-900/5 gap-4 transition-colors">
           <div className="flex items-center gap-4">
-            <div className="bg-red-100 dark:bg-red-500/20 p-2 rounded-full">
-              <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-500" />
+            <div className="bg-destructive/20 p-2 rounded-full">
+              <AlertTriangle className="h-6 w-6 text-destructive" />
             </div>
             <div>
-              <h4 className="text-red-800 dark:text-red-500 font-semibold text-lg font-bold">Payment Rejected</h4>
-              <p className="text-red-600 dark:text-red-200/80 text-sm">
+              <h4 className="text-destructive font-semibold text-lg font-bold">Payment Rejected</h4>
+              <p className="text-destructive/90 text-sm">
                 Your recent payment was rejected. 
                 {displayProfile.admin_notes && <span className="font-semibold block mt-1">Admin notes: {displayProfile.admin_notes}</span>}
               </p>
             </div>
           </div>
-          <Button asChild className="bg-red-600 text-white hover:bg-red-700 font-medium shadow-md w-full md:w-auto">
+          <Button asChild className="bg-destructive text-destructive-foreground hover:bg-destructive/95 font-medium shadow-md w-full md:w-auto border-none">
             <Link to="/buy-membership">Resubmit Payment</Link>
           </Button>
         </div>
@@ -229,17 +229,17 @@ function MemberDashboard({ profile }: { profile: any }) {
 
 
       {isExpiringSoon && (
-        <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 p-5 rounded-xl flex items-center justify-between shadow-lg shadow-amber-900/5 transition-colors">
+        <div className="bg-amber-500/10 border border-amber-500/20 p-5 rounded-xl flex items-center justify-between shadow-lg shadow-amber-900/5 transition-colors">
           <div className="flex items-center gap-4">
-            <div className="bg-amber-100 dark:bg-amber-500/20 p-2 rounded-full">
-              <AlertTriangle className="h-6 w-6 text-amber-600 dark:text-amber-500" />
+            <div className="bg-amber-500/20 p-2 rounded-full">
+              <AlertTriangle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <h4 className="text-amber-800 dark:text-amber-500 font-semibold text-lg">Membership Expiring Soon</h4>
-              <p className="text-amber-700 dark:text-amber-200/80">You have {daysLeft} days remaining on your active plan.</p>
+              <h4 className="text-amber-800 dark:text-amber-400 font-semibold text-lg">Membership Expiring Soon</h4>
+              <p className="text-amber-700 dark:text-amber-400/95">You have {daysLeft} days remaining on your active plan.</p>
             </div>
           </div>
-          <Button asChild className="bg-amber-500 text-amber-950 hover:bg-amber-400 font-medium shadow-md">
+          <Button asChild className="bg-amber-600 text-white hover:bg-amber-750 font-medium shadow-md border-none">
             <Link to="/buy-membership">Renew Now</Link>
           </Button>
         </div>
@@ -469,7 +469,7 @@ function MemberDashboard({ profile }: { profile: any }) {
                           {new Date(checkin.check_in_time).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                        </span>
                      </span>
-                     <Badge variant="outline" className="text-muted-foreground/75 uppercase text-[10px] border-slate-300 font-semibold tracking-wider bg-card">
+                      <Badge variant="outline" className="text-muted-foreground/75 uppercase text-[10px] border-border font-semibold tracking-wider bg-card">
                         {checkin.method}
                      </Badge>
                    </li>
