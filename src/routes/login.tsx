@@ -74,7 +74,7 @@ function Login() {
     : '';
 
   return (
-    <div className="min-h-screen bg-[#080809] text-[#F0EDE6] flex flex-col justify-center items-center px-6 selection:bg-[#BEFF00] selection:text-[#080809]">
+    <div className="min-h-screen bg-background text-foreground flex flex-col justify-center items-center px-6 selection:bg-primary/30 selection:text-foreground">
       {/* Background grain */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
       
@@ -84,14 +84,14 @@ function Login() {
             <img src="/logo.png" alt="Logo" className="h-20 object-contain hover:opacity-80 transition-opacity" />
           </Link>
           <div className="mt-4 flex items-center justify-center gap-4">
-            <span className="block h-[1px] w-6 bg-[#F0EDE6]/15" />
-            <span className="text-[#F0EDE6]/40" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Portal</span>
-            <span className="block h-[1px] w-6 bg-[#F0EDE6]/15" />
+            <span className="block h-[1px] w-6 bg-border" />
+            <span className="text-muted-foreground" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Portal</span>
+            <span className="block h-[1px] w-6 bg-border" />
           </div>
         </div>
 
         {(error || authError) && (
-          <div className="mb-8 p-4 border border-[#FF3366]/20 bg-[#FF3366]/5 text-[#FF3366] text-center" style={{ fontFamily: "Inter", fontSize: "12px" }}>
+          <div className="mb-8 p-4 border border-destructive/20 bg-destructive/10 text-destructive text-center font-semibold rounded-lg" style={{ fontFamily: "Inter", fontSize: "12px" }}>
             {error || authError}
           </div>
         )}
@@ -100,7 +100,7 @@ function Login() {
           type="button"
           onClick={handleGoogleSignIn}
           disabled={isLoading}
-          className="w-full border border-[#F0EDE6]/10 text-white bg-[#0E0E10] hover:bg-white hover:text-[#080809] py-4 flex items-center justify-center transition-all duration-300 font-medium tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full border border-border text-foreground bg-card hover:bg-muted py-4 flex items-center justify-center transition-all duration-300 font-medium tracking-wide disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
           style={{ fontFamily: "Inter", fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase" }}
         >
           <svg className="w-4 h-4 mr-3 shrink-0" viewBox="0 0 24 24">
@@ -125,21 +125,21 @@ function Login() {
         </button>
 
         <div className="flex items-center gap-4 my-8">
-          <span className="h-[1px] flex-1 bg-[#F0EDE6]/10" />
-          <span className="text-[#F0EDE6]/30 text-[9px] tracking-widest font-semibold font-sans uppercase">OR</span>
-          <span className="h-[1px] flex-1 bg-[#F0EDE6]/10" />
+          <span className="h-[1px] flex-1 bg-border" />
+          <span className="text-muted-foreground text-[9px] tracking-widest font-semibold font-sans uppercase">OR</span>
+          <span className="h-[1px] flex-1 bg-border" />
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-1 group">
-            <label className="block text-[#F0EDE6]/50 transition-colors group-focus-within:text-[#BEFF00]" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+            <label className="block text-muted-foreground transition-colors group-focus-within:text-primary" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase" }}>
               Email Address
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-transparent border-b border-[#F0EDE6]/20 px-0 py-3 text-lg text-[#F0EDE6] focus:outline-none focus:border-[#BEFF00] transition-colors rounded-none placeholder:text-[#F0EDE6]/20"
+              className="w-full bg-transparent border-b border-border px-0 py-3 text-lg text-foreground focus:outline-none focus:border-primary transition-colors rounded-none placeholder:text-muted-foreground/50"
               placeholder="member@example.com"
               required
             />
@@ -147,10 +147,10 @@ function Login() {
 
           <div className="space-y-1 group relative">
             <div className="flex items-center justify-between">
-              <label className="block text-[#F0EDE6]/50 transition-colors group-focus-within:text-[#BEFF00]" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase" }}>
+              <label className="block text-muted-foreground transition-colors group-focus-within:text-primary" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase" }}>
                 Password
               </label>
-              <Link to="/forgot-password" className="text-[#F0EDE6]/30 hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter", fontSize: "10px" }}>
+              <Link to="/forgot-password" className="text-muted-foreground/60 hover:text-primary transition-colors" style={{ fontFamily: "Inter", fontSize: "10px" }}>
                 Forgot?
               </Link>
             </div>
@@ -159,13 +159,13 @@ function Login() {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-transparent border-b border-[#F0EDE6]/20 px-0 py-3 pr-10 text-lg text-[#F0EDE6] focus:outline-none focus:border-[#BEFF00] transition-colors rounded-none"
+                className="w-full bg-transparent border-b border-border px-0 py-3 pr-10 text-lg text-foreground focus:outline-none focus:border-primary transition-colors rounded-none"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-0 top-1/2 -translate-y-1/2 text-[#F0EDE6]/50 hover:text-[#BEFF00] transition-colors p-2"
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors p-2"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -175,8 +175,8 @@ function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full mt-8 bg-[#BEFF00] text-[#080809] py-4 flex items-center justify-center gap-3 hover:bg-white transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ fontFamily: "Inter", fontSize: "12px", letterSpacing: "0.26em", textTransform: "uppercase", fontWeight: 500 }}
+            className="w-full mt-8 bg-primary text-primary-foreground py-4 flex items-center justify-center gap-3 hover:opacity-90 transition-opacity duration-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold"
+            style={{ fontFamily: "Inter", fontSize: "12px", letterSpacing: "0.26em", textTransform: "uppercase" }}
           >
             {isLoading ? 'Authenticating...' : 'Sign In'}
             {!isLoading && <span>&rarr;</span>}
@@ -184,8 +184,8 @@ function Login() {
         </form>
 
         <div className="mt-12 text-center">
-          <p className="text-[#F0EDE6]/30" style={{ fontFamily: "Inter", fontSize: "11px", lineHeight: "1.6" }}>
-            Don't have an account? <Link to="/signup" className="text-[#F0EDE6]/60 hover:text-[#BEFF00] transition-colors border-b border-[#F0EDE6]/20 pb-0.5">Apply for Membership</Link>
+          <p className="text-muted-foreground" style={{ fontFamily: "Inter", fontSize: "11px", lineHeight: "1.6" }}>
+            Don't have an account? <Link to="/signup" className="text-foreground hover:text-primary transition-colors border-b border-border pb-0.5">Apply for Membership</Link>
           </p>
         </div>
       </div>

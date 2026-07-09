@@ -244,7 +244,7 @@ function BuyMembershipPage() {
       <div className="max-w-md mx-auto py-20 text-center space-y-4 px-4">
         <h2 className="text-2xl font-black text-foreground">No active packages found</h2>
         <p className="text-muted-foreground">Could not resolve active subscription plan items.</p>
-        <Button onClick={() => navigate({ to: '/membership-plans' })} className="bg-indigo-600 text-white w-full">
+        <Button onClick={() => navigate({ to: '/membership-plans' })} className="bg-primary text-primary-foreground w-full hover:bg-primary/90">
           <ArrowLeft className="h-4 w-4 mr-2" /> Select a plan
         </Button>
       </div>
@@ -275,11 +275,11 @@ function BuyMembershipPage() {
         <div className="md:col-span-5 flex flex-col gap-4">
           {/* Plan Selector Card */}
           <Card className="bg-card border-border text-foreground shadow-sm p-4 flex flex-col gap-2">
-            <h3 className="font-extrabold text-xs tracking-tight uppercase text-indigo-600">Select Gym Package</h3>
+            <h3 className="font-extrabold text-xs tracking-tight uppercase text-primary">Select Gym Package</h3>
             <select
               value={selectedPlanId}
               onChange={(e) => setSelectedPlanId(e.target.value)}
-              className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-1.5 text-xs text-foreground focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-1.5 text-xs text-foreground focus:ring-2 focus:ring-primary outline-none"
             >
               {plans.map(p => (
                 <option key={p.id} value={p.id}>{p.name} - ₹ {p.price}</option>
@@ -290,7 +290,7 @@ function BuyMembershipPage() {
           {/* Billing Summary Card */}
           <Card className="bg-card border-border text-foreground shadow-sm p-4 flex-1 flex flex-col justify-between">
             <div className="space-y-4">
-              <h3 className="font-extrabold text-xs tracking-tight border-b border-border/50 pb-2 uppercase text-indigo-600">Billing Details</h3>
+              <h3 className="font-extrabold text-xs tracking-tight border-b border-border/50 pb-2 uppercase text-primary">Billing Details</h3>
               <div className="flex justify-between items-center text-xs">
                 <div>
                   <div className="font-extrabold text-foreground">{selectedPlan.name}</div>
@@ -314,10 +314,10 @@ function BuyMembershipPage() {
             <div className="pt-4 border-t border-border/50">
               <div className="flex justify-between items-center mb-4">
                 <span className="font-bold text-xs text-muted-foreground uppercase tracking-wider">Total Due</span>
-                <span className="text-xl font-black text-indigo-600">₹ {selectedPlan.price}</span>
+                <span className="text-xl font-black text-primary">₹ {selectedPlan.price}</span>
               </div>
               <div className="flex items-center gap-1.5 text-muted-foreground/75 text-[9px] font-bold uppercase tracking-wider justify-center">
-                <ShieldCheck className="h-3.5 w-3.5 text-emerald-500 fill-emerald-100" /> PCI secure checkout verified
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-700 dark:text-emerald-400 fill-emerald-500/10" /> PCI secure checkout verified
               </div>
             </div>
           </Card>
@@ -327,7 +327,7 @@ function BuyMembershipPage() {
         <Card className="md:col-span-7 bg-card border-border text-foreground shadow-sm p-4 flex flex-col justify-between">
           <div className="space-y-4 flex-1 flex flex-col min-h-0">
             <div>
-              <h3 className="font-extrabold text-xs tracking-tight uppercase text-indigo-600">Payment Channel</h3>
+              <h3 className="font-extrabold text-xs tracking-tight uppercase text-primary">Payment Channel</h3>
               <p className="text-[10px] text-muted-foreground mt-0.5">Select a method to submit your payment details.</p>
             </div>
 
@@ -346,16 +346,16 @@ function BuyMembershipPage() {
                     onClick={() => setMethod(m.id)}
                     className={`flex flex-col items-start gap-1.5 p-3 rounded-xl border transition-all duration-300 relative overflow-hidden text-left ${
                       isSelected 
-                        ? 'border-indigo-600 bg-indigo-500/5 text-indigo-600 shadow-sm' 
+                        ? 'border-primary bg-primary/10 text-primary shadow-sm' 
                         : 'border-border bg-card text-muted-foreground hover:border-border/80'
                     }`}
                   >
                     {m.highlight && (
-                      <span className="absolute top-0 right-0 bg-indigo-600 text-[8px] font-black text-white px-1.5 py-0.5 rounded-bl uppercase">
+                      <span className="absolute top-0 right-0 bg-primary text-[8px] font-black text-primary-foreground px-1.5 py-0.5 rounded-bl uppercase">
                         Instant
                       </span>
                     )}
-                    <m.icon className={`h-5 w-5 ${isSelected ? 'text-indigo-600' : 'text-muted-foreground/75'}`} />
+                    <m.icon className={`h-5 w-5 ${isSelected ? 'text-primary' : 'text-muted-foreground/75'}`} />
                     <div>
                       <div className="font-bold text-xs text-foreground leading-tight">{m.name}</div>
                       <div className="text-[9px] text-muted-foreground/80 leading-none mt-0.5">{m.subtitle}</div>
@@ -370,8 +370,8 @@ function BuyMembershipPage() {
               <form id="checkout-form" onSubmit={submitPayment} className="h-full flex flex-col justify-center">
                 {method === 'razorpay' ? (
                   <div className="flex flex-col items-center text-center space-y-2 py-2">
-                    <div className="p-2 bg-indigo-100 dark:bg-indigo-950 rounded-full">
-                      <ShieldCheck className="h-6 w-6 text-indigo-600" />
+                    <div className="p-2 bg-primary/10 rounded-full">
+                      <ShieldCheck className="h-6 w-6 text-primary" />
                     </div>
                     <div className="space-y-1">
                       <h4 className="font-extrabold text-xs text-foreground uppercase tracking-wider">Razorpay Gateway Enabled</h4>
@@ -383,7 +383,7 @@ function BuyMembershipPage() {
                 ) : method === 'bank' ? (
                   <div className="space-y-3">
                     <div className="bg-background p-3 rounded-lg border border-border text-[11px] grid grid-cols-2 gap-y-1 font-semibold text-foreground/80">
-                      <div className="text-indigo-600 uppercase font-bold text-xs col-span-2 mb-1">AXIS BANK CREDENTIALS</div>
+                      <div className="text-primary uppercase font-bold text-xs col-span-2 mb-1">AXIS BANK CREDENTIALS</div>
                       <div>Account Name:</div> <div className="text-foreground">Elevate Fitness Ltd.</div>
                       <div>A/C Number:</div> <div className="text-foreground text-xs font-mono">918029381923</div>
                       <div>IFSC Code:</div> <div className="text-foreground text-xs font-mono">UTIB0001892</div>
@@ -404,7 +404,7 @@ function BuyMembershipPage() {
                     <div className="space-y-1">
                       <Label htmlFor="proof_upload" className="text-foreground/80 font-bold text-[10px]">Upload Receipt Proof</Label>
                       <div className="flex gap-2 items-center bg-background p-2 border border-border border-dashed rounded-lg h-10">
-                        <UploadCloud className="h-4 w-4 text-indigo-500 shrink-0" />
+                        <UploadCloud className="h-4 w-4 text-primary shrink-0" />
                         <input 
                           type="file" 
                           id="proof_upload" 
@@ -414,11 +414,11 @@ function BuyMembershipPage() {
                         />
                       </div>
                       {proof ? (
-                        <div className="text-[9px] text-emerald-600 font-bold flex items-center gap-1">
+                        <div className="text-[9px] text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
                           <CheckCircle2 className="h-3 w-3" /> Uploaded successfully
                         </div>
                       ) : isUploading ? (
-                        <div className="text-[9px] text-indigo-500 animate-pulse font-bold">Uploading...</div>
+                        <div className="text-[9px] text-primary animate-pulse font-bold">Uploading...</div>
                       ) : null}
                     </div>
                   </div>
@@ -436,7 +436,7 @@ function BuyMembershipPage() {
               type="submit" 
               form="checkout-form"
               disabled={purchaseMutation.isPending || isUploading}
-              className="w-full h-10 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow flex items-center justify-center gap-2"
+              className="w-full h-10 text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow flex items-center justify-center gap-2"
             >
               {purchaseMutation.isPending ? 'Processing...' : method === 'razorpay' ? 'Launch Razorpay Gateway' : 'Confirm Request & Settle'}
             </Button>

@@ -61,7 +61,7 @@ export function WeeklySplitCard() {
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div>
           <CardTitle className="text-xl font-bold flex items-center gap-2 text-foreground">
-            <Dumbbell className="h-5 w-5 text-indigo-600" />
+            <Dumbbell className="h-5 w-5 text-primary" />
             Weekly Workout Split
           </CardTitle>
           <CardDescription className="text-muted-foreground mt-1">
@@ -72,12 +72,12 @@ export function WeeklySplitCard() {
           {isEditing ? (
             <>
               <Button variant="ghost" size="sm" onClick={() => setIsEditing(false)} className="text-muted-foreground">Cancel</Button>
-              <Button size="sm" onClick={handleSave} disabled={isSaving} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+              <Button size="sm" onClick={handleSave} disabled={isSaving} className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 {isSaving ? 'Saving...' : <><Save className="h-4 w-4 mr-1.5" /> Save</>}
               </Button>
             </>
           ) : (
-            <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="border-border text-foreground/80">
+            <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="border-border text-foreground">
               Edit Split
             </Button>
           )}
@@ -92,26 +92,26 @@ export function WeeklySplitCard() {
                 key={day} 
                 className={`p-3 rounded-lg border ${
                   isToday 
-                    ? 'border-indigo-300 bg-indigo-50/50' 
-                    : 'border-border/50 bg-slate-50/50'
+                    ? 'border-primary/40 bg-primary/5' 
+                    : 'border-border/50 bg-background'
                 } flex flex-col gap-1.5 transition-colors`}
               >
                 <div className="flex items-center justify-between">
-                  <span className={`text-xs font-bold uppercase tracking-wider ${isToday ? 'text-indigo-700' : 'text-muted-foreground'}`}>
+                  <span className={`text-xs font-bold uppercase tracking-wider ${isToday ? 'text-primary' : 'text-muted-foreground'}`}>
                     {day.substring(0, 3)}
                   </span>
-                  {isToday && <span className="text-[10px] font-bold bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded">TODAY</span>}
+                  {isToday && <span className="text-[10px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded">TODAY</span>}
                 </div>
                 
                 {isEditing ? (
                   <Input 
                     value={split[day] || ''} 
                     onChange={(e) => setSplit({ ...split, [day]: e.target.value })}
-                    className="h-8 text-sm px-2 bg-card border-border focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/20 shadow-sm"
+                    className="h-8 text-sm px-2 bg-card border-border focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/20 shadow-sm"
                     placeholder="e.g. Legs"
                   />
                 ) : (
-                  <div className={`text-sm font-medium leading-tight ${isToday ? 'text-foreground' : 'text-foreground/80'}`}>
+                  <div className={`text-sm font-medium leading-tight ${isToday ? 'text-foreground' : 'text-foreground'}`}>
                     {split[day] || 'Rest'}
                   </div>
                 )}
@@ -122,7 +122,7 @@ export function WeeklySplitCard() {
         
         {isEditing && (
           <div className="mt-4 flex justify-end">
-             <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground/75 hover:text-slate-700 text-xs h-7">
+             <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground hover:text-foreground text-xs h-7">
                Reset to Default
              </Button>
           </div>

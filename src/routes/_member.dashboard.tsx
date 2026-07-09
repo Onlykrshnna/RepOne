@@ -88,19 +88,19 @@ function MemberDashboard({ profile }: { profile: any }) {
   if (!BYPASS_STATUS_BLOCKS && isSuspended) {
     return (
       <div className="space-y-6 max-w-2xl mx-auto mt-10">
-        <Card className="bg-red-950/20 border-red-900/50 text-foreground text-center py-10 shadow-lg shadow-red-900/10">
-          <AlertTriangle className="h-16 w-16 text-red-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
-          <CardTitle className="text-3xl mb-2 text-red-400">Account Suspended</CardTitle>
+        <Card className="bg-destructive/10 border-destructive/20 text-foreground text-center py-10 shadow-lg">
+          <AlertTriangle className="h-16 w-16 text-destructive mx-auto mb-6 drop-shadow-[0_0_15px_rgba(239,68,68,0.2)]" />
+          <CardTitle className="text-3xl mb-2 text-destructive">Account Suspended</CardTitle>
           <CardDescription className="text-muted-foreground max-w-md mx-auto text-base">
             Your account is currently suspended. Please contact support for more information.
             {displayProfile.admin_notes && (
-              <div className="mt-6 p-4 bg-card border border-border rounded-lg text-left text-sm text-foreground/80">
+              <div className="mt-6 p-4 bg-card border border-border rounded-lg text-left text-sm text-foreground">
                 <strong className="text-foreground block mb-1">Admin Notes:</strong>
                 {displayProfile.admin_notes}
               </div>
             )}
           </CardDescription>
-          <Button asChild className="mt-8 bg-red-600 hover:bg-red-700 text-foreground font-medium px-8 h-12">
+          <Button asChild variant="destructive" className="mt-8 font-medium px-8 h-12">
             <Link to="/support">Contact Support</Link>
           </Button>
         </Card>
@@ -112,10 +112,10 @@ function MemberDashboard({ profile }: { profile: any }) {
   if (!BYPASS_STATUS_BLOCKS && isExpired) {
     return (
       <div className="space-y-6 max-w-3xl mx-auto mt-10">
-        <Card className="bg-card border-amber-900/50 text-foreground shadow-xl shadow-amber-900/10">
+        <Card className="bg-card border-border text-foreground shadow-lg">
           <CardHeader className="text-center pb-2 pt-10">
-            <AlertCircle className="h-16 w-16 text-amber-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.4)]" />
-            <CardTitle className="text-3xl text-amber-500">Membership Expired</CardTitle>
+            <AlertCircle className="h-16 w-16 text-amber-800 dark:text-amber-400 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.2)]" />
+            <CardTitle className="text-3xl text-amber-800 dark:text-amber-400">Membership Expired</CardTitle>
             <CardDescription className="text-muted-foreground text-base mt-2">
               Your membership plan has ended.
             </CardDescription>
@@ -124,7 +124,7 @@ function MemberDashboard({ profile }: { profile: any }) {
             <p className="text-base text-muted-foreground mb-8 max-w-lg mx-auto">
               To continue accessing our facilities and booking classes, please renew your membership.
             </p>
-            <Button asChild className="bg-indigo-600 text-white hover:bg-gold/90 font-medium h-12 px-8">
+            <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium h-12 px-8">
               <Link to="/buy-membership">Renew Membership</Link>
             </Button>
           </CardContent>
@@ -148,16 +148,16 @@ function MemberDashboard({ profile }: { profile: any }) {
       <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-4 gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-foreground mb-1">Hello, {displayProfile.first_name} {displayProfile.last_name || ''}</h2>
-          <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">@{displayProfile.username || 'member'}</p>
+          <p className="text-xs font-semibold text-primary">@{displayProfile.username || 'member'}</p>
           <p className="text-muted-foreground text-xs mt-1">Ready to crush your goals today?</p>
         </div>
         <Badge className={`px-4 py-1.5 text-xs font-semibold tracking-wide uppercase rounded-full ${
           isNone ? 'bg-muted text-muted-foreground border border-border' : 
-          isPending ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20' :
+          isPending ? 'bg-amber-500/10 text-amber-800 dark:text-amber-400 border border-amber-500/20' :
           isRejected ? 'bg-destructive/10 text-destructive border border-destructive/20' :
-          isExpired ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20' :
+          isExpired ? 'bg-amber-500/10 text-amber-800 dark:text-amber-400 border border-amber-500/20' :
           isSuspended ? 'bg-destructive/10 text-destructive border border-destructive/20' :
-          isActive ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' :
+          isActive ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20' :
           'bg-muted text-muted-foreground border border-border'
         }`}>
           {
@@ -173,48 +173,48 @@ function MemberDashboard({ profile }: { profile: any }) {
       </div>
 
       {isNone && (
-        <div className="bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg shadow-emerald-900/5 gap-4 transition-colors">
+        <div className="bg-emerald-500/10 dark:bg-emerald-950/20 border border-emerald-500/20 dark:border-emerald-900/30 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg gap-4 transition-colors">
           <div className="flex items-center gap-4">
-            <div className="bg-emerald-500/20 p-2 rounded-full">
-              <CreditCard className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+            <div className="bg-emerald-500/20 dark:bg-emerald-900/20 p-2 rounded-full">
+              <CreditCard className="h-6 w-6 text-emerald-700 dark:text-emerald-400" />
             </div>
             <div>
-              <h4 className="text-emerald-800 dark:text-emerald-400 font-semibold text-lg">Complete Registration</h4>
-              <p className="text-emerald-600 dark:text-emerald-400/90 text-sm">Purchase a membership plan to unlock all gym features.</p>
+              <h4 className="text-emerald-800 dark:text-emerald-400 font-bold text-lg">Complete Registration</h4>
+              <p className="text-emerald-700 dark:text-emerald-400 text-sm">Purchase a membership plan to unlock all gym features.</p>
             </div>
           </div>
-          <Button asChild className="bg-emerald-600 text-white hover:bg-emerald-750 font-medium shadow-md w-full md:w-auto border-none">
+          <Button asChild className="bg-emerald-600 text-white hover:bg-emerald-700 font-medium shadow-md w-full md:w-auto border-none">
             <Link to="/buy-membership">View Plans</Link>
           </Button>
         </div>
       )}
 
       {isPending && (
-        <div className="bg-amber-500/10 border border-amber-500/20 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg shadow-amber-900/5 gap-4 transition-colors">
+        <div className="bg-amber-500/10 dark:bg-amber-950/20 border border-amber-500/20 dark:border-amber-900/30 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg gap-4 transition-colors">
           <div className="flex items-center gap-4">
-            <div className="bg-amber-500/20 p-2 rounded-full">
-              <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+            <div className="bg-amber-500/20 dark:bg-amber-900/20 p-2 rounded-full">
+              <Clock className="h-6 w-6 text-amber-800 dark:text-amber-400" />
             </div>
             <div>
-              <h4 className="text-amber-800 dark:text-amber-400 font-semibold text-lg font-bold">Payment Submitted</h4>
-              <p className="text-amber-600 dark:text-amber-400/90 text-sm">Waiting for Admin Approval. Your access will unlock shortly!</p>
+              <h4 className="text-amber-800 dark:text-amber-400 font-bold text-lg">Payment Submitted</h4>
+              <p className="text-amber-700 dark:text-amber-400 text-sm">Waiting for Admin Approval. Your access will unlock shortly!</p>
             </div>
           </div>
-          <Button disabled className="opacity-50 cursor-not-allowed bg-amber-600 text-white w-full md:w-auto font-medium shadow-md border-none">
+          <Button disabled className="opacity-50 cursor-not-allowed bg-muted text-muted-foreground w-full md:w-auto font-medium shadow-md border-none">
             Purchase Disabled
           </Button>
         </div>
       )}
 
       {isRejected && (
-        <div className="bg-destructive/10 border border-destructive/20 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg shadow-red-900/5 gap-4 transition-colors">
+        <div className="bg-destructive/10 dark:bg-red-950/20 border border-destructive/20 dark:border-red-900/30 p-5 rounded-xl flex flex-col md:flex-row items-center justify-between shadow-lg gap-4 transition-colors">
           <div className="flex items-center gap-4">
-            <div className="bg-destructive/20 p-2 rounded-full">
+            <div className="bg-destructive/20 dark:bg-red-900/20 p-2 rounded-full">
               <AlertTriangle className="h-6 w-6 text-destructive" />
             </div>
             <div>
-              <h4 className="text-destructive font-semibold text-lg font-bold">Payment Rejected</h4>
-              <p className="text-destructive/90 text-sm">
+              <h4 className="text-destructive dark:text-red-400 font-bold text-lg">Payment Rejected</h4>
+              <p className="text-destructive dark:text-red-400 text-sm">
                 Your recent payment was rejected. 
                 {displayProfile.admin_notes && <span className="font-semibold block mt-1">Admin notes: {displayProfile.admin_notes}</span>}
               </p>
@@ -229,17 +229,17 @@ function MemberDashboard({ profile }: { profile: any }) {
 
 
       {isExpiringSoon && (
-        <div className="bg-amber-500/10 border border-amber-500/20 p-5 rounded-xl flex items-center justify-between shadow-lg shadow-amber-900/5 transition-colors">
+        <div className="bg-amber-500/10 dark:bg-amber-950/20 border border-amber-500/20 dark:border-amber-900/30 p-5 rounded-xl flex items-center justify-between shadow-lg transition-colors">
           <div className="flex items-center gap-4">
-            <div className="bg-amber-500/20 p-2 rounded-full">
-              <AlertTriangle className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+            <div className="bg-amber-500/20 dark:bg-amber-900/20 p-2 rounded-full">
+              <AlertTriangle className="h-6 w-6 text-amber-800 dark:text-amber-400" />
             </div>
             <div>
-              <h4 className="text-amber-800 dark:text-amber-400 font-semibold text-lg">Membership Expiring Soon</h4>
-              <p className="text-amber-700 dark:text-amber-400/95">You have {daysLeft} days remaining on your active plan.</p>
+              <h4 className="text-amber-800 dark:text-amber-400 font-bold text-lg">Membership Expiring Soon</h4>
+              <p className="text-amber-700 dark:text-amber-400">You have {daysLeft} days remaining on your active plan.</p>
             </div>
           </div>
-          <Button asChild className="bg-amber-600 text-white hover:bg-amber-750 font-medium shadow-md border-none">
+          <Button asChild className="bg-amber-600 text-white hover:bg-amber-700 font-medium shadow-md border-none">
             <Link to="/buy-membership">Renew Now</Link>
           </Button>
         </div>
@@ -274,15 +274,15 @@ function MemberDashboard({ profile }: { profile: any }) {
             </div>
           ) : (
             <Link to="/checkin" className="group block h-full">
-              <Card className="bg-card border-border text-foreground h-full hover:border-gold/50 hover:bg-muted/50 transition-all duration-300 shadow-sm hover:shadow-gold/10 overflow-hidden relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <Card className="bg-card border-border text-foreground h-full hover:border-primary/50 hover:bg-muted/50 transition-all duration-300 shadow-sm hover:shadow-primary/10 overflow-hidden relative">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <CardContent className="flex flex-col items-center justify-center p-8 text-center space-y-4 relative z-10">
-                  <div className="p-4 bg-background rounded-full group-hover:bg-gold/10 group-hover:scale-110 transition-all duration-300">
-                    <Scan className="h-8 w-8 text-muted-foreground group-hover:text-gold transition-colors" />
+                  <div className="p-4 bg-background rounded-full group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-300">
+                    <Scan className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg group-hover:text-gold transition-colors">Check In</h3>
-                    <p className="text-xs text-muted-foreground/75 mt-1">Scan your QR code</p>
+                    <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">Check In</h3>
+                    <p className="text-xs text-muted-foreground mt-1">Scan your QR code</p>
                   </div>
                 </CardContent>
               </Card>
@@ -320,7 +320,7 @@ function MemberDashboard({ profile }: { profile: any }) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg group-hover:text-emerald-600 transition-colors">Book Class</h3>
-                    <p className="text-xs text-muted-foreground/75 mt-1">Reserve your spot</p>
+                    <p className="text-xs text-muted-foreground mt-1">Reserve your spot</p>
                   </div>
                 </CardContent>
               </Card>
@@ -338,7 +338,7 @@ function MemberDashboard({ profile }: { profile: any }) {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg group-hover:text-blue-600 transition-colors">Log Progress</h3>
-                  <p className="text-xs text-muted-foreground/75 mt-1">Track measurements</p>
+                  <p className="text-xs text-muted-foreground mt-1">Track measurements</p>
                 </div>
               </CardContent>
             </Card>
@@ -375,7 +375,7 @@ function MemberDashboard({ profile }: { profile: any }) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg group-hover:text-purple-600 transition-colors">Membership</h3>
-                    <p className="text-xs text-muted-foreground/75 mt-1">View or renew plan</p>
+                    <p className="text-xs text-muted-foreground mt-1">View or renew plan</p>
                   </div>
                 </CardContent>
               </Card>
@@ -391,10 +391,10 @@ function MemberDashboard({ profile }: { profile: any }) {
       <div className="grid gap-6 md:grid-cols-3">
         {/* Active Membership Details */}
         <Card className="bg-card border-border text-foreground md:col-span-2 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-bl-full pointer-events-none" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full pointer-events-none" />
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-indigo-600" />
+              <CreditCard className="h-5 w-5 text-primary" />
               Current Plan Details
             </CardTitle>
           </CardHeader>
@@ -410,8 +410,8 @@ function MemberDashboard({ profile }: { profile: any }) {
                 )}
               </div>
               <div className="text-left md:text-right bg-card px-4 py-3 rounded-lg border border-border min-w-[120px]">
-                <div className="text-3xl font-black text-indigo-600 leading-none mb-1">{daysLeft !== undefined ? daysLeft : '-'}</div>
-                <div className="text-[10px] text-muted-foreground/75 uppercase tracking-widest font-semibold">Days Remaining</div>
+                <div className="text-3xl font-black text-primary leading-none mb-1">{daysLeft !== undefined ? daysLeft : '-'}</div>
+                <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">Days Remaining</div>
               </div>
             </div>
           </CardContent>
@@ -427,22 +427,22 @@ function MemberDashboard({ profile }: { profile: any }) {
           </CardHeader>
           <CardContent>
              {upcomingClasses.length > 0 ? (
-               <ul className="space-y-3">
-                 {upcomingClasses.map((cls: any) => (
-                   <li key={cls.id} className="flex justify-between items-center bg-background p-3 rounded-lg border border-border">
-                     <div>
-                       <div className="font-medium text-foreground/90">{cls.title}</div>
-                       <div className="text-xs text-muted-foreground/75">{cls.time}</div>
-                     </div>
-                     <Badge variant="outline" className={`${cls.color} ${cls.bg} border-transparent font-medium`}>
-                       {cls.instructor}
-                     </Badge>
-                   </li>
-                 ))}
-               </ul>
-             ) : (
-               <div className="text-sm text-muted-foreground/75 py-4 text-center">No upcoming classes.</div>
-             )}
+                <ul className="space-y-3">
+                  {upcomingClasses.map((cls: any) => (
+                    <li key={cls.id} className="flex justify-between items-center bg-background p-3 rounded-lg border border-border">
+                      <div>
+                        <div className="font-medium text-foreground">{cls.title}</div>
+                        <div className="text-xs text-muted-foreground">{cls.time}</div>
+                      </div>
+                      <Badge variant="outline" className={`${cls.color} ${cls.bg} border-transparent font-medium`}>
+                        {cls.instructor}
+                      </Badge>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="text-sm text-muted-foreground py-4 text-center">No upcoming classes.</div>
+              )}
           </CardContent>
         </Card>
       </div>
@@ -458,26 +458,26 @@ function MemberDashboard({ profile }: { profile: any }) {
           </CardHeader>
           <CardContent>
              {recentCheckins.length > 0 ? (
-               <ul className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-                 {recentCheckins.map((checkin: any) => (
-                   <li key={checkin.id} className="flex justify-between items-center text-sm border border-border bg-background p-4 rounded-lg hover:bg-muted/50 transition-colors">
-                     <span className="flex items-center gap-3">
-                       <div className="bg-muted p-2 rounded text-muted-foreground">
-                          <CalendarCheck className="h-4 w-4" />
-                       </div>
-                       <span className="font-medium text-foreground/80">
-                          {new Date(checkin.check_in_time).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                       </span>
-                     </span>
-                      <Badge variant="outline" className="text-muted-foreground/75 uppercase text-[10px] border-border font-semibold tracking-wider bg-card">
+                <ul className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+                  {recentCheckins.map((checkin: any) => (
+                    <li key={checkin.id} className="flex justify-between items-center text-sm border border-border bg-background p-4 rounded-lg hover:bg-muted/50 transition-colors">
+                      <span className="flex items-center gap-3">
+                        <div className="bg-muted p-2 rounded text-muted-foreground">
+                           <CalendarCheck className="h-4 w-4" />
+                        </div>
+                        <span className="font-medium text-foreground">
+                           {new Date(checkin.check_in_time).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                        </span>
+                      </span>
+                      <Badge variant="outline" className="text-muted-foreground uppercase text-[10px] border-border font-semibold tracking-wider bg-card">
                         {checkin.method}
-                     </Badge>
-                   </li>
-                 ))}
-               </ul>
-             ) : (
-               <div className="text-sm text-muted-foreground/75 py-4 text-center">No recent check-ins.</div>
-             )}
+                      </Badge>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="text-sm text-muted-foreground py-4 text-center">No recent check-ins.</div>
+              )}
           </CardContent>
         </Card>
       </div>

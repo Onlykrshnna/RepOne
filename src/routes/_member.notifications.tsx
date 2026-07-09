@@ -24,8 +24,8 @@ function MemberNotificationsPage() {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'class': return <Calendar className="h-5 w-5 text-indigo-600" />;
-      case 'plan': return <Award className="h-5 w-5 text-emerald-500" />;
+      case 'class': return <Calendar className="h-5 w-5 text-primary" />;
+      case 'plan': return <Award className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />;
       default: return <Bell className="h-5 w-5 text-blue-500" />;
     }
   };
@@ -39,7 +39,7 @@ function MemberNotificationsPage() {
         </div>
         <button 
           onClick={markAllRead} 
-          className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+          className="text-sm font-medium text-primary hover:underline"
         >
           Mark all as read
         </button>
@@ -56,7 +56,7 @@ function MemberNotificationsPage() {
             notifications.map((notif) => (
               <div 
                 key={notif.id} 
-                className={`p-6 flex gap-4 transition-colors ${notif.read ? 'bg-transparent' : 'bg-indigo-500/5'}`}
+                className={`p-6 flex gap-4 transition-colors ${notif.read ? 'bg-transparent' : 'bg-primary/5'}`}
               >
                 <div className={`p-2.5 rounded-full bg-background border border-border h-fit shrink-0`}>
                   {getIcon(notif.type)}
@@ -64,7 +64,7 @@ function MemberNotificationsPage() {
                 <div className="space-y-1 flex-1">
                   <div className="flex items-start justify-between gap-4">
                     <h4 className="font-semibold text-foreground text-base">{notif.title}</h4>
-                    <span className="text-xs text-muted-foreground/70 shrink-0">
+                    <span className="text-xs text-muted-foreground shrink-0">
                       {new Date(notif.date).toLocaleDateString()}
                     </span>
                   </div>

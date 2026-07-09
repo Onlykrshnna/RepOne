@@ -28,14 +28,14 @@ export function ThemeToggle() {
         className={[
           'relative flex items-center gap-1 h-8 w-[72px] rounded-full px-1',
           'transition-colors duration-300 focus:outline-none',
-          'bg-slate-100 border border-slate-200 shadow-[inset_0_1px_4px_rgba(0,0,0,0.06)]',
+          'bg-muted border border-border shadow-[inset_0_1px_4px_rgba(0,0,0,0.06)]',
         ].join(' ')}
       >
-        <span className="absolute top-1 w-6 h-6 rounded-full z-10 flex items-center justify-center left-1 bg-white shadow-[0_2px_6px_rgba(0,0,0,0.14)]">
+        <span className="absolute top-1 w-6 h-6 rounded-full z-10 flex items-center justify-center left-1 bg-background shadow-[0_2px_6px_rgba(0,0,0,0.1)]">
           <Sun className="w-3.5 h-3.5 text-amber-500" strokeWidth={2} />
         </span>
         <Sun className="w-3 h-3 ml-1 opacity-0" strokeWidth={2} />
-        <Moon className="w-3 h-3 ml-auto mr-1 opacity-30 text-slate-400" strokeWidth={2} />
+        <Moon className="w-3 h-3 ml-auto mr-1 opacity-30 text-muted-foreground" strokeWidth={2} />
       </button>
     );
   }
@@ -49,10 +49,8 @@ export function ThemeToggle() {
       className={[
         'relative flex items-center gap-1 h-8 w-[72px] rounded-full px-1',
         'transition-colors duration-300 focus:outline-none',
-        'focus-visible:ring-2 focus-visible:ring-indigo-500/40',
-        isDark
-          ? 'bg-indigo-950/80 border border-indigo-700/40 shadow-[inset_0_1px_4px_rgba(0,0,0,0.35)]'
-          : 'bg-slate-100 border border-slate-200 shadow-[inset_0_1px_4px_rgba(0,0,0,0.06)]',
+        'focus-visible:ring-2 focus-visible:ring-primary/40',
+        'bg-muted border border-border shadow-[inset_0_1px_4px_rgba(0,0,0,0.06)]',
       ].join(' ')}
     >
       {/* Sliding pill dot */}
@@ -63,12 +61,12 @@ export function ThemeToggle() {
           'absolute top-1 w-6 h-6 rounded-full z-10',
           'flex items-center justify-center',
           isDark
-            ? 'right-1 bg-indigo-600 shadow-[0_2px_8px_rgba(99,102,241,0.55)]'
-            : 'left-1 bg-white shadow-[0_2px_6px_rgba(0,0,0,0.14)]',
+            ? 'right-1 bg-primary text-primary-foreground shadow'
+            : 'left-1 bg-background text-foreground shadow',
         ].join(' ')}
       >
         {isDark ? (
-          <Moon className="w-3.5 h-3.5 text-indigo-200" strokeWidth={2} />
+          <Moon className="w-3.5 h-3.5 text-primary-foreground" strokeWidth={2} />
         ) : (
           <Sun className="w-3.5 h-3.5 text-amber-500" strokeWidth={2} />
         )}
@@ -78,14 +76,14 @@ export function ThemeToggle() {
       <Sun
         className={[
           'w-3 h-3 ml-1 transition-opacity duration-200',
-          isDark ? 'opacity-30 text-slate-400' : 'opacity-0',
+          isDark ? 'opacity-30 text-muted-foreground' : 'opacity-0',
         ].join(' ')}
         strokeWidth={2}
       />
       <Moon
         className={[
           'w-3 h-3 ml-auto mr-1 transition-opacity duration-200',
-          isDark ? 'opacity-0' : 'opacity-30 text-slate-400',
+          isDark ? 'opacity-0' : 'opacity-30 text-muted-foreground',
         ].join(' ')}
         strokeWidth={2}
       />

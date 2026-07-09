@@ -83,20 +83,20 @@ function MemberAttendanceBody({ profile }: { profile: any }) {
     <div className="space-y-6 max-w-5xl mx-auto pb-10">
       
       {/* Motivational Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 p-8 text-white shadow-lg border border-indigo-500/20">
-        <div className="absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-indigo-500/20 blur-2xl"></div>
-        <div className="absolute bottom-0 left-0 -mb-4 -ml-4 h-32 w-32 rounded-full bg-blue-500/20 blur-2xl"></div>
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary/95 to-slate-950 p-8 text-primary-foreground shadow-lg border border-primary/20">
+        <div className="absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-primary/20 blur-2xl"></div>
+        <div className="absolute bottom-0 left-0 -mb-4 -ml-4 h-32 w-32 rounded-full bg-primary/10 blur-2xl"></div>
         <div className="relative z-10 flex flex-col md:flex-row gap-6 items-center justify-between">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Your Fitness Journey</h2>
-            <div className="flex items-start gap-2 text-indigo-100/80 max-w-lg italic">
-              <Quote className="h-5 w-5 shrink-0 text-indigo-400 opacity-50 mt-1 transform rotate-180" />
+            <div className="flex items-start gap-2 text-primary-foreground/90 max-w-lg italic">
+              <Quote className="h-5 w-5 shrink-0 text-primary-foreground/50 mt-1 transform rotate-180" />
               <p className="text-lg font-medium tracking-wide leading-relaxed">{randomQuote}</p>
             </div>
           </div>
           <div className="shrink-0 hidden md:block">
-            <div className="h-16 w-16 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10 shadow-inner">
-              <Activity className="h-8 w-8 text-indigo-300" />
+            <div className="h-16 w-16 rounded-2xl bg-primary-foreground/10 flex items-center justify-center backdrop-blur-md border border-primary-foreground/10 shadow-inner">
+              <Activity className="h-8 w-8 text-primary-foreground/80" />
             </div>
           </div>
         </div>
@@ -105,7 +105,7 @@ function MemberAttendanceBody({ profile }: { profile: any }) {
       {/* Streak Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-card border-border shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-orange-500/10 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+          <div className="absolute top-0 right-0 w-16 h-16 bg-orange-500/5 dark:bg-orange-500/10 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
           <CardContent className="p-6 flex items-center justify-between">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Current Streak</p>
@@ -113,14 +113,14 @@ function MemberAttendanceBody({ profile }: { profile: any }) {
                 {currentStreak} <span className="text-lg font-normal text-muted-foreground lowercase">days</span>
               </p>
             </div>
-            <div className={`p-3 rounded-xl ${currentStreak > 0 ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-500' : 'bg-muted text-muted-foreground'}`}>
+            <div className={`p-3 rounded-xl border ${currentStreak > 0 ? 'bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-500/20' : 'bg-muted text-muted-foreground border-border'}`}>
               <Flame className="h-6 w-6" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-card border-border shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-yellow-500/10 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+          <div className="absolute top-0 right-0 w-16 h-16 bg-yellow-500/5 dark:bg-yellow-500/10 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
           <CardContent className="p-6 flex items-center justify-between">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Longest Streak</p>
@@ -128,14 +128,14 @@ function MemberAttendanceBody({ profile }: { profile: any }) {
                 {longestStreak} <span className="text-lg font-normal text-muted-foreground lowercase">days</span>
               </p>
             </div>
-            <div className="p-3 rounded-xl bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-500">
+            <div className="p-3 rounded-xl bg-amber-500/10 text-amber-800 dark:text-amber-400 border border-amber-500/20">
               <Trophy className="h-6 w-6" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-card border-border shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-500/10 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+          <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 dark:bg-primary/10 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
           <CardContent className="p-6 flex items-center justify-between">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Total Visits</p>
@@ -143,7 +143,7 @@ function MemberAttendanceBody({ profile }: { profile: any }) {
                 {totalDays} <span className="text-lg font-normal text-muted-foreground lowercase">days</span>
               </p>
             </div>
-            <div className="p-3 rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
+            <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/20">
               <CalendarCheck className="h-6 w-6" />
             </div>
           </CardContent>
@@ -205,22 +205,22 @@ function MemberAttendanceBody({ profile }: { profile: any }) {
         <Card className="bg-card border-border shadow-sm flex flex-col h-full">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Clock className="h-5 w-5 text-indigo-500" />
+              <Clock className="h-5 w-5 text-primary" />
               Recent Logs
             </CardTitle>
           </CardHeader>
           <CardContent className="flex-1 overflow-hidden">
             {checkins.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground p-6">
-                <ShieldAlert className="h-10 w-10 mb-3 text-muted-foreground/30" />
+                <ShieldAlert className="h-10 w-10 mb-3 text-muted-foreground/40" />
                 <p className="text-sm">No recent logs.</p>
               </div>
             ) : (
               <ul className="space-y-3 h-[250px] overflow-y-auto pr-2 custom-scrollbar">
                 {checkins.slice(0, 15).map((checkin: any) => (
-                  <li key={checkin.id} className="flex justify-between items-center text-sm border border-border/60 bg-muted/20 p-3 rounded-xl hover:bg-muted/50 transition-colors">
+                  <li key={checkin.id} className="flex justify-between items-center text-sm border border-border bg-muted/10 p-3 rounded-xl hover:bg-muted/30 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="bg-background shadow-sm border border-border/50 p-2 rounded-lg text-foreground">
+                      <div className="bg-background shadow-sm border border-border p-2 rounded-lg text-foreground">
                         <Clock className="h-4 w-4" />
                       </div>
                       <div className="flex flex-col">
@@ -232,7 +232,7 @@ function MemberAttendanceBody({ profile }: { profile: any }) {
                         </span>
                       </div>
                     </div>
-                    <Badge variant="secondary" className="text-[10px] uppercase font-semibold tracking-wider bg-primary/10 text-primary border-primary/20">
+                    <Badge variant="outline" className="text-[10px] uppercase font-semibold tracking-wider bg-primary/10 text-primary border border-primary/20">
                       {checkin.method}
                     </Badge>
                   </li>

@@ -220,7 +220,7 @@ function CheckInPage() {
   if (isAuthLoading || isMobile === null) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -231,8 +231,8 @@ function CheckInPage() {
       <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 bg-background">
         <Card className="max-w-md w-full border-border shadow-xl text-center">
           <CardHeader className="pb-4">
-            <div className="mx-auto bg-indigo-500/10 p-4 rounded-full mb-4 w-20 h-20 flex items-center justify-center">
-              <MonitorX className="h-10 w-10 text-indigo-500" />
+            <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4 w-20 h-20 flex items-center justify-center">
+              <MonitorX className="h-10 w-10 text-primary" />
             </div>
             <CardTitle className="text-2xl font-black">Mobile Check-In Only</CardTitle>
             <CardDescription className="text-base mt-2">
@@ -285,15 +285,15 @@ function CheckInPage() {
               <p className="text-muted-foreground text-sm">Align the front desk QR code within the frame to record your attendance.</p>
             </div>
             
-            <div className="w-full aspect-square bg-card rounded-3xl overflow-hidden border-2 border-indigo-500/30 shadow-2xl shadow-indigo-500/10 relative">
+            <div className="w-full aspect-square bg-card rounded-3xl overflow-hidden border-2 border-primary/30 shadow-2xl shadow-primary/10 relative">
               <div id="qr-reader" className="w-full h-full [&>div]:border-none [&_video]:object-cover" />
               {/* Overlay targeting crosshairs */}
               <div className="absolute inset-0 pointer-events-none border-[40px] border-background/80 flex items-center justify-center">
-                <div className="w-64 h-64 border-2 border-indigo-500 rounded-xl relative">
-                  <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-indigo-500" />
-                  <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-indigo-500" />
-                  <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-indigo-500" />
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-indigo-500" />
+                <div className="w-64 h-64 border-2 border-primary rounded-xl relative">
+                  <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-primary" />
+                  <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-primary" />
+                  <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-primary" />
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-primary" />
                 </div>
               </div>
             </div>
@@ -327,7 +327,7 @@ function CheckInPage() {
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-20"
           >
-            <Loader2 className="h-12 w-12 animate-spin text-indigo-500 mb-6" />
+            <Loader2 className="h-12 w-12 animate-spin text-primary mb-6" />
             <h2 className="text-xl font-bold">Verifying Membership...</h2>
             <p className="text-muted-foreground text-sm mt-2">Processing your check-in securely.</p>
           </motion.div>
@@ -341,10 +341,10 @@ function CheckInPage() {
             animate={{ opacity: 1, y: 0 }}
             className="w-full max-w-sm"
           >
-            <Card className="border-red-900/30 shadow-xl shadow-red-900/10 overflow-hidden relative">
-              <div className="absolute top-0 left-0 w-full h-1.5 bg-red-500" />
+            <Card className="border-destructive/20 shadow-xl overflow-hidden relative">
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-destructive" />
               <CardContent className="pt-10 pb-8 px-6 flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mb-6">
+                <div className="w-16 h-16 bg-destructive/10 text-destructive rounded-full flex items-center justify-center mb-6">
                   <AlertTriangle className="h-8 w-8" />
                 </div>
                 <h2 className="text-2xl font-black text-foreground mb-2">
@@ -355,7 +355,7 @@ function CheckInPage() {
                 </p>
                 <Button 
                   onClick={resetScanner} 
-                  className="w-full bg-foreground text-background hover:bg-foreground/90"
+                  className="w-full bg-primary text-primary-foreground hover:opacity-90"
                   size="lg"
                 >
                   <RefreshCcw className="h-4 w-4 mr-2" /> Try Again
@@ -373,18 +373,18 @@ function CheckInPage() {
             animate={{ opacity: 1, y: 0 }}
             className="w-full max-w-sm"
           >
-            <Card className="border-emerald-900/30 shadow-xl shadow-emerald-900/10 overflow-hidden relative bg-gradient-to-b from-emerald-950/20 to-card">
+            <Card className="border-emerald-500/20 shadow-xl overflow-hidden relative bg-gradient-to-b from-emerald-500/5 dark:from-emerald-950/20 to-card">
               <div className="absolute top-0 left-0 w-full h-1.5 bg-emerald-500" />
               
               <CardHeader className="text-center pb-2 pt-8">
                 <motion.div 
                   initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-                  className="mx-auto w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/30 text-emerald-50"
+                  className="mx-auto w-20 h-20 bg-emerald-600 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/30 text-emerald-50"
                 >
                   <CheckCircle className="h-10 w-10" />
                 </motion.div>
                 <CardTitle className="text-3xl font-black text-foreground tracking-tight">Access Granted</CardTitle>
-                <p className="text-emerald-500 font-bold uppercase tracking-wider text-xs mt-2">Active Member</p>
+                <p className="text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider text-xs mt-2">Active Member</p>
               </CardHeader>
               
               <CardContent className="pt-6 pb-8 px-6 space-y-6">
@@ -412,13 +412,13 @@ function CheckInPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold flex items-center gap-1">
-                        <Flame className="h-3 w-3 text-orange-500" /> Streak
+                        <Flame className="h-3 w-3 text-orange-700 dark:text-orange-400" /> Streak
                       </p>
                       <p className="font-bold text-foreground">{streakData?.currentStreak || 1} Days</p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold flex items-center gap-1">
-                        <Dumbbell className="h-3 w-3 text-indigo-500" /> Today
+                        <Dumbbell className="h-3 w-3 text-primary" /> Today
                       </p>
                       <p className="font-bold text-foreground truncate">{todayWorkout}</p>
                     </div>
@@ -427,7 +427,7 @@ function CheckInPage() {
 
                 <Button 
                   onClick={() => navigate({ to: '/dashboard' })}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20"
+                  className="w-full bg-primary text-primary-foreground hover:opacity-90"
                   size="lg"
                 >
                   Go to Dashboard

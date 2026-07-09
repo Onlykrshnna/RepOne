@@ -120,7 +120,7 @@ function ProgressPage() {
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {overview?.map((o) => (
                   <div key={o.member.id} 
-                    className={`flex items-center justify-between p-4 rounded-xl border ${o.needsUpdate ? 'border-amber-500/50 bg-amber-500/5' : 'border-border bg-background'} cursor-pointer hover:bg-muted transition-colors`}
+                    className={`flex items-center justify-between p-4 rounded-xl border ${o.needsUpdate ? 'border-amber-500/50 bg-amber-500/5 dark:bg-amber-950/20' : 'border-border bg-background'} cursor-pointer hover:bg-muted transition-colors`}
                     onClick={() => {
                       setSelectedMemberId(o.member.id);
                       setSelectedMemberName(o.member.name);
@@ -187,7 +187,7 @@ function ProgressPage() {
           </div>
           <p className="text-muted-foreground">Track measurements, weight, and body composition over time.</p>
         </div>
-        <Button onClick={openLogDialog} className="bg-indigo-600 text-white hover:bg-gold/90">
+        <Button onClick={openLogDialog} className="bg-primary text-primary-foreground hover:bg-primary/90">
           <Plus className="mr-2 h-4 w-4" /> Log Measurement
         </Button>
       </div>
@@ -203,9 +203,9 @@ function ProgressPage() {
                 <Scale className="h-4 w-4 text-emerald-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{latest?.weight_kg || '--'} <span className="text-sm font-normal text-muted-foreground/75">kg</span></div>
+                <div className="text-2xl font-bold">{latest?.weight_kg || '--'} <span className="text-sm font-normal text-muted-foreground">kg</span></div>
                 {weightTrend && (
-                  <p className={`text-xs mt-1 flex items-center ${weightTrend.isPositive ? 'text-red-400' : 'text-emerald-400'}`}>
+                  <p className={`text-xs mt-1 flex items-center ${weightTrend.isPositive ? 'text-destructive dark:text-red-400' : 'text-emerald-700 dark:text-emerald-400'}`}>
                     {weightTrend.isPositive ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
                     {Math.abs(weightTrend.value).toFixed(1)} kg since last log
                   </p>
@@ -219,9 +219,9 @@ function ProgressPage() {
                 <Target className="h-4 w-4 text-blue-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{latest?.body_fat_percentage || '--'} <span className="text-sm font-normal text-muted-foreground/75">%</span></div>
+                <div className="text-2xl font-bold">{latest?.body_fat_percentage || '--'} <span className="text-sm font-normal text-muted-foreground">%</span></div>
                 {fatTrend && (
-                  <p className={`text-xs mt-1 flex items-center ${fatTrend.isPositive ? 'text-red-400' : 'text-emerald-400'}`}>
+                  <p className={`text-xs mt-1 flex items-center ${fatTrend.isPositive ? 'text-destructive dark:text-red-400' : 'text-emerald-700 dark:text-emerald-400'}`}>
                     {fatTrend.isPositive ? <ArrowUp className="h-3 w-3 mr-1" /> : <ArrowDown className="h-3 w-3 mr-1" />}
                     {Math.abs(fatTrend.value).toFixed(1)}% since last log
                   </p>
@@ -236,7 +236,7 @@ function ProgressPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{latest?.bmi || '--'}</div>
-                <p className="text-xs mt-1 text-muted-foreground/75">
+                <p className="text-xs mt-1 text-muted-foreground">
                   {latest?.bmi ? (latest.bmi < 18.5 ? 'Underweight' : latest.bmi < 25 ? 'Normal' : latest.bmi < 30 ? 'Overweight' : 'Obese') : 'Not calculated'}
                 </p>
               </CardContent>
@@ -266,7 +266,7 @@ function ProgressPage() {
                     </LineChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="h-full flex items-center justify-center text-muted-foreground/75">No data available for chart</div>
+                  <div className="h-full flex items-center justify-center text-muted-foreground">No data available for chart</div>
                 )}
               </CardContent>
             </Card>
@@ -287,16 +287,16 @@ function ProgressPage() {
                   </TableHeader>
                   <TableBody>
                     {history?.length === 0 ? (
-                      <TableRow className="border-border"><TableCell colSpan={4} className="text-center text-muted-foreground/75 h-24">No records found</TableCell></TableRow>
+                      <TableRow className="border-border"><TableCell colSpan={4} className="text-center text-muted-foreground h-24">No records found</TableCell></TableRow>
                     ) : (
                       history?.slice().reverse().map(record => (
                         <TableRow key={record.id} className="border-border">
-                          <TableCell className="text-foreground/80">{new Date(record.recorded_at).toLocaleDateString()}</TableCell>
+                          <TableCell className="text-foreground">{new Date(record.recorded_at).toLocaleDateString()}</TableCell>
                           <TableCell className="font-medium text-foreground">{record.weight_kg ? `${record.weight_kg} kg` : '--'}</TableCell>
-                          <TableCell className="text-foreground/80">{record.body_fat_percentage ? `${record.body_fat_percentage}%` : '--'}</TableCell>
+                          <TableCell className="text-foreground">{record.body_fat_percentage ? `${record.body_fat_percentage}%` : '--'}</TableCell>
                           <TableCell className="text-right">
                              {isAdmin && (
-                               <Button variant="ghost" size="sm" className="h-6 text-red-400 hover:text-red-300 hover:bg-red-950/50" onClick={() => deleteMutation.mutate(record.id)}>
+                               <Button variant="ghost" size="sm" className="h-6 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => deleteMutation.mutate(record.id)}>
                                  Delete
                                </Button>
                              )}
@@ -343,18 +343,18 @@ function ProgressPage() {
             </div>
 
             <div className="space-y-2 pt-2 border-t border-border">
-              <Label className="text-indigo-600">Tape Measurements (Optional)</Label>
+              <Label className="text-primary">Tape Measurements (Optional)</Label>
               <div className="grid grid-cols-3 gap-2 mt-2">
                  <div className="space-y-1">
-                   <Label className="text-xs text-muted-foreground/75">Chest (cm)</Label>
+                   <Label className="text-xs text-muted-foreground">Chest (cm)</Label>
                    <Input type="number" step="0.5" className="bg-background border-border text-foreground h-8 text-sm" value={formData.chest_cm || ''} onChange={e => setFormData({...formData, chest_cm: parseFloat(e.target.value) || null})} />
                  </div>
                  <div className="space-y-1">
-                   <Label className="text-xs text-muted-foreground/75">Waist (cm)</Label>
+                   <Label className="text-xs text-muted-foreground">Waist (cm)</Label>
                    <Input type="number" step="0.5" className="bg-background border-border text-foreground h-8 text-sm" value={formData.waist_cm || ''} onChange={e => setFormData({...formData, waist_cm: parseFloat(e.target.value) || null})} />
                  </div>
                  <div className="space-y-1">
-                   <Label className="text-xs text-muted-foreground/75">Shoulders (cm)</Label>
+                   <Label className="text-xs text-muted-foreground">Shoulders (cm)</Label>
                    <Input type="number" step="0.5" className="bg-background border-border text-foreground h-8 text-sm" value={formData.shoulders_cm || ''} onChange={e => setFormData({...formData, shoulders_cm: parseFloat(e.target.value) || null})} />
                  </div>
               </div>
@@ -367,8 +367,8 @@ function ProgressPage() {
 
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-border text-foreground/80 hover:bg-muted">Cancel</Button>
-            <Button onClick={handleSave} disabled={addMutation.isPending} className="bg-indigo-600 text-white hover:bg-gold/90">
+            <Button variant="outline" onClick={() => setDialogOpen(false)} className="border-border text-foreground hover:bg-muted">Cancel</Button>
+            <Button onClick={handleSave} disabled={addMutation.isPending} className="bg-primary text-primary-foreground hover:bg-primary/90">
               {addMutation.isPending ? 'Saving...' : 'Save Measurements'}
             </Button>
           </DialogFooter>

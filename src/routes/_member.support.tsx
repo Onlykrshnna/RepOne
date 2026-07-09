@@ -175,13 +175,13 @@ function SupportPage() {
   const getStatusBadge = (status: TicketStatus) => {
     switch (status) {
       case 'Open':
-        return <Badge className="bg-indigo-50 text-indigo-600 border border-indigo-200">Open</Badge>;
+        return <Badge className="bg-primary/10 text-primary border border-primary/20">Open</Badge>;
       case 'Pending':
-        return <Badge className="bg-amber-50 text-amber-600 border border-amber-200">Pending</Badge>;
+        return <Badge className="bg-amber-500/10 text-amber-800 dark:text-amber-400 border border-amber-500/20">Pending</Badge>;
       case 'Resolved':
-        return <Badge className="bg-emerald-50 text-emerald-600 border border-emerald-200">Resolved</Badge>;
+        return <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">Resolved</Badge>;
       case 'Closed':
-        return <Badge variant="outline" className="border-border text-muted-foreground/75">Closed</Badge>;
+        return <Badge variant="outline" className="border-border text-muted-foreground">Closed</Badge>;
     }
   };
 
@@ -193,7 +193,7 @@ function SupportPage() {
           <p className="text-muted-foreground">Contact gym help desk, report issues, and resolve complaints.</p>
         </div>
         {profile?.role === 'member' && (
-          <Button onClick={() => setIsCreateModalOpen(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-sm transition-all duration-300">
+          <Button onClick={() => setIsCreateModalOpen(true)} className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium shadow-sm transition-all duration-300">
             <Plus className="mr-2 h-4 w-4" /> Open Support Ticket
           </Button>
         )}
@@ -202,20 +202,20 @@ function SupportPage() {
       {profile?.role === 'admin' && metrics && (
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
           <Card className="bg-card border-border text-foreground shadow-sm text-center py-4">
-            <div className="text-2xl font-black text-indigo-600">{metrics.openTickets}</div>
-            <div className="text-[10px] uppercase font-bold text-muted-foreground/75 mt-1">Open Tickets</div>
+            <div className="text-2xl font-black text-primary">{metrics.openTickets}</div>
+            <div className="text-[10px] uppercase font-bold text-muted-foreground mt-1">Open Tickets</div>
           </Card>
           <Card className="bg-card border-border text-foreground shadow-sm text-center py-4">
-            <div className="text-2xl font-black text-amber-500">{metrics.pendingTickets}</div>
-            <div className="text-[10px] uppercase font-bold text-muted-foreground/75 mt-1">Pending</div>
+            <div className="text-2xl font-black text-amber-800 dark:text-amber-400">{metrics.pendingTickets}</div>
+            <div className="text-[10px] uppercase font-bold text-muted-foreground mt-1">Pending</div>
           </Card>
           <Card className="bg-card border-border text-foreground shadow-sm text-center py-4">
-            <div className="text-2xl font-black text-emerald-500">{metrics.resolvedTickets}</div>
-            <div className="text-[10px] uppercase font-bold text-muted-foreground/75 mt-1">Resolved Tickets</div>
+            <div className="text-2xl font-black text-emerald-700 dark:text-emerald-400">{metrics.resolvedTickets}</div>
+            <div className="text-[10px] uppercase font-bold text-muted-foreground mt-1">Resolved Tickets</div>
           </Card>
           <Card className="bg-card border-border text-foreground shadow-sm text-center py-4">
             <div className="text-2xl font-black text-foreground">{metrics.totalTickets}</div>
-            <div className="text-[10px] uppercase font-bold text-muted-foreground/75 mt-1">Total inquiries</div>
+            <div className="text-[10px] uppercase font-bold text-muted-foreground mt-1">Total inquiries</div>
           </Card>
         </div>
       )}
@@ -230,7 +230,7 @@ function SupportPage() {
 
           <div className="flex gap-2">
             <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground/75" />
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search subject..."
                 value={ticketSearch}
@@ -257,7 +257,7 @@ function SupportPage() {
               {[1, 2].map(i => <Skeleton key={i} className="h-12 w-full" />)}
             </div>
           ) : tickets.length === 0 ? (
-            <div className="p-12 text-center text-muted-foreground/75 italic">No tickets found.</div>
+            <div className="p-12 text-center text-muted-foreground italic">No tickets found.</div>
           ) : (
             <div className="divide-y divide-border">
               {tickets
@@ -271,11 +271,11 @@ function SupportPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-bold text-foreground text-base">{ticket.subject}</span>
-                        <Badge variant="outline" className="border-indigo-500/20 text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 text-[10px] uppercase font-bold">
+                        <Badge variant="outline" className="border-primary/20 text-primary bg-primary/10 text-[10px] uppercase font-bold">
                           {ticket.category}
                         </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground/75 font-medium">
+                      <p className="text-xs text-muted-foreground font-medium">
                         {profile?.role === 'admin' ? `Submitted by: ${ticket.profiles?.first_name} ${ticket.profiles?.last_name} | ` : ''}
                         Last updated: {new Date(ticket.updated_at).toLocaleString()}
                       </p>
@@ -283,7 +283,7 @@ function SupportPage() {
 
                     <div className="flex items-center gap-3 self-end sm:self-center">
                       {getStatusBadge(ticket.status)}
-                      <Button variant="ghost" size="sm" className="text-indigo-600 font-bold hover:bg-indigo-50/50">
+                      <Button variant="ghost" size="sm" className="text-primary font-bold hover:bg-muted">
                         Chat <MessageSquare className="h-3.5 w-3.5 ml-1" />
                       </Button>
                     </div>
@@ -348,7 +348,7 @@ function SupportPage() {
             <div className="space-y-2">
               <Label htmlFor="attachment">Upload Attachment (Image/PDF - optional)</Label>
               <div className="flex gap-2 items-center bg-background p-2 border border-border border-dashed rounded-lg">
-                <Paperclip className="h-4 w-4 text-muted-foreground/75" />
+                <Paperclip className="h-4 w-4 text-muted-foreground" />
                 <input 
                   type="file" 
                   id="attachment" 
@@ -361,8 +361,8 @@ function SupportPage() {
             </div>
 
             <DialogFooter className="pt-4 border-t border-border/50">
-              <Button type="button" variant="outline" className="border-border text-foreground/80 bg-card" onClick={() => setIsCreateModalOpen(false)}>Cancel</Button>
-              <Button type="submit" disabled={createTicketMutation.isPending} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+              <Button type="button" variant="outline" className="border-border text-foreground bg-card" onClick={() => setIsCreateModalOpen(false)}>Cancel</Button>
+              <Button type="submit" disabled={createTicketMutation.isPending} className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 Submit Ticket
               </Button>
             </DialogFooter>
@@ -383,7 +383,7 @@ function SupportPage() {
                     <DialogTitle className="text-xl font-bold flex items-center gap-2">
                       {activeTicket.subject}
                     </DialogTitle>
-                    <p className="text-xs text-muted-foreground/75">Category: {activeTicket.category} | Created: {new Date(activeTicket.created_at).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted-foreground">Category: {activeTicket.category} | Created: {new Date(activeTicket.created_at).toLocaleDateString()}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(activeTicket.status)}
@@ -405,15 +405,15 @@ function SupportPage() {
 
               {/* Main Ticket Description Box */}
               <div className="bg-background p-4 rounded-xl border border-border/50 text-sm space-y-2 mt-2">
-                <div className="font-bold text-foreground/90">Issue Details:</div>
-                <p className="text-foreground/80 leading-relaxed font-medium">{activeTicket.description}</p>
+                <div className="font-bold text-foreground">Issue Details:</div>
+                <p className="text-foreground leading-relaxed font-medium">{activeTicket.description}</p>
                 {activeTicket.attachment_url && (
                   <div className="pt-2 border-t border-border mt-2 flex justify-end">
                     <a 
                       href={activeTicket.attachment_url} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-xs text-indigo-600 hover:text-indigo-700 font-bold flex items-center gap-1"
+                      className="text-xs text-primary hover:underline font-bold flex items-center gap-1"
                     >
                       View File Attachment <ExternalLink className="h-3 w-3" />
                     </a>
@@ -424,7 +424,7 @@ function SupportPage() {
               {/* Chat Thread Container */}
               <div className="flex-1 overflow-y-auto space-y-3 p-3 bg-muted/30 border border-border/50 rounded-xl my-3">
                 {replies.length === 0 ? (
-                  <div className="text-center text-xs text-muted-foreground/75 py-12 italic">No replies posted. Type message below to start chat.</div>
+                  <div className="text-center text-xs text-muted-foreground py-12 italic">No replies posted. Type message below to start chat.</div>
                 ) : (
                   replies.map((reply) => {
                     const isAdmin = reply.profiles?.role === 'admin';
@@ -435,15 +435,15 @@ function SupportPage() {
                         key={reply.id} 
                         className={`flex flex-col max-w-[80%] rounded-xl p-3 ${
                           isOwn 
-                            ? 'bg-indigo-600 text-white ml-auto' 
+                            ? 'bg-primary text-primary-foreground ml-auto' 
                             : 'bg-card text-foreground border border-border mr-auto'
                         }`}
                       >
-                        <span className={`text-[9px] font-bold uppercase mb-1 ${isOwn ? 'text-indigo-100' : 'text-muted-foreground/75'}`}>
+                        <span className={`text-[9px] font-bold uppercase mb-1 ${isOwn ? 'text-primary-foreground/90' : 'text-muted-foreground'}`}>
                           {reply.profiles?.first_name} {isAdmin ? '(Admin)' : ''}
                         </span>
                         <p className="text-sm font-semibold">{reply.message}</p>
-                        <span className={`text-[8px] text-right mt-1 font-medium ${isOwn ? 'text-indigo-200' : 'text-muted-foreground/75'}`}>
+                        <span className={`text-[8px] text-right mt-1 font-medium ${isOwn ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
                           {new Date(reply.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
@@ -470,13 +470,13 @@ function SupportPage() {
                   <Button 
                     onClick={() => sendReplyMutation.mutate(replyMsg)}
                     disabled={sendReplyMutation.isPending || !replyMsg}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 h-10 shadow-sm"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 h-10 shadow-sm border-none"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
               ) : (
-                <div className="text-center text-xs text-muted-foreground/75 italic py-2">
+                <div className="text-center text-xs text-muted-foreground italic py-2">
                   This support ticket is closed and cannot receive replies.
                 </div>
               )}

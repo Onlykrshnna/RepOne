@@ -135,13 +135,13 @@ function MembershipPlansPage() {
         ) : isPending && !hasMembership ? (
           /* ── PENDING STATE ── */
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-            <Card className="bg-amber-950/10 border-amber-800/40 text-foreground">
+            <Card className="bg-amber-500/10 dark:bg-amber-950/20 border-amber-500/20 dark:border-amber-900/30 text-foreground">
               <CardContent className="flex items-center gap-6 p-8">
-                <div className="p-4 rounded-full bg-amber-500/10 shrink-0">
-                  <Clock className="h-10 w-10 text-amber-400" />
+                <div className="p-4 rounded-full bg-amber-500/20 dark:bg-amber-900/20 shrink-0">
+                  <Clock className="h-10 w-10 text-amber-800 dark:text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-amber-400">Membership Approval Pending</p>
+                  <p className="text-lg font-bold text-amber-800 dark:text-amber-400">Membership Approval Pending</p>
                   <p className="text-muted-foreground text-sm mt-1 max-w-xl">
                     Your payment has been submitted and is awaiting admin approval. You'll be notified once your membership is activated.
                   </p>
@@ -168,8 +168,8 @@ function MembershipPlansPage() {
             {(isExpiringSoon || isExpired) && (
               <div className={`flex items-center gap-3 px-5 py-4 rounded-xl border text-sm font-semibold ${
                 isExpired
-                  ? 'bg-red-950/20 border-red-800/40 text-red-400'
-                  : 'bg-amber-950/20 border-amber-800/40 text-amber-400'
+                  ? 'bg-destructive/10 dark:bg-red-950/20 border-destructive/20 dark:border-red-900/30 text-destructive dark:text-red-400'
+                  : 'bg-amber-500/10 dark:bg-amber-950/20 border-amber-500/20 dark:border-amber-900/30 text-amber-800 dark:text-amber-400'
               }`}>
                 <AlertTriangle className="h-5 w-5 shrink-0" />
                 {isExpired
@@ -183,19 +183,19 @@ function MembershipPlansPage() {
             <div className="grid md:grid-cols-3 gap-5">
               {/* Plan identity */}
               <Card className={`md:col-span-1 border text-foreground relative overflow-hidden ${
-                isExpired ? 'bg-red-950/10 border-red-800/30' :
-                isExpiringSoon ? 'bg-amber-950/10 border-amber-800/30' :
-                'bg-gradient-to-br from-indigo-950/30 to-card border-indigo-700/30'
+                isExpired ? 'bg-destructive/5 dark:bg-red-950/10 border-destructive/20 dark:border-red-900/20' :
+                isExpiringSoon ? 'bg-amber-500/5 dark:bg-amber-950/10 border-amber-500/20 dark:border-amber-900/20' :
+                'bg-gradient-to-br from-primary/5 dark:from-indigo-950/20 to-card border-primary/20 dark:border-indigo-700/30'
               }`}>
                 <CardContent className="p-6 flex flex-col h-full">
                   <div className="flex items-center justify-between mb-4">
-                    <div className={`p-2.5 rounded-xl ${isExpired ? 'bg-red-500/10' : isExpiringSoon ? 'bg-amber-500/10' : 'bg-indigo-500/10'}`}>
-                      <CreditCard className={`h-6 w-6 ${isExpired ? 'text-red-400' : isExpiringSoon ? 'text-amber-400' : 'text-indigo-400'}`} />
+                    <div className={`p-2.5 rounded-xl ${isExpired ? 'bg-destructive/10' : isExpiringSoon ? 'bg-amber-500/10' : 'bg-primary/10'}`}>
+                      <CreditCard className={`h-6 w-6 ${isExpired ? 'text-destructive' : isExpiringSoon ? 'text-amber-800 dark:text-amber-400' : 'text-primary'}`} />
                     </div>
                     <Badge className={`text-[10px] font-bold uppercase tracking-wider ${
-                      isExpired ? 'bg-red-500/15 text-red-400 border-red-500/20' :
-                      isExpiringSoon ? 'bg-amber-500/15 text-amber-400 border-amber-500/20' :
-                      'bg-emerald-500/15 text-emerald-400 border-emerald-500/20'
+                      isExpired ? 'bg-destructive/15 text-destructive border-destructive/20' :
+                      isExpiringSoon ? 'bg-amber-500/15 text-amber-800 dark:text-amber-400 border-amber-500/20' :
+                      'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
                     }`}>
                       {isExpired ? 'Expired' : isExpiringSoon ? 'Expiring Soon' : 'Active'}
                     </Badge>
@@ -206,7 +206,7 @@ function MembershipPlansPage() {
                     {activePlanDetails?.description}
                   </p>
                   <div className="mt-4 pt-4 border-t border-border/40">
-                    <p className="text-3xl font-black text-indigo-400">₹{activePlanDetails?.price ?? latestApprovedPayment?.amount ?? '—'}</p>
+                    <p className="text-3xl font-black text-primary">₹{activePlanDetails?.price ?? latestApprovedPayment?.amount ?? '—'}</p>
                     <p className="text-xs text-muted-foreground">{activePlanDetails?.duration_days} days validity</p>
                   </div>
                 </CardContent>
@@ -231,7 +231,7 @@ function MembershipPlansPage() {
                       <div className="flex items-center gap-2 text-muted-foreground text-xs">
                         <CalendarCheck className="h-3.5 w-3.5" /> Expiry Date
                       </div>
-                      <p className={`text-lg font-bold ${isExpired ? 'text-red-400' : isExpiringSoon ? 'text-amber-400' : 'text-foreground'}`}>
+                      <p className={`text-lg font-bold ${isExpired ? 'text-destructive' : isExpiringSoon ? 'text-amber-800 dark:text-amber-400' : 'text-foreground'}`}>
                         {memberRow.expiry_date
                           ? new Date(memberRow.expiry_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
                           : '—'}
@@ -242,7 +242,7 @@ function MembershipPlansPage() {
                         <Clock className="h-3.5 w-3.5" /> Days Remaining
                       </div>
                       <p className={`text-3xl font-black ${
-                        isExpired ? 'text-red-400' : isExpiringSoon ? 'text-amber-400' : 'text-emerald-400'
+                        isExpired ? 'text-destructive' : isExpiringSoon ? 'text-amber-800 dark:text-amber-400' : 'text-emerald-700 dark:text-emerald-400'
                       }`}>
                         {isExpired ? '0' : daysRemaining ?? '—'}
                         <span className="text-sm font-medium text-muted-foreground ml-1">days</span>
@@ -270,7 +270,7 @@ function MembershipPlansPage() {
                       <div className="h-2.5 rounded-full bg-muted overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-700 ${
-                            isExpired ? 'bg-red-500' : isExpiringSoon ? 'bg-amber-400' : 'bg-indigo-500'
+                            isExpired ? 'bg-destructive' : isExpiringSoon ? 'bg-amber-500' : 'bg-primary'
                           }`}
                           style={{
                             width: isExpired ? '100%' : `${Math.max(2, Math.min(100, 100 - Math.round(((daysRemaining ?? 0) / (activePlanDetails?.duration_days || 30)) * 100))).toFixed(0)}%`
@@ -317,7 +317,7 @@ function MembershipPlansPage() {
                       </>
                     )}
                     <div className="ml-auto">
-                      <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 uppercase text-[10px] font-bold tracking-wider">
+                      <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 uppercase text-[10px] font-bold tracking-wider">
                         <CheckCircle className="h-3 w-3 mr-1" /> Approved
                       </Badge>
                     </div>
@@ -352,7 +352,7 @@ function MembershipPlansPage() {
       <section>
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-2">
-            <div className="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full text-xs font-semibold text-indigo-400">
+            <div className="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full text-xs font-semibold text-primary">
               <Sparkles className="h-3.5 w-3.5" />
               {hasMembership ? (isExpiringSoon || isExpired ? 'Renew or Upgrade' : 'Available Plans') : 'Choose Your Plan'}
             </div>
@@ -452,9 +452,9 @@ function MembershipPlansPage() {
                         disabled={disabled}
                         className={`w-full py-5 text-sm font-bold shadow-sm transition-all duration-300 ${
                           disabled
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 cursor-default'
+                            ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 cursor-default'
                             : isFeatured || isCurrentPlan
-                            ? 'bg-indigo-600 text-white hover:bg-indigo-700 hover:-translate-y-0.5'
+                            ? 'bg-primary text-primary-foreground hover:bg-primary/95 hover:-translate-y-0.5'
                             : 'bg-card border border-border text-foreground hover:bg-muted/50'
                         }`}
                       >

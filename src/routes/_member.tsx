@@ -107,11 +107,11 @@ function NotificationBellButton() {
       variant="ghost" 
       size="icon" 
       onClick={() => navigate({ to: '/notifications' })} 
-      className="relative text-muted-foreground hover:text-foreground border border-border/40 hover:bg-muted/40 rounded-full h-9 w-9 p-0"
+      className="relative text-muted-foreground hover:text-foreground border border-border hover:bg-muted rounded-full h-9 w-9 p-0"
     >
       <Bell className="h-4 w-4" />
       {unreadCount > 0 && (
-        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-indigo-600 text-[9px] font-bold text-white shadow-sm animate-pulse">
+        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground shadow-sm animate-pulse">
           {unreadCount}
         </span>
       )}
@@ -128,7 +128,7 @@ function MemberLayoutInner({ currentPath, navItems, currentNav, signOut }: any) 
         <SidebarHeader className="border-b border-border p-4">
           <Link to="/" className="flex items-center gap-2" onClick={() => setOpenMobile(false)}>
             <img src="/logo.png" alt="Logo" className="h-12 object-contain dark:invert-0 invert" />
-            <span className="text-xs text-gold/80">MEMBER</span>
+            <span className="text-xs text-primary font-bold">MEMBER</span>
           </Link>
         </SidebarHeader>
         <SidebarContent>
@@ -141,7 +141,7 @@ function MemberLayoutInner({ currentPath, navItems, currentNav, signOut }: any) 
                     <SidebarMenuButton asChild isActive={currentPath === item.url || currentPath.startsWith(item.url + '/')} tooltip={item.title}>
                       <Link 
                         to={item.isLocked ? '/dashboard' : item.url} 
-                        className={`flex items-center text-foreground/80 hover:text-foreground ${item.isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`flex items-center text-muted-foreground hover:text-foreground ${item.isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
                         onClick={(e) => {
                           if (item.isLocked) {
                             e.preventDefault();
@@ -164,7 +164,7 @@ function MemberLayoutInner({ currentPath, navItems, currentNav, signOut }: any) 
         <SidebarFooter className="border-t border-border p-2">
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={() => { signOut(); setOpenMobile(false); }} className="text-foreground/80 hover:text-foreground">
+              <SidebarMenuButton onClick={() => { signOut(); setOpenMobile(false); }} className="text-muted-foreground hover:text-foreground">
                 <LogOut className="h-4 w-4" />
                 <span>Logout</span>
               </SidebarMenuButton>
@@ -173,7 +173,7 @@ function MemberLayoutInner({ currentPath, navItems, currentNav, signOut }: any) 
         </SidebarFooter>
       </Sidebar>
       
-      <SidebarInset className="bg-card text-foreground min-h-screen overflow-x-hidden max-w-[100vw]">
+      <SidebarInset className="bg-background text-foreground min-h-screen overflow-x-hidden max-w-[100vw]">
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
