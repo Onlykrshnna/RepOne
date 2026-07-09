@@ -13,3 +13,12 @@
 - [x] Update `Footer.tsx` with RepOne & WebForge links and SaaS product categories.
 - [x] Add interactive Before vs. After comparison section.
 - [x] Run build test to verify zero compilation or runtime errors.
+- [x] Task 1: Fix duplicate `<title>` tags (6 pages)
+- [x] Task 2: Fix duplicate meta descriptions (5 pages)
+- [x] Task 3: Fix structured data (JSON-LD) errors
+- [x] Task 4: Fix missing H1 tags (3 pages)
+- [x] Task 5: Fix orphaned sitemap pages (9 pages)
+- [x] Task 6: Fix pages with only one internal link (10 pages)
+- [x] Task 7: Fix non-descriptive anchor text (6 links)
+- [x] Task 8: Verify sitemap/robots/deployment status
+- [x] Task 9: Add llms.txt
