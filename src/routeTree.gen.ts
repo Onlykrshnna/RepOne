@@ -9,14 +9,45 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestimonialsRouteImport } from './routes/testimonials'
+import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as ForGymOwnersRouteImport } from './routes/for-gym-owners'
+import { Route as ForGymChainsRouteImport } from './routes/for-gym-chains'
+import { Route as ForBoutiqueStudiosRouteImport } from './routes/for-boutique-studios'
+import { Route as DemoRouteImport } from './routes/demo'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as MemberRouteImport } from './routes/_member'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FeaturesIndexRouteImport } from './routes/features.index'
+import { Route as CompareIndexRouteImport } from './routes/compare.index'
+import { Route as CaseStudiesIndexRouteImport } from './routes/case-studies.index'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as FeaturesQrAttendanceRouteImport } from './routes/features.qr-attendance'
+import { Route as FeaturesPaymentsRouteImport } from './routes/features.payments'
+import { Route as FeaturesMembershipManagementRouteImport } from './routes/features.membership-management'
+import { Route as FeaturesMemberAppRouteImport } from './routes/features.member-app'
+import { Route as FeaturesClassBookingRouteImport } from './routes/features.class-booking'
+import { Route as FeaturesBrandingWhiteLabelRouteImport } from './routes/features.branding-white-label'
+import { Route as FeaturesAnalyticsReportsRouteImport } from './routes/features.analytics-reports'
+import { Route as CompareReponeVsZenplannerRouteImport } from './routes/compare.repone-vs-zenplanner'
+import { Route as CompareReponeVsMindbodyRouteImport } from './routes/compare.repone-vs-mindbody'
+import { Route as CompareReponeVsGlofoxRouteImport } from './routes/compare.repone-vs-glofox'
+import { Route as CompareReponeVsExcelWhatsappRouteImport } from './routes/compare.repone-vs-excel-whatsapp'
+import { Route as CaseStudiesSlugRouteImport } from './routes/case-studies.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminReportsRouteImport } from './routes/admin.reports'
 import { Route as AdminQrManagementRouteImport } from './routes/admin.qr-management'
@@ -30,7 +61,7 @@ import { Route as AdminFeedbackRouteImport } from './routes/admin.feedback'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminClassesRouteImport } from './routes/admin.classes'
 import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
-import { Route as MemberSupportRouteImport } from './routes/_member.support'
+import { Route as MemberSupportTicketsRouteImport } from './routes/_member.support-tickets'
 import { Route as MemberProgressRouteImport } from './routes/_member.progress'
 import { Route as MemberProfileRouteImport } from './routes/_member.profile'
 import { Route as MemberPaymentsRouteImport } from './routes/_member.payments'
@@ -43,14 +74,54 @@ import { Route as MemberAttendanceRouteImport } from './routes/_member.attendanc
 import { Route as AdminMembersAddRouteImport } from './routes/admin.members.add'
 import { Route as AdminMembersMemberIdRouteImport } from './routes/admin.members.$memberId'
 
+const TestimonialsRoute = TestimonialsRouteImport.update({
+  id: '/testimonials',
+  path: '/testimonials',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundPolicyRoute = RefundPolicyRouteImport.update({
+  id: '/refund-policy',
+  path: '/refund-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -63,6 +134,31 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForGymOwnersRoute = ForGymOwnersRouteImport.update({
+  id: '/for-gym-owners',
+  path: '/for-gym-owners',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForGymChainsRoute = ForGymChainsRouteImport.update({
+  id: '/for-gym-chains',
+  path: '/for-gym-chains',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForBoutiqueStudiosRoute = ForBoutiqueStudiosRouteImport.update({
+  id: '/for-boutique-studios',
+  path: '/for-boutique-studios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckinRoute = CheckinRouteImport.update({
   id: '/checkin',
   path: '/checkin',
@@ -73,6 +169,11 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MemberRoute = MemberRouteImport.update({
   id: '/_member',
   getParentRoute: () => rootRouteImport,
@@ -80,6 +181,96 @@ const MemberRoute = MemberRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesIndexRoute = FeaturesIndexRouteImport.update({
+  id: '/features/',
+  path: '/features/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareIndexRoute = CompareIndexRouteImport.update({
+  id: '/compare/',
+  path: '/compare/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaseStudiesIndexRoute = CaseStudiesIndexRouteImport.update({
+  id: '/case-studies/',
+  path: '/case-studies/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesQrAttendanceRoute = FeaturesQrAttendanceRouteImport.update({
+  id: '/features/qr-attendance',
+  path: '/features/qr-attendance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesPaymentsRoute = FeaturesPaymentsRouteImport.update({
+  id: '/features/payments',
+  path: '/features/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesMembershipManagementRoute =
+  FeaturesMembershipManagementRouteImport.update({
+    id: '/features/membership-management',
+    path: '/features/membership-management',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const FeaturesMemberAppRoute = FeaturesMemberAppRouteImport.update({
+  id: '/features/member-app',
+  path: '/features/member-app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesClassBookingRoute = FeaturesClassBookingRouteImport.update({
+  id: '/features/class-booking',
+  path: '/features/class-booking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesBrandingWhiteLabelRoute =
+  FeaturesBrandingWhiteLabelRouteImport.update({
+    id: '/features/branding-white-label',
+    path: '/features/branding-white-label',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const FeaturesAnalyticsReportsRoute =
+  FeaturesAnalyticsReportsRouteImport.update({
+    id: '/features/analytics-reports',
+    path: '/features/analytics-reports',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CompareReponeVsZenplannerRoute =
+  CompareReponeVsZenplannerRouteImport.update({
+    id: '/compare/repone-vs-zenplanner',
+    path: '/compare/repone-vs-zenplanner',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CompareReponeVsMindbodyRoute = CompareReponeVsMindbodyRouteImport.update({
+  id: '/compare/repone-vs-mindbody',
+  path: '/compare/repone-vs-mindbody',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareReponeVsGlofoxRoute = CompareReponeVsGlofoxRouteImport.update({
+  id: '/compare/repone-vs-glofox',
+  path: '/compare/repone-vs-glofox',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareReponeVsExcelWhatsappRoute =
+  CompareReponeVsExcelWhatsappRouteImport.update({
+    id: '/compare/repone-vs-excel-whatsapp',
+    path: '/compare/repone-vs-excel-whatsapp',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CaseStudiesSlugRoute = CaseStudiesSlugRouteImport.update({
+  id: '/case-studies/$slug',
+  path: '/case-studies/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
@@ -147,9 +338,9 @@ const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
   path: '/attendance',
   getParentRoute: () => AdminRoute,
 } as any)
-const MemberSupportRoute = MemberSupportRouteImport.update({
-  id: '/support',
-  path: '/support',
+const MemberSupportTicketsRoute = MemberSupportTicketsRouteImport.update({
+  id: '/support-tickets',
+  path: '/support-tickets',
   getParentRoute: () => MemberRoute,
 } as any)
 const MemberProgressRoute = MemberProgressRouteImport.update({
@@ -210,12 +401,26 @@ const AdminMembersMemberIdRoute = AdminMembersMemberIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/checkin': typeof CheckinRoute
+  '/contact': typeof ContactRoute
+  '/demo': typeof DemoRoute
+  '/for-boutique-studios': typeof ForBoutiqueStudiosRoute
+  '/for-gym-chains': typeof ForGymChainsRoute
+  '/for-gym-owners': typeof ForGymOwnersRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/support': typeof SupportRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
+  '/testimonials': typeof TestimonialsRoute
   '/attendance': typeof MemberAttendanceRoute
   '/buy-membership': typeof MemberBuyMembershipRoute
   '/classes': typeof MemberClassesRoute
@@ -225,7 +430,7 @@ export interface FileRoutesByFullPath {
   '/payments': typeof MemberPaymentsRoute
   '/profile': typeof MemberProfileRoute
   '/progress': typeof MemberProgressRoute
-  '/support': typeof MemberSupportRoute
+  '/support-tickets': typeof MemberSupportTicketsRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/classes': typeof AdminClassesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -239,17 +444,48 @@ export interface FileRoutesByFullPath {
   '/admin/qr-management': typeof AdminQrManagementRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/case-studies/$slug': typeof CaseStudiesSlugRoute
+  '/compare/repone-vs-excel-whatsapp': typeof CompareReponeVsExcelWhatsappRoute
+  '/compare/repone-vs-glofox': typeof CompareReponeVsGlofoxRoute
+  '/compare/repone-vs-mindbody': typeof CompareReponeVsMindbodyRoute
+  '/compare/repone-vs-zenplanner': typeof CompareReponeVsZenplannerRoute
+  '/features/analytics-reports': typeof FeaturesAnalyticsReportsRoute
+  '/features/branding-white-label': typeof FeaturesBrandingWhiteLabelRoute
+  '/features/class-booking': typeof FeaturesClassBookingRoute
+  '/features/member-app': typeof FeaturesMemberAppRoute
+  '/features/membership-management': typeof FeaturesMembershipManagementRoute
+  '/features/payments': typeof FeaturesPaymentsRoute
+  '/features/qr-attendance': typeof FeaturesQrAttendanceRoute
+  '/blog/': typeof BlogIndexRoute
+  '/case-studies/': typeof CaseStudiesIndexRoute
+  '/compare/': typeof CompareIndexRoute
+  '/features/': typeof FeaturesIndexRoute
   '/admin/members/$memberId': typeof AdminMembersMemberIdRoute
   '/admin/members/add': typeof AdminMembersAddRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/checkin': typeof CheckinRoute
+  '/contact': typeof ContactRoute
+  '/demo': typeof DemoRoute
+  '/for-boutique-studios': typeof ForBoutiqueStudiosRoute
+  '/for-gym-chains': typeof ForGymChainsRoute
+  '/for-gym-owners': typeof ForGymOwnersRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/support': typeof SupportRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
+  '/testimonials': typeof TestimonialsRoute
   '/attendance': typeof MemberAttendanceRoute
   '/buy-membership': typeof MemberBuyMembershipRoute
   '/classes': typeof MemberClassesRoute
@@ -259,7 +495,7 @@ export interface FileRoutesByTo {
   '/payments': typeof MemberPaymentsRoute
   '/profile': typeof MemberProfileRoute
   '/progress': typeof MemberProgressRoute
-  '/support': typeof MemberSupportRoute
+  '/support-tickets': typeof MemberSupportTicketsRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/classes': typeof AdminClassesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -273,6 +509,23 @@ export interface FileRoutesByTo {
   '/admin/qr-management': typeof AdminQrManagementRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/case-studies/$slug': typeof CaseStudiesSlugRoute
+  '/compare/repone-vs-excel-whatsapp': typeof CompareReponeVsExcelWhatsappRoute
+  '/compare/repone-vs-glofox': typeof CompareReponeVsGlofoxRoute
+  '/compare/repone-vs-mindbody': typeof CompareReponeVsMindbodyRoute
+  '/compare/repone-vs-zenplanner': typeof CompareReponeVsZenplannerRoute
+  '/features/analytics-reports': typeof FeaturesAnalyticsReportsRoute
+  '/features/branding-white-label': typeof FeaturesBrandingWhiteLabelRoute
+  '/features/class-booking': typeof FeaturesClassBookingRoute
+  '/features/member-app': typeof FeaturesMemberAppRoute
+  '/features/membership-management': typeof FeaturesMembershipManagementRoute
+  '/features/payments': typeof FeaturesPaymentsRoute
+  '/features/qr-attendance': typeof FeaturesQrAttendanceRoute
+  '/blog': typeof BlogIndexRoute
+  '/case-studies': typeof CaseStudiesIndexRoute
+  '/compare': typeof CompareIndexRoute
+  '/features': typeof FeaturesIndexRoute
   '/admin/members/$memberId': typeof AdminMembersMemberIdRoute
   '/admin/members/add': typeof AdminMembersAddRoute
 }
@@ -280,12 +533,26 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_member': typeof MemberRouteWithChildren
+  '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/checkin': typeof CheckinRoute
+  '/contact': typeof ContactRoute
+  '/demo': typeof DemoRoute
+  '/for-boutique-studios': typeof ForBoutiqueStudiosRoute
+  '/for-gym-chains': typeof ForGymChainsRoute
+  '/for-gym-owners': typeof ForGymOwnersRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/signup': typeof SignupRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/support': typeof SupportRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
+  '/testimonials': typeof TestimonialsRoute
   '/_member/attendance': typeof MemberAttendanceRoute
   '/_member/buy-membership': typeof MemberBuyMembershipRoute
   '/_member/classes': typeof MemberClassesRoute
@@ -295,7 +562,7 @@ export interface FileRoutesById {
   '/_member/payments': typeof MemberPaymentsRoute
   '/_member/profile': typeof MemberProfileRoute
   '/_member/progress': typeof MemberProgressRoute
-  '/_member/support': typeof MemberSupportRoute
+  '/_member/support-tickets': typeof MemberSupportTicketsRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/classes': typeof AdminClassesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -309,6 +576,23 @@ export interface FileRoutesById {
   '/admin/qr-management': typeof AdminQrManagementRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/case-studies/$slug': typeof CaseStudiesSlugRoute
+  '/compare/repone-vs-excel-whatsapp': typeof CompareReponeVsExcelWhatsappRoute
+  '/compare/repone-vs-glofox': typeof CompareReponeVsGlofoxRoute
+  '/compare/repone-vs-mindbody': typeof CompareReponeVsMindbodyRoute
+  '/compare/repone-vs-zenplanner': typeof CompareReponeVsZenplannerRoute
+  '/features/analytics-reports': typeof FeaturesAnalyticsReportsRoute
+  '/features/branding-white-label': typeof FeaturesBrandingWhiteLabelRoute
+  '/features/class-booking': typeof FeaturesClassBookingRoute
+  '/features/member-app': typeof FeaturesMemberAppRoute
+  '/features/membership-management': typeof FeaturesMembershipManagementRoute
+  '/features/payments': typeof FeaturesPaymentsRoute
+  '/features/qr-attendance': typeof FeaturesQrAttendanceRoute
+  '/blog/': typeof BlogIndexRoute
+  '/case-studies/': typeof CaseStudiesIndexRoute
+  '/compare/': typeof CompareIndexRoute
+  '/features/': typeof FeaturesIndexRoute
   '/admin/members/$memberId': typeof AdminMembersMemberIdRoute
   '/admin/members/add': typeof AdminMembersAddRoute
 }
@@ -316,12 +600,26 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/admin'
     | '/checkin'
+    | '/contact'
+    | '/demo'
+    | '/for-boutique-studios'
+    | '/for-gym-chains'
+    | '/for-gym-owners'
     | '/forgot-password'
     | '/login'
+    | '/pricing'
+    | '/privacy-policy'
+    | '/refund-policy'
     | '/reset-password'
+    | '/robots.txt'
     | '/signup'
+    | '/sitemap.xml'
+    | '/support'
+    | '/terms-of-service'
+    | '/testimonials'
     | '/attendance'
     | '/buy-membership'
     | '/classes'
@@ -331,7 +629,7 @@ export interface FileRouteTypes {
     | '/payments'
     | '/profile'
     | '/progress'
-    | '/support'
+    | '/support-tickets'
     | '/admin/attendance'
     | '/admin/classes'
     | '/admin/dashboard'
@@ -345,17 +643,48 @@ export interface FileRouteTypes {
     | '/admin/qr-management'
     | '/admin/reports'
     | '/admin/settings'
+    | '/blog/$slug'
+    | '/case-studies/$slug'
+    | '/compare/repone-vs-excel-whatsapp'
+    | '/compare/repone-vs-glofox'
+    | '/compare/repone-vs-mindbody'
+    | '/compare/repone-vs-zenplanner'
+    | '/features/analytics-reports'
+    | '/features/branding-white-label'
+    | '/features/class-booking'
+    | '/features/member-app'
+    | '/features/membership-management'
+    | '/features/payments'
+    | '/features/qr-attendance'
+    | '/blog/'
+    | '/case-studies/'
+    | '/compare/'
+    | '/features/'
     | '/admin/members/$memberId'
     | '/admin/members/add'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/admin'
     | '/checkin'
+    | '/contact'
+    | '/demo'
+    | '/for-boutique-studios'
+    | '/for-gym-chains'
+    | '/for-gym-owners'
     | '/forgot-password'
     | '/login'
+    | '/pricing'
+    | '/privacy-policy'
+    | '/refund-policy'
     | '/reset-password'
+    | '/robots.txt'
     | '/signup'
+    | '/sitemap.xml'
+    | '/support'
+    | '/terms-of-service'
+    | '/testimonials'
     | '/attendance'
     | '/buy-membership'
     | '/classes'
@@ -365,7 +694,7 @@ export interface FileRouteTypes {
     | '/payments'
     | '/profile'
     | '/progress'
-    | '/support'
+    | '/support-tickets'
     | '/admin/attendance'
     | '/admin/classes'
     | '/admin/dashboard'
@@ -379,18 +708,49 @@ export interface FileRouteTypes {
     | '/admin/qr-management'
     | '/admin/reports'
     | '/admin/settings'
+    | '/blog/$slug'
+    | '/case-studies/$slug'
+    | '/compare/repone-vs-excel-whatsapp'
+    | '/compare/repone-vs-glofox'
+    | '/compare/repone-vs-mindbody'
+    | '/compare/repone-vs-zenplanner'
+    | '/features/analytics-reports'
+    | '/features/branding-white-label'
+    | '/features/class-booking'
+    | '/features/member-app'
+    | '/features/membership-management'
+    | '/features/payments'
+    | '/features/qr-attendance'
+    | '/blog'
+    | '/case-studies'
+    | '/compare'
+    | '/features'
     | '/admin/members/$memberId'
     | '/admin/members/add'
   id:
     | '__root__'
     | '/'
     | '/_member'
+    | '/about'
     | '/admin'
     | '/checkin'
+    | '/contact'
+    | '/demo'
+    | '/for-boutique-studios'
+    | '/for-gym-chains'
+    | '/for-gym-owners'
     | '/forgot-password'
     | '/login'
+    | '/pricing'
+    | '/privacy-policy'
+    | '/refund-policy'
     | '/reset-password'
+    | '/robots.txt'
     | '/signup'
+    | '/sitemap.xml'
+    | '/support'
+    | '/terms-of-service'
+    | '/testimonials'
     | '/_member/attendance'
     | '/_member/buy-membership'
     | '/_member/classes'
@@ -400,7 +760,7 @@ export interface FileRouteTypes {
     | '/_member/payments'
     | '/_member/profile'
     | '/_member/progress'
-    | '/_member/support'
+    | '/_member/support-tickets'
     | '/admin/attendance'
     | '/admin/classes'
     | '/admin/dashboard'
@@ -414,6 +774,23 @@ export interface FileRouteTypes {
     | '/admin/qr-management'
     | '/admin/reports'
     | '/admin/settings'
+    | '/blog/$slug'
+    | '/case-studies/$slug'
+    | '/compare/repone-vs-excel-whatsapp'
+    | '/compare/repone-vs-glofox'
+    | '/compare/repone-vs-mindbody'
+    | '/compare/repone-vs-zenplanner'
+    | '/features/analytics-reports'
+    | '/features/branding-white-label'
+    | '/features/class-booking'
+    | '/features/member-app'
+    | '/features/membership-management'
+    | '/features/payments'
+    | '/features/qr-attendance'
+    | '/blog/'
+    | '/case-studies/'
+    | '/compare/'
+    | '/features/'
     | '/admin/members/$memberId'
     | '/admin/members/add'
   fileRoutesById: FileRoutesById
@@ -421,16 +798,75 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MemberRoute: typeof MemberRouteWithChildren
+  AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
   CheckinRoute: typeof CheckinRoute
+  ContactRoute: typeof ContactRoute
+  DemoRoute: typeof DemoRoute
+  ForBoutiqueStudiosRoute: typeof ForBoutiqueStudiosRoute
+  ForGymChainsRoute: typeof ForGymChainsRoute
+  ForGymOwnersRoute: typeof ForGymOwnersRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  PricingRoute: typeof PricingRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  RefundPolicyRoute: typeof RefundPolicyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   SignupRoute: typeof SignupRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SupportRoute: typeof SupportRoute
+  TermsOfServiceRoute: typeof TermsOfServiceRoute
+  TestimonialsRoute: typeof TestimonialsRoute
+  BlogSlugRoute: typeof BlogSlugRoute
+  CaseStudiesSlugRoute: typeof CaseStudiesSlugRoute
+  CompareReponeVsExcelWhatsappRoute: typeof CompareReponeVsExcelWhatsappRoute
+  CompareReponeVsGlofoxRoute: typeof CompareReponeVsGlofoxRoute
+  CompareReponeVsMindbodyRoute: typeof CompareReponeVsMindbodyRoute
+  CompareReponeVsZenplannerRoute: typeof CompareReponeVsZenplannerRoute
+  FeaturesAnalyticsReportsRoute: typeof FeaturesAnalyticsReportsRoute
+  FeaturesBrandingWhiteLabelRoute: typeof FeaturesBrandingWhiteLabelRoute
+  FeaturesClassBookingRoute: typeof FeaturesClassBookingRoute
+  FeaturesMemberAppRoute: typeof FeaturesMemberAppRoute
+  FeaturesMembershipManagementRoute: typeof FeaturesMembershipManagementRoute
+  FeaturesPaymentsRoute: typeof FeaturesPaymentsRoute
+  FeaturesQrAttendanceRoute: typeof FeaturesQrAttendanceRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+  CaseStudiesIndexRoute: typeof CaseStudiesIndexRoute
+  CompareIndexRoute: typeof CompareIndexRoute
+  FeaturesIndexRoute: typeof FeaturesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/testimonials': {
+      id: '/testimonials'
+      path: '/testimonials'
+      fullPath: '/testimonials'
+      preLoaderRoute: typeof TestimonialsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -438,11 +874,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refund-policy': {
+      id: '/refund-policy'
+      path: '/refund-policy'
+      fullPath: '/refund-policy'
+      preLoaderRoute: typeof RefundPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -459,6 +923,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/for-gym-owners': {
+      id: '/for-gym-owners'
+      path: '/for-gym-owners'
+      fullPath: '/for-gym-owners'
+      preLoaderRoute: typeof ForGymOwnersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-gym-chains': {
+      id: '/for-gym-chains'
+      path: '/for-gym-chains'
+      fullPath: '/for-gym-chains'
+      preLoaderRoute: typeof ForGymChainsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-boutique-studios': {
+      id: '/for-boutique-studios'
+      path: '/for-boutique-studios'
+      fullPath: '/for-boutique-studios'
+      preLoaderRoute: typeof ForBoutiqueStudiosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkin': {
       id: '/checkin'
       path: '/checkin'
@@ -473,6 +972,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_member': {
       id: '/_member'
       path: ''
@@ -485,6 +991,125 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features/': {
+      id: '/features/'
+      path: '/features'
+      fullPath: '/features/'
+      preLoaderRoute: typeof FeaturesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare/': {
+      id: '/compare/'
+      path: '/compare'
+      fullPath: '/compare/'
+      preLoaderRoute: typeof CompareIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/case-studies/': {
+      id: '/case-studies/'
+      path: '/case-studies'
+      fullPath: '/case-studies/'
+      preLoaderRoute: typeof CaseStudiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features/qr-attendance': {
+      id: '/features/qr-attendance'
+      path: '/features/qr-attendance'
+      fullPath: '/features/qr-attendance'
+      preLoaderRoute: typeof FeaturesQrAttendanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features/payments': {
+      id: '/features/payments'
+      path: '/features/payments'
+      fullPath: '/features/payments'
+      preLoaderRoute: typeof FeaturesPaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features/membership-management': {
+      id: '/features/membership-management'
+      path: '/features/membership-management'
+      fullPath: '/features/membership-management'
+      preLoaderRoute: typeof FeaturesMembershipManagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features/member-app': {
+      id: '/features/member-app'
+      path: '/features/member-app'
+      fullPath: '/features/member-app'
+      preLoaderRoute: typeof FeaturesMemberAppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features/class-booking': {
+      id: '/features/class-booking'
+      path: '/features/class-booking'
+      fullPath: '/features/class-booking'
+      preLoaderRoute: typeof FeaturesClassBookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features/branding-white-label': {
+      id: '/features/branding-white-label'
+      path: '/features/branding-white-label'
+      fullPath: '/features/branding-white-label'
+      preLoaderRoute: typeof FeaturesBrandingWhiteLabelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features/analytics-reports': {
+      id: '/features/analytics-reports'
+      path: '/features/analytics-reports'
+      fullPath: '/features/analytics-reports'
+      preLoaderRoute: typeof FeaturesAnalyticsReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare/repone-vs-zenplanner': {
+      id: '/compare/repone-vs-zenplanner'
+      path: '/compare/repone-vs-zenplanner'
+      fullPath: '/compare/repone-vs-zenplanner'
+      preLoaderRoute: typeof CompareReponeVsZenplannerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare/repone-vs-mindbody': {
+      id: '/compare/repone-vs-mindbody'
+      path: '/compare/repone-vs-mindbody'
+      fullPath: '/compare/repone-vs-mindbody'
+      preLoaderRoute: typeof CompareReponeVsMindbodyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare/repone-vs-glofox': {
+      id: '/compare/repone-vs-glofox'
+      path: '/compare/repone-vs-glofox'
+      fullPath: '/compare/repone-vs-glofox'
+      preLoaderRoute: typeof CompareReponeVsGlofoxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare/repone-vs-excel-whatsapp': {
+      id: '/compare/repone-vs-excel-whatsapp'
+      path: '/compare/repone-vs-excel-whatsapp'
+      fullPath: '/compare/repone-vs-excel-whatsapp'
+      preLoaderRoute: typeof CompareReponeVsExcelWhatsappRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/case-studies/$slug': {
+      id: '/case-studies/$slug'
+      path: '/case-studies/$slug'
+      fullPath: '/case-studies/$slug'
+      preLoaderRoute: typeof CaseStudiesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/settings': {
@@ -578,11 +1203,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAttendanceRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/_member/support': {
-      id: '/_member/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof MemberSupportRouteImport
+    '/_member/support-tickets': {
+      id: '/_member/support-tickets'
+      path: '/support-tickets'
+      fullPath: '/support-tickets'
+      preLoaderRoute: typeof MemberSupportTicketsRouteImport
       parentRoute: typeof MemberRoute
     }
     '/_member/progress': {
@@ -675,7 +1300,7 @@ interface MemberRouteChildren {
   MemberPaymentsRoute: typeof MemberPaymentsRoute
   MemberProfileRoute: typeof MemberProfileRoute
   MemberProgressRoute: typeof MemberProgressRoute
-  MemberSupportRoute: typeof MemberSupportRoute
+  MemberSupportTicketsRoute: typeof MemberSupportTicketsRoute
 }
 
 const MemberRouteChildren: MemberRouteChildren = {
@@ -688,7 +1313,7 @@ const MemberRouteChildren: MemberRouteChildren = {
   MemberPaymentsRoute: MemberPaymentsRoute,
   MemberProfileRoute: MemberProfileRoute,
   MemberProgressRoute: MemberProgressRoute,
-  MemberSupportRoute: MemberSupportRoute,
+  MemberSupportTicketsRoute: MemberSupportTicketsRoute,
 }
 
 const MemberRouteWithChildren =
@@ -745,12 +1370,43 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MemberRoute: MemberRouteWithChildren,
+  AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
   CheckinRoute: CheckinRoute,
+  ContactRoute: ContactRoute,
+  DemoRoute: DemoRoute,
+  ForBoutiqueStudiosRoute: ForBoutiqueStudiosRoute,
+  ForGymChainsRoute: ForGymChainsRoute,
+  ForGymOwnersRoute: ForGymOwnersRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  PricingRoute: PricingRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
+  RefundPolicyRoute: RefundPolicyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   SignupRoute: SignupRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SupportRoute: SupportRoute,
+  TermsOfServiceRoute: TermsOfServiceRoute,
+  TestimonialsRoute: TestimonialsRoute,
+  BlogSlugRoute: BlogSlugRoute,
+  CaseStudiesSlugRoute: CaseStudiesSlugRoute,
+  CompareReponeVsExcelWhatsappRoute: CompareReponeVsExcelWhatsappRoute,
+  CompareReponeVsGlofoxRoute: CompareReponeVsGlofoxRoute,
+  CompareReponeVsMindbodyRoute: CompareReponeVsMindbodyRoute,
+  CompareReponeVsZenplannerRoute: CompareReponeVsZenplannerRoute,
+  FeaturesAnalyticsReportsRoute: FeaturesAnalyticsReportsRoute,
+  FeaturesBrandingWhiteLabelRoute: FeaturesBrandingWhiteLabelRoute,
+  FeaturesClassBookingRoute: FeaturesClassBookingRoute,
+  FeaturesMemberAppRoute: FeaturesMemberAppRoute,
+  FeaturesMembershipManagementRoute: FeaturesMembershipManagementRoute,
+  FeaturesPaymentsRoute: FeaturesPaymentsRoute,
+  FeaturesQrAttendanceRoute: FeaturesQrAttendanceRoute,
+  BlogIndexRoute: BlogIndexRoute,
+  CaseStudiesIndexRoute: CaseStudiesIndexRoute,
+  CompareIndexRoute: CompareIndexRoute,
+  FeaturesIndexRoute: FeaturesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

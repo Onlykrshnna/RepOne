@@ -101,7 +101,7 @@ function MemberDashboard({ profile }: { profile: any }) {
             )}
           </CardDescription>
           <Button asChild variant="destructive" className="mt-8 font-medium px-8 h-12">
-            <Link to="/support">Contact Support</Link>
+            <Link to="/support-tickets">Contact Support</Link>
           </Button>
         </Card>
       </div>

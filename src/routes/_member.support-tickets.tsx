@@ -19,7 +19,7 @@ import { Badge } from '../components/ui/badge';
 import { Skeleton } from '../components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../components/ui/dialog';
 
-export const Route = createFileRoute('/_member/support')({
+export const Route = createFileRoute('/_member/support-tickets')({
   component: SupportPage,
 });
 

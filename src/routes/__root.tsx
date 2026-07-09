@@ -75,8 +75,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
+  head: () => {
+    const meta: any[] = [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "RepOne · Gym Management Platform & Demo" },
@@ -86,19 +86,40 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "RepOne is a modern gym management platform. Manage memberships, payments, QR check-ins, class schedules, and trainer portals in one place.",
       },
       { property: "og:url", content: "https://repone.web-forge.in" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/logo.png", type: "image/png" },
-      { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Inter:wght@300;400;500;600&display=swap",
-      },
-    ],
-  }),
+    ];
+
+    // Google Search Console site verification
+    const gscCode = import.meta.env.VITE_GSC_VERIFICATION_CODE || "{{GSC_VERIFICATION_CODE}}";
+    meta.push({ name: "google-site-verification", content: gscCode });
+
+    // Protect staging / preview environments from search crawlers
+    if (typeof window !== "undefined") {
+      const host = window.location.hostname;
+      if (host.includes("localhost") || (host.includes("vercel.app") && !host.includes("repone.web-forge.in"))) {
+        meta.push({ name: "robots", content: "noindex, nofollow" });
+      }
+    }
+    if (import.meta.env.VITE_VERCEL_ENV && import.meta.env.VITE_VERCEL_ENV !== "production") {
+      if (!meta.some((m) => m.name === "robots")) {
+        meta.push({ name: "robots", content: "noindex, nofollow" });
+      }
+    }
+
+    return {
+      meta,
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", href: "/logo.png", type: "image/png" },
+        { rel: "manifest", href: "/manifest.webmanifest" },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Inter:wght@300;400;500;600&display=swap",
+        },
+      ],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -106,10 +127,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        {gaId && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${gaId}');
+                `,
+              }}
+            />
+          </>
+        )}
       </head>
       <body>
         {children}
