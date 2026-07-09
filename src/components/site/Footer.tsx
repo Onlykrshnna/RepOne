@@ -4,9 +4,9 @@ export function Footer() {
   return (
     <footer className="bg-[#080809] pt-24 pb-12 border-t border-[#F0EDE6]/10 text-[#F0EDE6]">
       <div className="mx-auto max-w-[1440px] px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-16 md:gap-8 text-left">
-        <div className="md:col-span-2">
+        <div>
           <img src="/logo.png" alt="Logo" className="h-20 object-contain block mb-6" />
-          <p className="text-[#F0EDE6]/40 max-w-sm" style={{ fontFamily: "Inter", fontSize: "13px", lineHeight: "1.7" }}>
+          <p className="text-[#F0EDE6]/40" style={{ fontFamily: "Inter", fontSize: "13px", lineHeight: "1.7" }}>
             A premium gym management platform designed to automate operations, reconcile payments, and elevate member experiences. Powered by WebForge.
           </p>
         </div>
@@ -24,13 +24,22 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-4">
+          <span className="text-[#F0EDE6]/30 mb-2" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Target Audiences</span>
+          <div className="flex flex-col gap-2" style={{ fontFamily: "Inter", fontSize: "13px" }}>
+            <Link to="/for-gym-owners" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Independent Gyms</Link>
+            <Link to="/for-boutique-studios" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Boutique Studios</Link>
+            <Link to="/for-gym-chains" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Enterprise Chains</Link>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4">
           <span className="text-[#F0EDE6]/30 mb-2" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Company & Support</span>
           <div className="flex flex-col gap-2" style={{ fontFamily: "Inter", fontSize: "13px" }}>
             <Link to="/about" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">About Us</Link>
             <Link to="/testimonials" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Reviews</Link>
+            <Link to="/compare" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Alternative Comparisons</Link>
             <Link to="/contact" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Contact</Link>
             <Link to="/support" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Support & Guides</Link>
-            <a href="mailto:hello@repone.co" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">hello@repone.co</a>
           </div>
         </div>
       </div>

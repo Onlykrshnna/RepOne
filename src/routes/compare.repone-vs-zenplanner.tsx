@@ -6,7 +6,7 @@ import { Check, X } from "lucide-react";
 export const Route = createFileRoute("/compare/repone-vs-zenplanner")({
   head: () =>
     getSeoTags({
-      title: "RepOne vs Zen Planner: Gym Software Comparison",
+      title: "RepOne vs Zen Planner: Side-by-Side Gym Software Comparison",
       description:
         "Compare RepOne and Zen Planner side by side. See why RepOne is the preferred Zen Planner alternative.",
       path: "/compare/repone-vs-zenplanner",
@@ -89,6 +89,15 @@ function ZenPlannerComparePage() {
             Switch to RepOne Today
           </Link>
         </footer>
+
+        <div className="border-t border-border pt-12 mt-12 mb-8 text-center">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground block mb-4">Compare Alternatives</span>
+          <div className="flex justify-center gap-6 flex-wrap text-xs">
+            <Link to="/compare/repone-vs-mindbody" className="text-primary hover:underline font-semibold">RepOne vs Mindbody &rarr;</Link>
+            <Link to="/compare/repone-vs-glofox" className="text-primary hover:underline font-semibold">RepOne vs Glofox &rarr;</Link>
+            <Link to="/compare/repone-vs-excel-whatsapp" className="text-primary hover:underline font-semibold">Spreadsheets vs RepOne &rarr;</Link>
+          </div>
+        </div>
       </div>
     </MarketingLayout>
   );

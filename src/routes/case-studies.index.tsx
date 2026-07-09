@@ -7,7 +7,7 @@ import { ArrowRight, Trophy } from "lucide-react";
 export const Route = createFileRoute("/case-studies/")({
   head: () =>
     getSeoTags({
-      title: "Case Studies | RepOne Gym Software",
+      title: "B2B Gym Operations Case Studies & Results | RepOne",
       description:
         "Explore how gyms and fitness centers modernized check-ins, automated payments, and reduced churn with RepOne.",
       path: "/case-studies",

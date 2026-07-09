@@ -7,7 +7,7 @@ import { Star, MessageSquare } from "lucide-react";
 export const Route = createFileRoute("/testimonials")({
   head: () =>
     getSeoTags({
-      title: "Testimonials & Reviews | RepOne Gym Software",
+      title: "Verified Customer Reviews and Testimonials | RepOne",
       description:
         "Read verified reviews and success stories from gym owners and fitness studio managers using RepOne.",
       path: "/testimonials",

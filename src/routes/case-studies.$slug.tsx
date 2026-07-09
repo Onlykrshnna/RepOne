@@ -73,6 +73,17 @@ function CaseStudyDetailPage() {
     });
   };
 
+  const getRelatedLink = (slug: string) => {
+    switch (slug) {
+      case "iron-house-gym":
+        return { text: "Explore RepOne's complete Gym Membership Management software features", href: "/features/membership-management" };
+      case "titan-strength":
+        return { text: "Learn more about RepOne's contactless QR code check-in attendance system", href: "/features/qr-attendance" };
+      default:
+        return { text: "Explore all RepOne Gym Management features", href: "/features" };
+    }
+  };
+
   return (
     <MarketingLayout>
       <div className="max-w-[700px] mx-auto px-6 font-sans">
@@ -122,6 +133,17 @@ function CaseStudyDetailPage() {
         <article className="prose dark:prose-invert">
           {renderMarkdown(study.body)}
         </article>
+
+        {/* Contextual internal link to improve link graph density */}
+        <div className="my-8 p-6 bg-card border border-border rounded-xl">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground block mb-2">Related Resource</span>
+          <Link
+            to={getRelatedLink(study.slug).href}
+            className="text-sm font-semibold text-primary hover:underline"
+          >
+            {getRelatedLink(study.slug).text} &rarr;
+          </Link>
+        </div>
 
         <section className="bg-card border border-border p-6 rounded-2xl text-center mt-16 space-y-4">
           <h4 className="font-display text-lg font-bold">Ready to see results like {study.gym_name}?</h4>

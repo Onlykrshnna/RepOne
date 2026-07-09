@@ -89,6 +89,15 @@ function MindbodyComparePage() {
             Switch to RepOne Today
           </Link>
         </footer>
+
+        <div className="border-t border-border pt-12 mt-12 mb-8 text-center">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground block mb-4">Compare Alternatives</span>
+          <div className="flex justify-center gap-6 flex-wrap text-xs">
+            <Link to="/compare/repone-vs-glofox" className="text-primary hover:underline font-semibold">RepOne vs Glofox &rarr;</Link>
+            <Link to="/compare/repone-vs-zenplanner" className="text-primary hover:underline font-semibold">RepOne vs Zen Planner &rarr;</Link>
+            <Link to="/compare/repone-vs-excel-whatsapp" className="text-primary hover:underline font-semibold">Spreadsheets vs RepOne &rarr;</Link>
+          </div>
+        </div>
       </div>
     </MarketingLayout>
   );

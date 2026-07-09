@@ -69,10 +69,12 @@ export const schemaHelpers = {
     "operatingSystem": "All",
     "applicationCategory": "BusinessApplication",
     "description": "Run your entire gym from one platform: memberships, attendance, payments, and analytics. Book a free demo.",
+    "image": "https://repone.web-forge.in/logo.png",
     "offers": {
       "@type": "Offer",
       "price": "1999",
       "priceCurrency": "INR",
+      "availability": "https://schema.org/InStock",
       "seller": {
         "@type": "Organization",
         "name": "WebForge",
@@ -81,28 +83,39 @@ export const schemaHelpers = {
     }
   }),
 
-  pricing: (plans: { name: string; price: string; period: string; features: string[] }[]) => ({
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "RepOne Gym Management Software",
-    "description": "Transparent pricing for gyms and boutique fitness studios of every size.",
-    "offers": plans.map((p) => ({
-      "@type": "Offer",
-      "name": p.name,
-      "price": p.price.replace(/[^0-9]/g, "") || "0",
-      "priceCurrency": "INR",
-      "priceSpecification": {
-        "@type": "UnitPriceSpecification",
-        "price": p.price.replace(/[^0-9]/g, "") || "0",
-        "priceCurrency": "INR",
-        "referenceQuantity": {
-          "@type": "QuantitativeValue",
-          "value": "1",
-          "unitCode": p.period === "month" ? "MON" : "ANN"
-        }
-      }
-    }))
-  }),
+  pricing: (plans: { name: string; price: string; period: string; features: string[] }[]) => {
+    const validPlans = plans.filter((p) => {
+      const numeric = p.price.replace(/[^0-9]/g, "");
+      return numeric !== "" && !isNaN(Number(numeric)) && Number(numeric) > 0;
+    });
+    return {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "RepOne Gym Management Software",
+      "image": "https://repone.web-forge.in/logo.png",
+      "description": "Transparent pricing for gyms and boutique fitness studios of every size.",
+      "offers": validPlans.map((p) => {
+        const numericPrice = p.price.replace(/[^0-9]/g, "");
+        return {
+          "@type": "Offer",
+          "name": p.name,
+          "price": numericPrice,
+          "priceCurrency": "INR",
+          "availability": "https://schema.org/InStock",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "price": numericPrice,
+            "priceCurrency": "INR",
+            "referenceQuantity": {
+              "@type": "QuantitativeValue",
+              "value": "1",
+              "unitCode": p.period === "month" ? "MON" : "ANN"
+            }
+          }
+        };
+      })
+    };
+  },
 
   faq: (faqs: { question: string; answer: string }[]) => ({
     "@context": "https://schema.org",
@@ -156,23 +169,35 @@ export const schemaHelpers = {
     }
   }),
 
-  reviews: (reviews: { author: string; reviewBody: string; ratingValue: number; itemReviewedName: string }[]) => 
-    reviews.map((r) => ({
+  reviews: (reviewsList: { author: string; reviewBody: string; ratingValue: number; itemReviewedName: string }[]) => {
+    const avgRating = reviewsList.reduce((sum, r) => sum + r.ratingValue, 0) / (reviewsList.length || 1);
+    return {
       "@context": "https://schema.org",
-      "@type": "Review",
-      "author": {
-        "@type": "Person",
-        "name": r.author
+      "@type": "Product",
+      "name": reviewsList[0]?.itemReviewedName || "RepOne Gym Software",
+      "image": "https://repone.web-forge.in/logo.png",
+      "description": "RepOne Gym Management and Member Portal Platform",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": Number(avgRating.toFixed(1)),
+        "reviewCount": reviewsList.length,
+        "bestRating": 5,
+        "worstRating": 1
       },
-      "reviewBody": r.reviewBody,
-      "reviewRating": {
-        "@type": "Rating",
-        "ratingValue": r.ratingValue,
-        "bestRating": "5"
-      },
-      "itemReviewed": {
-        "@type": "Product",
-        "name": r.itemReviewedName
-      }
-    }))
+      "review": reviewsList.map((r) => ({
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": r.author
+        },
+        "reviewBody": r.reviewBody,
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": r.ratingValue,
+          "bestRating": 5,
+          "worstRating": 1
+        }
+      }))
+    };
+  }
 };

@@ -1,0 +1,30 @@
+# RepOne
+
+RepOne is a premium B2B2C Gym Operating System built by WebForge. It is designed to automate daily gym logistics, billing, member directories, check-ins, and analytics.
+
+## Main Routes
+- [/](https://repone.web-forge.in/) - Homepage with Hero, Philosophy, Stats, and Testimonials
+- [/features](https://repone.web-forge.in/features) - Platform features directory
+- [/pricing](https://repone.web-forge.in/pricing) - Flat-rate software subscription tiers
+- [/demo](https://repone.web-forge.in/demo) - Schedule a free setup walkthrough
+
+## Key Features
+- [/features/qr-attendance](https://repone.web-forge.in/features/qr-attendance) - Contactless QR code check-in attendance
+- [/features/membership-management](https://repone.web-forge.in/features/membership-management) - Automated member database and expiry lockers
+- [/features/payments](https://repone.web-forge.in/features/payments) - Reconciled receipts and manual check verifications
+- [/features/class-booking](https://repone.web-forge.in/features/class-booking) - Slot scheduling and waitlist automation
+- [/features/analytics-reports](https://repone.web-forge.in/features/analytics-reports) - Real-time metrics and retention audits
+- [/features/branding-white-label](https://repone.web-forge.in/features/branding-white-label) - Custom subdomains, colors, and logos
+- [/features/member-app](https://repone.web-forge.in/features/member-app) - Mobile native PWA member portal
+
+## Target Audiences
+- [/for-gym-owners](https://repone.web-forge.in/for-gym-owners) - Solutions for small and independent gym owners
+- [/for-boutique-studios](https://repone.web-forge.in/for-boutique-studios) - Solutions for boutique class-based fitness studios
+- [/for-gym-chains](https://repone.web-forge.in/for-gym-chains) - Multi-tenant administrative platforms for enterprise gym chains
+
+## Alternatives & Comparisons
+- [/compare](https://repone.web-forge.in/compare) - Platform comparison indexes
+- [/compare/repone-vs-mindbody](https://repone.web-forge.in/compare/repone-vs-mindbody) - Comparison with Mindbody
+- [/compare/repone-vs-glofox](https://repone.web-forge.in/compare/repone-vs-glofox) - Comparison with Glofox
+- [/compare/repone-vs-zenplanner](https://repone.web-forge.in/compare/repone-vs-zenplanner) - Comparison with Zen Planner
+- [/compare/repone-vs-excel-whatsapp](https://repone.web-forge.in/compare/repone-vs-excel-whatsapp) - Manual spreadsheets vs RepOne

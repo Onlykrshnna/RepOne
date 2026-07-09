@@ -36,7 +36,7 @@ function ForgotPassword() {
           </Link>
           <div className="mt-4 flex items-center justify-center gap-4">
             <span className="block h-[1px] w-6 bg-border" />
-            <span className="text-muted-foreground" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Recovery</span>
+            <h1 className="text-muted-foreground" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Recovery</h1>
             <span className="block h-[1px] w-6 bg-border" />
           </div>
         </div>

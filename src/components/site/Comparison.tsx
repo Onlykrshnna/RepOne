@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Reveal } from "./Reveal";
 import { X, Check } from "lucide-react";
 
@@ -90,6 +91,15 @@ export function Comparison() {
               </div>
             </div>
           </Reveal>
+        </div>
+
+        <div className="mt-16 text-center">
+          <Link
+            to="/compare"
+            className="inline-flex items-center gap-2 text-xs font-bold text-[#BEFF00] hover:underline uppercase tracking-widest font-sans"
+          >
+            See Full Competitor Comparisons &rarr;
+          </Link>
         </div>
       </div>
     </section>

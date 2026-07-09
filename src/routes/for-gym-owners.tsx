@@ -65,6 +65,14 @@ function ForGymOwnersPage() {
             Book Free Demo <ArrowRight className="w-4 h-4" />
           </Link>
         </section>
+
+        <div className="border-t border-border pt-12 mt-12 mb-16 text-center">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground block mb-4">Explore Solutions</span>
+          <div className="flex justify-center gap-6 flex-wrap text-xs">
+            <Link to="/for-boutique-studios" className="text-primary hover:underline font-semibold">Boutique Fitness Studios &rarr;</Link>
+            <Link to="/for-gym-chains" className="text-primary hover:underline font-semibold">Enterprise Gym Chains &rarr;</Link>
+          </div>
+        </div>
       </div>
     </MarketingLayout>
   );

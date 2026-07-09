@@ -6,7 +6,7 @@ import { HelpCircle, BookOpen, MessageSquare, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/support")({
   head: () =>
     getSeoTags({
-      title: "Support Center | RepOne Gym Software",
+      title: "Help Desk, Guides, Onboarding Documentation | RepOne",
       description:
         "Access guides, onboarding documentation, or reach out to WebForge customer support.",
       path: "/support",

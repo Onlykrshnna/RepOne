@@ -6,7 +6,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 export const Route = createFileRoute("/contact")({
   head: () =>
     getSeoTags({
-      title: "Contact Us | RepOne Gym Software",
+      title: "Get in Touch with RepOne Integration Specialists",
       description:
         "Get in touch with the RepOne team. Ask about custom integrations or request a set-up call.",
       path: "/contact",

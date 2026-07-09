@@ -6,7 +6,7 @@ import { Heart, Target, Lightbulb } from "lucide-react";
 export const Route = createFileRoute("/about")({
   head: () =>
     getSeoTags({
-      title: "About Us | RepOne Gym Software",
+      title: "About WebForge and the RepOne Platform Mission",
       description:
         "Learn about the mission behind RepOne — built by WebForge to automate gym administration and operations.",
       path: "/about",

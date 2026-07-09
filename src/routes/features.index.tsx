@@ -93,7 +93,7 @@ function FeaturesIndexPage() {
                 to={feat.href}
                 className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
               >
-                Learn More &rarr;
+                Explore {feat.title.replace(" Software", "")} &rarr;
               </Link>
             </div>
           );
