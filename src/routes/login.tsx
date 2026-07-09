@@ -5,7 +5,16 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../lib/auth-context';
 import { supabase } from '../lib/supabase';
 
+import { getSeoTags } from '../lib/seo';
+
 export const Route = createFileRoute('/login')({
+  head: () =>
+    getSeoTags({
+      title: "Member Portal Login | RepOne",
+      description: "Log in to the RepOne member portal to book gym slots, view schedules, and manage memberships.",
+      path: "/login",
+      noindex: true,
+    }),
   component: Login,
 });
 

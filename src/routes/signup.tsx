@@ -4,7 +4,16 @@ import { authService } from '../services/auth.service';
 import { Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
+import { getSeoTags } from '../lib/seo';
+
 export const Route = createFileRoute('/signup')({
+  head: () =>
+    getSeoTags({
+      title: "Member Registration | RepOne",
+      description: "Create your gym member account on RepOne to access schedules, track check-ins, and manage bookings.",
+      path: "/signup",
+      noindex: true,
+    }),
   component: Signup,
 });
 

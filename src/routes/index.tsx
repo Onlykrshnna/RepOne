@@ -16,26 +16,17 @@ import { Footer } from "@/components/site/Footer";
 import { CustomCursor } from "@/components/site/CustomCursor";
 import { Preloader } from "@/components/site/Preloader";
 
-export const Route = createFileRoute("/")(  {
-  head: () => ({
-    meta: [
-      { title: "RepOne · Gym Management Platform & Demo" },
-      {
-        name: "description",
-        content:
-          "Explore the live interactive demo of XYZ Fitness powered by RepOne, a premium gym management platform.",
-      },
-      { property: "og:title", content: "RepOne · Gym Management Platform" },
-      {
-        property: "og:description",
-        content:
-          "Automated memberships, payments, QR attendance, trainer dashboards, and member portals.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://repone.web-forge.in" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+import { getSeoTags, schemaHelpers } from "@/lib/seo";
+
+export const Route = createFileRoute("/")({
+  head: () =>
+    getSeoTags({
+      title: "RepOne · Gym Management Platform & Demo",
+      description:
+        "Explore the live interactive demo of XYZ Fitness powered by RepOne. RepOne is a premium B2B2C gym operating system designed to automate memberships, UPI payment reconciliation, contactless QR check-ins, group class booking schedules, and trainer dashboards in one place.",
+      path: "",
+      schema: schemaHelpers.softwareApplication(),
+    }),
   component: Index,
 });
 

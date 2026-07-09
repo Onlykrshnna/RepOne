@@ -3,7 +3,16 @@ import { createFileRoute, useNavigate, Link } from '@tanstack/react-router';
 import { authService } from '../services/auth.service';
 import { supabase } from '../lib/supabase';
 
+import { getSeoTags } from '../lib/seo';
+
 export const Route = createFileRoute('/reset-password')({
+  head: () =>
+    getSeoTags({
+      title: "Reset Password | RepOne",
+      description: "Reset your gym member login account password securely on RepOne.",
+      path: "/reset-password",
+      noindex: true,
+    }),
   component: ResetPassword,
 });
 
