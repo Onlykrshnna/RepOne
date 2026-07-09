@@ -76,11 +76,10 @@ export const programs = [
 ];
 
 export const links = [
-  { label: "Why RepOne", href: "#why-repone" },
-  { label: "Features", href: "#features" },
-  { label: "Showcase", href: "#showcase" },
-  { label: "Adaptability", href: "#brand" },
-  { label: "Packages", href: "#packages" },
+  { label: "Features", href: "/features" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Blog", href: "/blog" },
+  { label: "Case Studies", href: "/case-studies" },
 ];
 
 export const tiers = [

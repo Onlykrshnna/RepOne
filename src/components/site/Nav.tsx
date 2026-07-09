@@ -32,7 +32,7 @@ export function Nav() {
 
         <nav className="hidden md:flex items-center gap-10">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-[#F0EDE6]/45 hover:text-[#BEFF00] transition-colors duration-300" style={lbl}>{l.label}</a>
+            <Link key={l.href} to={l.href} className="text-[#F0EDE6]/45 hover:text-[#BEFF00] transition-colors duration-300" style={lbl}>{l.label}</Link>
           ))}
         </nav>
 
@@ -58,7 +58,7 @@ export function Nav() {
       {open && (
         <div className="md:hidden border-t border-white/[0.06] bg-[#080809]/97 backdrop-blur-xl">
           <div className="px-6 py-8 flex flex-col gap-5">
-            {links.map((l) => (<a key={l.href} href={l.href} onClick={() => setOpen(false)} className="text-[#F0EDE6]/65 hover:text-[#BEFF00] transition-colors" style={{ ...lbl, fontSize: "12px" }}>{l.label}</a>))}
+            {links.map((l) => (<Link key={l.href} to={l.href} onClick={() => setOpen(false)} className="text-[#F0EDE6]/65 hover:text-[#BEFF00] transition-colors" style={{ ...lbl, fontSize: "12px" }}>{l.label}</Link>))}
             {!isLoading && !session && (
               <Link to="/signup" onClick={() => setOpen(false)} className="mt-4 py-4 bg-[#BEFF00] text-[#080809] text-center" style={{ ...lbl, fontSize: "11px" }}>Sign Up</Link>
             )}

@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+
 export function Footer() {
   return (
     <footer className="bg-[#080809] pt-24 pb-12 border-t border-[#F0EDE6]/10 text-[#F0EDE6]">
@@ -10,22 +12,26 @@ export function Footer() {
         </div>
         
         <div className="flex flex-col gap-4">
-          <span className="text-[#F0EDE6]/30 mb-2" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Products</span>
+          <span className="text-[#F0EDE6]/30 mb-2" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Products & Features</span>
           <div className="flex flex-col gap-2" style={{ fontFamily: "Inter", fontSize: "13px" }}>
-            <span className="text-[#F0EDE6]/70">Gym Website</span>
-            <span className="text-[#F0EDE6]/70">Admin Dashboard</span>
-            <span className="text-[#F0EDE6]/70">Member Portal</span>
-            <span className="text-[#F0EDE6]/70">QR Attendance</span>
-            <span className="text-[#F0EDE6]/70">Payments Pipeline</span>
-            <span className="text-[#F0EDE6]/70">Analytics Engine</span>
+            <Link to="/" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Gym Website</Link>
+            <Link to="/features/membership-management" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Membership Management</Link>
+            <Link to="/features/member-app" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Member App</Link>
+            <Link to="/features/qr-attendance" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">QR Attendance</Link>
+            <Link to="/features/payments" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Payments Pipeline</Link>
+            <Link to="/features/branding-white-label" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">White-Label Branding</Link>
           </div>
         </div>
 
         <div className="flex flex-col gap-4">
-          <span className="text-[#F0EDE6]/30 mb-2" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Support & Social</span>
-          <a href="mailto:hello@repone.co" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter", fontSize: "13px" }}>hello@repone.co</a>
-          <a href="#" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter", fontSize: "13px" }}>Instagram</a>
-          <a href="#" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter", fontSize: "13px" }}>LinkedIn</a>
+          <span className="text-[#F0EDE6]/30 mb-2" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.26em", textTransform: "uppercase" }}>Company & Support</span>
+          <div className="flex flex-col gap-2" style={{ fontFamily: "Inter", fontSize: "13px" }}>
+            <Link to="/about" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">About Us</Link>
+            <Link to="/testimonials" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Reviews</Link>
+            <Link to="/contact" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Contact</Link>
+            <Link to="/support" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">Support & Guides</Link>
+            <a href="mailto:hello@repone.co" className="text-[#F0EDE6]/70 hover:text-[#BEFF00] transition-colors">hello@repone.co</a>
+          </div>
         </div>
       </div>
       
@@ -34,8 +40,9 @@ export function Footer() {
           &copy; {new Date().getFullYear()} RepOne. POWERED BY WEBFORGE. ALL RIGHTS RESERVED.
         </span>
         <div className="flex items-center gap-6">
-          <a href="#" className="text-[#F0EDE6]/30 hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase" }}>Terms</a>
-          <a href="#" className="text-[#F0EDE6]/30 hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase" }}>Privacy</a>
+          <Link to="/terms-of-service" className="text-[#F0EDE6]/30 hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase" }}>Terms</Link>
+          <Link to="/privacy-policy" className="text-[#F0EDE6]/30 hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase" }}>Privacy</Link>
+          <Link to="/refund-policy" className="text-[#F0EDE6]/30 hover:text-[#BEFF00] transition-colors" style={{ fontFamily: "Inter", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase" }}>Refunds</Link>
         </div>
       </div>
     </footer>
